@@ -8,6 +8,7 @@ library(stringr)
 library(shinydashboard)
 library(treemap)
 library(lubridate)
+library(shinyWidgets)
 
 username <- "tmorley"#change to be your username
 pathway <- paste("C:\\Users\\",username,"\\OneDrive - Department for Education\\Documents\\Projects\\qa_log_app", sep="")
