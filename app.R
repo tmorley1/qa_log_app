@@ -9,9 +9,18 @@ library(shinydashboard)
 library(treemap)
 library(lubridate)
 library(shinyWidgets)
+library(RODBC)
 
-username <- "tmorley"#change to be your username
+#location of app files
+username <- "tmorley"
 pathway <- paste("C:\\Users\\",username,"\\OneDrive - Department for Education\\Documents\\Projects\\qa_log_app", sep="")
+
+#sql server and database
+servername<-"T1PRMDRSQL\\SQLPROD,55842"
+databasename <- "MDR_Modelling_DSAGT1"
+
+#Create connection to the SQL server
+myConn <- odbcDriverConnect(connection=paste("Driver={SQL Server}; Server=", servername, "; Database=", databasename, "; Trusted_Connection=yes", sep=""))
 
 #---App--------------------------------------------------------
 

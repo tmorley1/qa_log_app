@@ -12,53 +12,74 @@ params:
   DG8: NA
 ---
 
+<style>
+.column-left{
+  float: left;
+  width: 33%;
+  text-align: left;
+}
+.column-center{
+  display: inline-block;
+  width: 33%;
+  text-align: center;
+}
+.column-right{
+  float: right;
+  width: 33%;
+  text-align: right;
+}
+</style>
+
 Documentation and Governance
 
-
+<div class="column-left">
 Scope and specification
+</div>
 
-```{r}
+<div class="column-center">
+```{r, echo=FALSE}
 params$DG1
 ```
+</div>
 
 User guide
 
-```{r}
+```{r, echo=FALSE}
 params$DG2
 ```
 
 Technical guide
 
-```{r}
+```{r, echo=FALSE}
 params$DG3
 ```
 
 KIM
 
-```{r}
+```{r, echo=FALSE}
 params$DG4
 ```
 
 Version control
 
-```{r}
+```{r, echo=FALSE}
 params$DG5
 ```
 
 Responsibilities
 
-```{r}
+```{r, echo=FALSE}
 params$DG6
 ```
 
 QA planning and resourcing
 
-```{r}
+```{r, echo=FALSE}
 params$DG7
 ```
 
 Record of QA
 
-```{r}
+```{r, echo=FALSE}
 params$DG8
 ```

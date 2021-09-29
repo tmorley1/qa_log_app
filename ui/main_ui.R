@@ -1,6 +1,6 @@
 tabPanel("Edit info", #button in navigation panel
          
-         #colours in drop down menu
+#-------colours in drop down menu----
          tags$head(
            tags$style(HTML("
         .option[data-value='1) Excellent'], .item[data-value='1) Excellent']{
@@ -32,10 +32,34 @@ tabPanel("Edit info", #button in navigation panel
           color: black !important;
         }
   "))),
-         
+#----UI----         
          h1(strong("QA Log"), align="center"),
+#----Selecting QA log using project ID----
+fluidRow(column(4,
+          textInput("projectID", "Project ID", value=""),
+          actionButton("submitprojectID", "Submit")),
+        column(4,
+          textOutput("projectname"))),
+#----Colours for DG score----
+fluidRow(column(4,
+conditionalPanel(
+  condition = ("output.scorecolour == 'GREEN'"),
          fluidRow(column(6,
-           uiOutput("scoreDG",style="Background-color: #d4f7d2;"))),
+           uiOutput("scoreDGgreen",style="Background-color: #32cd32;")))),
+conditionalPanel(
+  condition = ("output.scorecolour == 'YELLOW'"),
+         fluidRow(column(6,
+           uiOutput("scoreDGyellow",style="Background-color: #ffff00;")))),
+conditionalPanel(
+  condition = ("output.scorecolour == 'ORANGE'"),
+  fluidRow(column(6,
+                  uiOutput("scoreDGorange",style="Background-color: #ffa500;")))),
+conditionalPanel(
+  condition = ("output.scorecolour == 'RED'"),
+  fluidRow(column(6,
+                  uiOutput("scoreDGred",style="Background-color: #ff0000;")))),
+)),
+#----DG checks----
          fluidRow(
            column(12,
                   h2("Documentation and Governance")

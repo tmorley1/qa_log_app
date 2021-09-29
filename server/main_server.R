@@ -28,6 +28,19 @@ output$report <- downloadHandler(
   }
 )
 
+#--- Reading in data from SQL database----
+observeEvent(input$submitprojectID, {
+  chosennumber <- input$projectID
+  
+  #select correct row from SQL
+  selectrow <- paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", chosennumber, sep="")
+  
+  #now run the query to get our output.
+  selectrow <- sqlQuery(myConn, selectrow)
+  
+  output$projectname <- renderText({selectrow[1,2]})
+})
+
 #--- Scores selector DG ------
 rating_options <- function(score_index){
  renderUI({selectizeInput(score_index, choices=c("1) Excellent",
@@ -108,8 +121,28 @@ total_DG <- reactive({reactive_score_DG1() + reactive_score_DG2() + reactive_sco
 #adds up number of ratings
 number_DG <- reactive({iszero(input$scoreDG1)+iszero(input$scoreDG2)+iszero(input$scoreDG3)+iszero(input$scoreDG4)+iszero(input$scoreDG5)+iszero(input$scoreDG6)+iszero(input$scoreDG7)+iszero(input$scoreDG8)})
 
-#calculates average rating
+#calculates average percentage rating
 percentage_DG <- reactive(if(number_DG()==0){0}
                           else{round(total_DG()/number_DG())})
 
-output$scoreDG <- renderValueBox({valueBox(paste(percentage_DG()," %"),subtitle="Documentation and Governance")})
+#score colours
+output$scorecolour <- renderText({
+  if(percentage_DG() >= 90) {
+    "GREEN"
+  }
+  else if (percentage_DG() >= 70){
+    "YELLOW"
+  }
+  else if (percentage_DG() >= 50){
+    "ORANGE"
+  }
+  else{
+    "RED"
+  }
+})
+outputOptions(output, "scorecolour", suspendWhenHidden=FALSE)
+
+output$scoreDGgreen <- renderValueBox({valueBox(paste(percentage_DG()," %"),subtitle="Documentation and Governance")})
+output$scoreDGyellow <- renderValueBox({valueBox(paste(percentage_DG()," %"),subtitle="Documentation and Governance")})
+output$scoreDGorange <- renderValueBox({valueBox(paste(percentage_DG()," %"),subtitle="Documentation and Governance")})
+output$scoreDGred <- renderValueBox({valueBox(paste(percentage_DG()," %"),subtitle="Documentation and Governance")})
