@@ -35,11 +35,21 @@ tabPanel("Edit info", #button in navigation panel
 #----UI----         
          h1(strong("QA Log"), align="center"),
 #----Selecting QA log using project ID----
-fluidRow(column(4,
-          textInput("projectID", "Project ID", value=""),
-          actionButton("submitprojectID", "Submit")),
-        column(4,
-          textOutput("projectname"))),
+fluidRow(column(2,
+          textInput("projectID", "Project ID", value="")),
+          column(2,br(),
+                 actionButton("submitprojectID", "Submit"))),
+fluidRow(column(2,
+          textOutput("projectname"),
+          tags$head(tags$style("#projectname{color: red;
+                                 font-size: 20px;
+                                 }"
+          )),
+          conditionalPanel(condition = ("output.projectname == 'Error: Project ID invalid'"),
+                            textInput("newprojectname", "Project name", value=""))),
+         column(2, textInput("version", "Version", value="")),
+         column(2, textInput("leadanalyst", "Lead Analyst", value="")),
+         column(2, textInput("analyticalassurer", "Analytical Assurer", value=""))),
 #----Colours for DG score----
 fluidRow(column(4,
 conditionalPanel(
@@ -97,7 +107,10 @@ conditionalPanel(
            column(2, h6("Record of QA")),
            column(2, uiOutput("scoreSelectorDG8"))
          ),
+
+#----Generate HTML and saving to SQL----
          fluidRow(
-           column(2, downloadButton("report", "Generate QA Log"))
+           column(3, downloadButton("report", "Generate QA Log")),
+           column(2, actionButton("saveSQL", "Save"))
          )
 )

@@ -8,6 +8,8 @@ databasename <- "MDR_Modelling_DSAGT1"
 #Create connection to the SQL server
 myConn <- odbcDriverConnect(connection=paste("Driver={SQL Server}; Server=", servername, "; Database=", databasename, "; Trusted_Connection=yes", sep=""))
 
+#----Reading in table ----
+
 #Create the query to pull in data - make sure you run this whole block at once,
 # as running it line by line won't work.
 myTable <- paste("
@@ -21,6 +23,8 @@ myTable <- gsub("\t","", myTable)
 #now run the query to get our output.
 myTable <- sqlQuery(myConn, myTable)
 
+#---- Adding extra row of data----
+
 #Now we want to export data. We can add a new row of data to the table as follows:
 
 #Adding an extra row of data
@@ -30,6 +34,8 @@ VALUES ('3', 'Test Project from R', '5', '5');
 ",sep="")
 saveConn<- odbcDriverConnect(connection=paste("Driver={SQL Server}; Server=", servername, "; Database=", databasename, "; Trusted_Connection=yes", sep=""))
 resultset <- sqlQuery(saveConn,sql)
+
+#---- Adding extra row of data from list----
 
 #But what if data is already defined in R? For example:
 
@@ -60,10 +66,20 @@ sql2 <- InsertListInQuery(query, newRow)
 
 resultset2 <- sqlQuery(saveConn,sql2)
 
+#---- Reading in specific row from SQL-----
+
 #Reading in specific output from SQL database
-chosennumber=2
+chosennumber=6
 
 selectrow <- paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", chosennumber, sep="")
 
 #now run the query to get our output.
 selectrow <- sqlQuery(myConn, selectrow)
+
+#---- Updating row in table----
+newDG1 <- 2
+chosenid <- 6
+
+rowEditQuery <- paste("UPDATE ", databasename,".dbo.test SET DG1 = ", newDG1,
+                      " WHERE projectID =", chosenid, ";", sep="")
+rowEditSet <- sqlQuery(myConn,rowEditQuery)

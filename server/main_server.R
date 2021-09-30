@@ -1,3 +1,4 @@
+#---- Creating HTML report----
 output$report <- downloadHandler(
   # For pdf output, change this to "report.pdf"
   filename = "report.html",
@@ -28,6 +29,17 @@ output$report <- downloadHandler(
   }
 )
 
+#--- Functions for reading in from SQL ----
+
+#Selected rating based on number
+readingOutput <- function(number){if(number==1){"1) Excellent"}
+  else if(number==2){"2) Good"}
+  else if(number==3){"3) Some issues"}
+  else if(number==4){"4) Needs improvement"}
+  else if(number==5){"5) Significant issues"}
+  else if(number==6){"N/A"}
+  else {"TO BE CHECKED"}}
+
 #--- Reading in data from SQL database----
 observeEvent(input$submitprojectID, {
   chosennumber <- input$projectID
@@ -38,7 +50,151 @@ observeEvent(input$submitprojectID, {
   #now run the query to get our output.
   selectrow <- sqlQuery(myConn, selectrow)
   
+  #Error if project ID does not exist
+  if(nrow(selectrow)==0) {
+    output$projectname <- renderText({"Error: Project ID invalid"})
+    #RESET ALL CHECKS
+    updateSelectizeInput(session, inputId = "scoreDG1", selected = "TO BE CHECKED")
+    updateSelectizeInput(session, inputId = "scoreDG2", selected = "TO BE CHECKED")
+    updateSelectizeInput(session, inputId = "scoreDG3", selected = "TO BE CHECKED")
+    updateSelectizeInput(session, inputId = "scoreDG4", selected = "TO BE CHECKED")
+    updateSelectizeInput(session, inputId = "scoreDG5", selected = "TO BE CHECKED")
+    updateSelectizeInput(session, inputId = "scoreDG6", selected = "TO BE CHECKED")
+    updateSelectizeInput(session, inputId = "scoreDG7", selected = "TO BE CHECKED")
+    updateSelectizeInput(session, inputId = "scoreDG8", selected = "TO BE CHECKED")
+  }
+  else{
   output$projectname <- renderText({selectrow[1,2]})
+  
+  #UPDATE ALL DG CHECKS
+  DG1output <- readingOutput(selectrow[1,3])
+  updateSelectizeInput(session, inputId = "scoreDG1", selected = DG1output)
+  
+  DG2output <- readingOutput(selectrow[1,4])
+  updateSelectizeInput(session, inputId = "scoreDG2", selected = DG2output)
+  
+  DG3output <- readingOutput(selectrow[1,5])
+  updateSelectizeInput(session, inputId = "scoreDG3", selected = DG3output)
+  
+  DG4output <- readingOutput(selectrow[1,6])
+  updateSelectizeInput(session, inputId = "scoreDG4", selected = DG4output)
+  
+  DG5output <- readingOutput(selectrow[1,7])
+  updateSelectizeInput(session, inputId = "scoreDG5", selected = DG5output)
+  
+  DG6output <- readingOutput(selectrow[1,8])
+  updateSelectizeInput(session, inputId = "scoreDG6", selected = DG6output)
+  
+  DG7output <- readingOutput(selectrow[1,9])
+  updateSelectizeInput(session, inputId = "scoreDG7", selected = DG7output)
+  
+  DG8output <- readingOutput(selectrow[1,10])
+  updateSelectizeInput(session, inputId = "scoreDG8", selected = DG8output)
+  
+  }
+})
+
+#---- Functions for saving to SQL----
+
+#function to insert list in SQL query
+InsertListInQuery <- function(querySentence, InList) {
+  InValues <- ""
+  for (i in 1:length(InList)){
+    if (i < length(InList)) {
+      InValues <- paste(InValues,"'",InList[[i]],"', ",sep="")}
+    else {
+      InValues <- paste(InValues,"'",InList[[i]],"'",sep="")
+    }
+    
+  }
+  LocOpenParenthesis <- gregexpr('[(]', querySentence)[[1]][[1]]
+  LocCloseParenthesis <- gregexpr('[)]', querySentence)[[1]][[1]]
+  if (LocCloseParenthesis-LocOpenParenthesis==1) {
+    querySentence<- gsub("[(]", paste("(",InValues,sep = ""), querySentence)
+  }
+  return (querySentence )
+}
+
+#writing score as an integer for SQL table
+write_score <- function(inputscore){
+  if(inputscore == "1) Excellent")
+    return('1')
+  else if(inputscore == "2) Good")
+    return('2')
+  else if(inputscore == "3) Some issues")
+    return('3')
+  else if (inputscore == "4) Needs improvement")
+    return('4')
+  else if (inputscore == "5) Significant issues")
+    return('5')
+  else if (inputscore == "N/A")
+    return('6')
+  else{
+    return('7')}
+}
+
+#---- Saving to SQL database----
+observeEvent(input$saveSQL, {
+  chosennumber <- input$projectID
+  
+  #select correct row from SQL
+  selectrow <- paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", chosennumber, sep="")
+  
+  #now run the query to get our output.
+  selectrow <- sqlQuery(myConn, selectrow)
+  
+  writing_score_DG1 <- reactive({write_score(input$scoreDG1)})
+  
+  writing_score_DG2 <- reactive({write_score(input$scoreDG2)})
+  
+  writing_score_DG3 <- reactive({write_score(input$scoreDG3)})
+  
+  writing_score_DG4 <- reactive({write_score(input$scoreDG4)})
+  
+  writing_score_DG5 <- reactive({write_score(input$scoreDG5)})
+  
+  writing_score_DG6 <- reactive({write_score(input$scoreDG6)})
+  
+  writing_score_DG7 <- reactive({write_score(input$scoreDG7)})
+  
+  writing_score_DG8 <- reactive({write_score(input$scoreDG8)})
+  
+  #if project ID does not already exist, create new entry
+  if(nrow(selectrow)==0) {
+    newRow <- c(input$projectID,input$newprojectname,
+                writing_score_DG1(),
+                writing_score_DG2(), 
+                writing_score_DG3(), 
+                writing_score_DG4(), 
+                writing_score_DG5(), 
+                writing_score_DG6(), 
+                writing_score_DG7(), 
+                writing_score_DG8())
+    
+    newRowQuery <- paste("INSERT INTO", databasename,".dbo.test VALUES ();")
+    
+    newRowSQL <- InsertListInQuery(newRowQuery, newRow)
+    
+    newRowSet <- sqlQuery(myConn,newRowSQL)
+
+  }
+  
+  #if project ID does exist, update existing row
+  else{
+    rowEditQuery <- paste("UPDATE ", databasename,".dbo.test 
+                          SET DG1=", writing_score_DG1(),
+                          ", DG2 = ", writing_score_DG2(),
+                          ", DG3 = ", writing_score_DG3(),
+                          ", DG4 = ", writing_score_DG4(),
+                          ", DG5 = ", writing_score_DG5(),
+                          ", DG6 = ", writing_score_DG6(),
+                          ", DG7 = ", writing_score_DG7(),
+                          ", DG8 = ", writing_score_DG8(),
+                          " WHERE projectID = ", input$projectID, ";", sep="")
+    
+    rowEditSet <- sqlQuery(myConn,rowEditQuery)
+  }
+ 
 })
 
 #--- Scores selector DG ------

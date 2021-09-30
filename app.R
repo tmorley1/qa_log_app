@@ -2,12 +2,7 @@
 library(shiny)
 library(tidyverse)
 library(shinythemes) #theme -> css
-library(plotly) # plotlyOutputs - graphs
-library(DT)
-library(stringr)
 library(shinydashboard)
-library(treemap)
-library(lubridate)
 library(shinyWidgets)
 library(RODBC)
 
