@@ -36,20 +36,23 @@ tabPanel("Edit info", #button in navigation panel
          h1(strong("QA Log"), align="center"),
 #----Selecting QA log using project ID----
 fluidRow(column(2,
+          #Box to input project ID and search database
           textInput("projectID", "Project ID", value="")),
           column(2,br(),
-                 actionButton("submitprojectID", "Submit"))),
-fluidRow(column(2,
-          textOutput("projectname"),
-          tags$head(tags$style("#projectname{color: red;
+                 actionButton("submitprojectID", "Submit")),
+         #Error message if project ID does not exist
+         column(4,br(),
+                textOutput("errormessage"),
+                tags$head(tags$style("#errormessage{color: red;
                                  font-size: 20px;
                                  }"
-          )),
-          conditionalPanel(condition = ("output.projectname == 'Error: Project ID invalid'"),
-                            textInput("newprojectname", "Project name", value=""))),
+                )))),
+#----Displaying project name, version, lead analyst, analytical assurer, BCM----
+fluidRow(column(2, textInput("projectname", "Project name", value="")),
          column(2, textInput("version", "Version", value="")),
          column(2, textInput("leadanalyst", "Lead Analyst", value="")),
-         column(2, textInput("analyticalassurer", "Analytical Assurer", value=""))),
+         column(2, textInput("analyticalassurer", "Analytical Assurer", value="")),
+         column(2, uiOutput("BCMSelector"))),
 #----Colours for DG score----
 fluidRow(column(4,
 conditionalPanel(

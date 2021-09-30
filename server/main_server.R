@@ -52,8 +52,13 @@ observeEvent(input$submitprojectID, {
   
   #Error if project ID does not exist
   if(nrow(selectrow)==0) {
-    output$projectname <- renderText({"Error: Project ID invalid"})
+    output$errormessage <- renderText({"Error: Project ID invalid"})
     #RESET ALL CHECKS
+    updateTextInput(session, inputId = "projectname", value="")
+    updateTextInput(session, inputId = "version", value="")
+    updateTextInput(session, inputId = "leadanalyst", value="")
+    updateTextInput(session, inputId = "analyticalassurer", value="")
+    updateSelectizeInput(session, inputId = "BCM", selected = "No")
     updateSelectizeInput(session, inputId = "scoreDG1", selected = "TO BE CHECKED")
     updateSelectizeInput(session, inputId = "scoreDG2", selected = "TO BE CHECKED")
     updateSelectizeInput(session, inputId = "scoreDG3", selected = "TO BE CHECKED")
@@ -64,7 +69,18 @@ observeEvent(input$submitprojectID, {
     updateSelectizeInput(session, inputId = "scoreDG8", selected = "TO BE CHECKED")
   }
   else{
-  output$projectname <- renderText({selectrow[1,2]})
+  output$errormessage <- renderText({""})
+  
+  #UPDATE ANALYST INPUTS
+  updateTextInput(session, inputId = "projectname", value = paste(selectrow[1,2]))
+  
+  updateTextInput(session, inputId = "version", value = paste(selectrow[1,11]))
+  
+  updateTextInput(session, inputId = "leadanalyst", value = paste(selectrow[1,12]))
+  
+  updateTextInput(session, inputId = "analyticalassurer", value = paste(selectrow[1,13]))
+  
+  updateSelectizeInput(session, inputId = "BCM", selected = selectrow[1,14])
   
   #UPDATE ALL DG CHECKS
   DG1output <- readingOutput(selectrow[1,3])
@@ -161,7 +177,7 @@ observeEvent(input$saveSQL, {
   
   #if project ID does not already exist, create new entry
   if(nrow(selectrow)==0) {
-    newRow <- c(input$projectID,input$newprojectname,
+    newRow <- c(input$projectID,paste(input$projectname),
                 writing_score_DG1(),
                 writing_score_DG2(), 
                 writing_score_DG3(), 
@@ -169,7 +185,11 @@ observeEvent(input$saveSQL, {
                 writing_score_DG5(), 
                 writing_score_DG6(), 
                 writing_score_DG7(), 
-                writing_score_DG8())
+                writing_score_DG8(),
+                paste(input$version),
+                paste(input$leadanalyst),
+                paste(input$analyticalassurer),
+                paste(input$BCM))
     
     newRowQuery <- paste("INSERT INTO", databasename,".dbo.test VALUES ();")
     
@@ -182,7 +202,8 @@ observeEvent(input$saveSQL, {
   #if project ID does exist, update existing row
   else{
     rowEditQuery <- paste("UPDATE ", databasename,".dbo.test 
-                          SET DG1=", writing_score_DG1(),
+                          SET ProjectName = '", input$projectname,
+                          "', DG1 = ", writing_score_DG1(),
                           ", DG2 = ", writing_score_DG2(),
                           ", DG3 = ", writing_score_DG3(),
                           ", DG4 = ", writing_score_DG4(),
@@ -190,12 +211,19 @@ observeEvent(input$saveSQL, {
                           ", DG6 = ", writing_score_DG6(),
                           ", DG7 = ", writing_score_DG7(),
                           ", DG8 = ", writing_score_DG8(),
-                          " WHERE projectID = ", input$projectID, ";", sep="")
+                          ", vers = '", input$version,
+                          "', leadanalyst = '", input$leadanalyst,
+                          "', AnalyticalAssurer = '", input$analyticalassurer,
+                          "', BusinessCritical = '", input$BCM,
+                          "' WHERE projectID = ", input$projectID, ";", sep="")
     
     rowEditSet <- sqlQuery(myConn,rowEditQuery)
   }
  
 })
+
+#---- BCM selector----
+output$BCMSelector <- renderUI({selectizeInput("BCM", choices=c("Yes", "No"), selected="No", label="Business Critical")})
 
 #--- Scores selector DG ------
 rating_options <- function(score_index){
