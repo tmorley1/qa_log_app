@@ -2,6 +2,13 @@
 title: "QA Log"
 output: html_document
 params:
+  id: NA
+  name: NA
+  version: NA
+  leadanalyst: NA
+  analyticalassurer: NA
+  BCM: NA
+  DGscore: NA
   DG1: NA
   DG2: NA
   DG3: NA
@@ -30,17 +37,47 @@ params:
 }
 </style>
 
-Documentation and Governance
+Project ID
+```{r, echo=FALSE}
+params$id
+```
 
-<div class="column-left">
+Project title
+```{r, echo=FALSE}
+params$name
+```
+
+Version
+```{r, echo=FALSE}
+params$version
+```
+
+Lead analyst
+```{r, echo=FALSE}
+params$leadanalyst
+```
+
+Analytical assurer
+```{r, echo=FALSE}
+params$analyticalassurer
+```
+
+Business Critical (Y/N)
+```{r, echo=FALSE}
+params$BCM
+```
+
+Documentation and Governance overall:
+```{r, echo=FALSE}
+params$DGscore
+```
+
+Documentation and Governance breakdown:
+
 Scope and specification
-</div>
-
-<div class="column-center">
 ```{r, echo=FALSE}
 params$DG1
 ```
-</div>
 
 User guide
 

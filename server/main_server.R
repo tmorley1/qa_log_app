@@ -10,7 +10,14 @@ output$report <- downloadHandler(
     file.copy(paste(pathway,"\\report.Rmd", sep=""), tempReport, overwrite = TRUE)
     
     # Set up parameters for Documentation and Governance to pass to Rmd document
-    params <- list(DG1 = input$scoreDG1,
+    params <- list(id = input$projectID,
+                   name = input$projectname,
+                   version = input$version,
+                   leadanalyst = input$leadanalyst,
+                   analyticalassurer = input$analyticalassurer,
+                   BCM = input$BCM,
+                   DGscore = percentage_DG(),
+                     DG1 = input$scoreDG1,
                      DG2 = input$scoreDG2,
                      DG3 = input$scoreDG3,
                      DG4 = input$scoreDG4,
@@ -28,87 +35,6 @@ output$report <- downloadHandler(
     )
   }
 )
-
-#--- Functions for reading in from SQL ----
-
-#Selected rating based on number
-readingOutput <- function(number){if(number==1){"1) Excellent"}
-  else if(number==2){"2) Good"}
-  else if(number==3){"3) Some issues"}
-  else if(number==4){"4) Needs improvement"}
-  else if(number==5){"5) Significant issues"}
-  else if(number==6){"N/A"}
-  else {"TO BE CHECKED"}}
-
-#--- Reading in data from SQL database----
-observeEvent(input$submitprojectID, {
-  chosennumber <- input$projectID
-  
-  #select correct row from SQL
-  selectrow <- paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", chosennumber, sep="")
-  
-  #now run the query to get our output.
-  selectrow <- sqlQuery(myConn, selectrow)
-  
-  #Error if project ID does not exist
-  if(nrow(selectrow)==0) {
-    output$errormessage <- renderText({"Error: Project ID invalid"})
-    #RESET ALL CHECKS
-    updateTextInput(session, inputId = "projectname", value="")
-    updateTextInput(session, inputId = "version", value="")
-    updateTextInput(session, inputId = "leadanalyst", value="")
-    updateTextInput(session, inputId = "analyticalassurer", value="")
-    updateSelectizeInput(session, inputId = "BCM", selected = "No")
-    updateSelectizeInput(session, inputId = "scoreDG1", selected = "TO BE CHECKED")
-    updateSelectizeInput(session, inputId = "scoreDG2", selected = "TO BE CHECKED")
-    updateSelectizeInput(session, inputId = "scoreDG3", selected = "TO BE CHECKED")
-    updateSelectizeInput(session, inputId = "scoreDG4", selected = "TO BE CHECKED")
-    updateSelectizeInput(session, inputId = "scoreDG5", selected = "TO BE CHECKED")
-    updateSelectizeInput(session, inputId = "scoreDG6", selected = "TO BE CHECKED")
-    updateSelectizeInput(session, inputId = "scoreDG7", selected = "TO BE CHECKED")
-    updateSelectizeInput(session, inputId = "scoreDG8", selected = "TO BE CHECKED")
-  }
-  else{
-  output$errormessage <- renderText({""})
-  
-  #UPDATE ANALYST INPUTS
-  updateTextInput(session, inputId = "projectname", value = paste(selectrow[1,2]))
-  
-  updateTextInput(session, inputId = "version", value = paste(selectrow[1,11]))
-  
-  updateTextInput(session, inputId = "leadanalyst", value = paste(selectrow[1,12]))
-  
-  updateTextInput(session, inputId = "analyticalassurer", value = paste(selectrow[1,13]))
-  
-  updateSelectizeInput(session, inputId = "BCM", selected = selectrow[1,14])
-  
-  #UPDATE ALL DG CHECKS
-  DG1output <- readingOutput(selectrow[1,3])
-  updateSelectizeInput(session, inputId = "scoreDG1", selected = DG1output)
-  
-  DG2output <- readingOutput(selectrow[1,4])
-  updateSelectizeInput(session, inputId = "scoreDG2", selected = DG2output)
-  
-  DG3output <- readingOutput(selectrow[1,5])
-  updateSelectizeInput(session, inputId = "scoreDG3", selected = DG3output)
-  
-  DG4output <- readingOutput(selectrow[1,6])
-  updateSelectizeInput(session, inputId = "scoreDG4", selected = DG4output)
-  
-  DG5output <- readingOutput(selectrow[1,7])
-  updateSelectizeInput(session, inputId = "scoreDG5", selected = DG5output)
-  
-  DG6output <- readingOutput(selectrow[1,8])
-  updateSelectizeInput(session, inputId = "scoreDG6", selected = DG6output)
-  
-  DG7output <- readingOutput(selectrow[1,9])
-  updateSelectizeInput(session, inputId = "scoreDG7", selected = DG7output)
-  
-  DG8output <- readingOutput(selectrow[1,10])
-  updateSelectizeInput(session, inputId = "scoreDG8", selected = DG8output)
-  
-  }
-})
 
 #---- Functions for saving to SQL----
 
@@ -222,36 +148,6 @@ observeEvent(input$saveSQL, {
  
 })
 
-#---- BCM selector----
-output$BCMSelector <- renderUI({selectizeInput("BCM", choices=c("Yes", "No"), selected="No", label="Business Critical")})
-
-#--- Scores selector DG ------
-rating_options <- function(score_index){
- renderUI({selectizeInput(score_index, choices=c("1) Excellent",
-                                                 "2) Good",
-                                                 "3) Some issues",
-                                                 "4) Needs improvement",
-                                                 "5) Significant issues",
-                                                 "N/A",
-                                                 "TO BE CHECKED"
- ),
-                          selected="TO BE CHECKED", label=NULL)})}
-
-output$scoreSelectorDG1 <- rating_options("scoreDG1")
-
-output$scoreSelectorDG2 <- rating_options("scoreDG2")
-
-output$scoreSelectorDG3 <- rating_options("scoreDG3")
-
-output$scoreSelectorDG4 <- rating_options("scoreDG4")
-
-output$scoreSelectorDG5 <- rating_options("scoreDG5")
-
-output$scoreSelectorDG6 <- rating_options("scoreDG6")
-
-output$scoreSelectorDG7 <- rating_options("scoreDG7")
-
-output$scoreSelectorDG8 <- rating_options("scoreDG8")
 
 #--- Functions for calculating scores -----
 

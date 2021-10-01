@@ -1,4 +1,4 @@
-tabPanel("Edit info", #button in navigation panel
+tabPanel(title = "QA Log", value = "panel2", #button in navigation panel
          
 #-------colours in drop down menu----
          tags$head(
@@ -34,25 +34,12 @@ tabPanel("Edit info", #button in navigation panel
   "))),
 #----UI----         
          h1(strong("QA Log"), align="center"),
-#----Selecting QA log using project ID----
-fluidRow(column(2,
-          #Box to input project ID and search database
-          textInput("projectID", "Project ID", value="")),
-          column(2,br(),
-                 actionButton("submitprojectID", "Submit")),
-         #Error message if project ID does not exist
-         column(4,br(),
-                textOutput("errormessage"),
-                tags$head(tags$style("#errormessage{color: red;
-                                 font-size: 20px;
-                                 }"
-                )))),
 #----Displaying project name, version, lead analyst, analytical assurer, BCM----
 fluidRow(column(2, textInput("projectname", "Project name", value="")),
          column(2, textInput("version", "Version", value="")),
          column(2, textInput("leadanalyst", "Lead Analyst", value="")),
          column(2, textInput("analyticalassurer", "Analytical Assurer", value="")),
-         column(2, uiOutput("BCMSelector"))),
+         column(2, selectizeInput("BCM", choices=c("Yes", "No"), selected="No", label="Business Critical"))),
 #----Colours for DG score----
 fluidRow(column(4,
 conditionalPanel(
@@ -80,35 +67,35 @@ conditionalPanel(
          ),
          fluidRow(
            column(2, h6("Scope and Specification")),
-           column(2, uiOutput("scoreSelectorDG1"))
+           column(2, rating_options("scoreDG1"))
          ),
          fluidRow(
            column(2, h6("User guide")),
-           column(2, uiOutput("scoreSelectorDG2"))
+           column(2, rating_options("scoreDG2"))
          ),
          fluidRow(
            column(2, h6("Technical guide")),
-           column(2, uiOutput("scoreSelectorDG3"))
+           column(2, rating_options("scoreDG3"))
          ),
          fluidRow(
            column(2, h6("KIM")),
-           column(2, uiOutput("scoreSelectorDG4"))
+           column(2, rating_options("scoreDG4"))
          ),
          fluidRow(
            column(2, h6("Version control")),
-           column(2, uiOutput("scoreSelectorDG5"))
+           column(2, rating_options("scoreDG5"))
          ),
          fluidRow(
            column(2, h6("Responsibilities")),
-           column(2, uiOutput("scoreSelectorDG6"))
+           column(2, rating_options("scoreDG6"))
          ),
          fluidRow(
            column(2, h6("QA planning and resourcing")),
-           column(2, uiOutput("scoreSelectorDG7"))
+           column(2, rating_options("scoreDG7"))
          ),
          fluidRow(
            column(2, h6("Record of QA")),
-           column(2, uiOutput("scoreSelectorDG8"))
+           column(2, rating_options("scoreDG8"))
          ),
 
 #----Generate HTML and saving to SQL----
