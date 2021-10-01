@@ -176,38 +176,71 @@ observeEvent(input$submitprojectID, {
     #UPDATE ANALYST INPUTS
     updateTextInput(session, inputId = "projectname", value = paste(selectrow[1,2]))
     
-    updateTextInput(session, inputId = "version", value = paste(selectrow[1,11]))
+    updateTextInput(session, inputId = "version", value = paste(selectrow[1,3]))
     
-    updateTextInput(session, inputId = "leadanalyst", value = paste(selectrow[1,12]))
+    updateTextInput(session, inputId = "leadanalyst", value = paste(selectrow[1,4]))
     
-    updateTextInput(session, inputId = "analyticalassurer", value = paste(selectrow[1,13]))
+    updateTextInput(session, inputId = "analyticalassurer", value = paste(selectrow[1,5]))
     
-    updateSelectizeInput(session, inputId = "BCM", selected = selectrow[1,14])
+    updateSelectizeInput(session, inputId = "BCM", selected = selectrow[1,6])
     
     #UPDATE ALL DG CHECKS
-    DG1output <- readingOutput(selectrow[1,3])
+    #DG1
+    DG1output <- readingOutput(selectrow[1,8])
     updateSelectizeInput(session, inputId = "scoreDG1", selected = DG1output)
+    updateTextInput(session, inputId = "assessDG1", value=paste(selectrow[1,9]))
+    updateTextInput(session, inputId = "summaryDG1", value=paste(selectrow[1,10]))
+    updateTextInput(session, inputId = "obsDG1", value=paste(selectrow[1,11]))
+    updateTextInput(session, inputId = "outDG1", value=paste(selectrow[1,12]))
     
-    DG2output <- readingOutput(selectrow[1,4])
+    DG2output <- readingOutput(selectrow[1,13])
     updateSelectizeInput(session, inputId = "scoreDG2", selected = DG2output)
+    updateTextInput(session, inputId = "assessDG2", value=paste(selectrow[1,14]))
+    updateTextInput(session, inputId = "summaryDG2", value=paste(selectrow[1,15]))
+    updateTextInput(session, inputId = "obsDG2", value=paste(selectrow[1,16]))
+    updateTextInput(session, inputId = "outDG2", value=paste(selectrow[1,17]))
     
-    DG3output <- readingOutput(selectrow[1,5])
+    DG3output <- readingOutput(selectrow[1,18])
     updateSelectizeInput(session, inputId = "scoreDG3", selected = DG3output)
+    updateTextInput(session, inputId = "assessDG3", value=paste(selectrow[1,19]))
+    updateTextInput(session, inputId = "summaryDG3", value=paste(selectrow[1,20]))
+    updateTextInput(session, inputId = "obsDG3", value=paste(selectrow[1,21]))
+    updateTextInput(session, inputId = "outDG3", value=paste(selectrow[1,22]))
     
-    DG4output <- readingOutput(selectrow[1,6])
+    DG4output <- readingOutput(selectrow[1,23])
     updateSelectizeInput(session, inputId = "scoreDG4", selected = DG4output)
+    updateTextInput(session, inputId = "assessDG4", value=paste(selectrow[1,24]))
+    updateTextInput(session, inputId = "summaryDG4", value=paste(selectrow[1,25]))
+    updateTextInput(session, inputId = "obsDG4", value=paste(selectrow[1,26]))
+    updateTextInput(session, inputId = "outDG4", value=paste(selectrow[1,27]))
     
-    DG5output <- readingOutput(selectrow[1,7])
+    DG5output <- readingOutput(selectrow[1,28])
     updateSelectizeInput(session, inputId = "scoreDG5", selected = DG5output)
+    updateTextInput(session, inputId = "assessDG5", value=paste(selectrow[1,29]))
+    updateTextInput(session, inputId = "summaryDG5", value=paste(selectrow[1,30]))
+    updateTextInput(session, inputId = "obsDG5", value=paste(selectrow[1,31]))
+    updateTextInput(session, inputId = "outDG5", value=paste(selectrow[1,32]))
     
-    DG6output <- readingOutput(selectrow[1,8])
+    DG6output <- readingOutput(selectrow[1,33])
     updateSelectizeInput(session, inputId = "scoreDG6", selected = DG6output)
+    updateTextInput(session, inputId = "assessDG6", value=paste(selectrow[1,34]))
+    updateTextInput(session, inputId = "summaryDG6", value=paste(selectrow[1,35]))
+    updateTextInput(session, inputId = "obsDG6", value=paste(selectrow[1,36]))
+    updateTextInput(session, inputId = "outDG6", value=paste(selectrow[1,37]))
     
-    DG7output <- readingOutput(selectrow[1,9])
+    DG7output <- readingOutput(selectrow[1,38])
     updateSelectizeInput(session, inputId = "scoreDG7", selected = DG7output)
+    updateTextInput(session, inputId = "assessDG7", value=paste(selectrow[1,39]))
+    updateTextInput(session, inputId = "summaryDG7", value=paste(selectrow[1,40]))
+    updateTextInput(session, inputId = "obsDG7", value=paste(selectrow[1,41]))
+    updateTextInput(session, inputId = "outDG7", value=paste(selectrow[1,42]))
     
-    DG8output <- readingOutput(selectrow[1,10])
+    DG8output <- readingOutput(selectrow[1,43])
     updateSelectizeInput(session, inputId = "scoreDG8", selected = DG8output)
+    updateTextInput(session, inputId = "assessDG8", value=paste(selectrow[1,44]))
+    updateTextInput(session, inputId = "summaryDG8", value=paste(selectrow[1,45]))
+    updateTextInput(session, inputId = "obsDG8", value=paste(selectrow[1,46]))
+    updateTextInput(session, inputId = "outDG8", value=paste(selectrow[1,47]))
   }
 })
 
