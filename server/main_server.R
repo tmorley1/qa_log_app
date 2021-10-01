@@ -226,3 +226,5 @@ output$scoreDGgreen <- renderValueBox({valueBox(paste(percentage_DG()," %"),subt
 output$scoreDGyellow <- renderValueBox({valueBox(paste(percentage_DG()," %"),subtitle="Documentation and Governance")})
 output$scoreDGorange <- renderValueBox({valueBox(paste(percentage_DG()," %"),subtitle="Documentation and Governance")})
 output$scoreDGred <- renderValueBox({valueBox(paste(percentage_DG()," %"),subtitle="Documentation and Governance")})
+
+output$projectIDtext <- renderValueBox({valueBox(paste(input$projectID), subtitle="Project ID")})

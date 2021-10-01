@@ -35,7 +35,8 @@ tabPanel(title = "QA Log", value = "panel2", #button in navigation panel
 #----UI----         
          h1(strong("QA Log"), align="center"),
 #----Displaying project name, version, lead analyst, analytical assurer, BCM----
-fluidRow(column(2, textInput("projectname", "Project name", value="")),
+fluidRow(column(2, uiOutput("projectIDtext")),
+         column(2, textInput("projectname", "Project name", value="")),
          column(2, textInput("version", "Version", value="")),
          column(2, textInput("leadanalyst", "Lead Analyst", value="")),
          column(2, textInput("analyticalassurer", "Analytical Assurer", value="")),
@@ -66,41 +67,81 @@ conditionalPanel(
            )
          ),
          fluidRow(
+           column(2, h5("QA area")),
+           column(2, h5("Rating")),
+           column(2, h5("Assessed by")),
+           column(2, h5("Summary of/link to QA outcome or evidence")),
+           column(2, h5("Observations")),
+           column(2, h5("Outstanding (potential) work"))
+         ),
+         fluidRow(
            column(2, h6("Scope and Specification")),
-           column(2, rating_options("scoreDG1"))
+           column(2, rating_options("scoreDG1")),
+           column(2, textInput("assessDG1",label=NULL, value="")),
+           column(2, textInput("summaryDG1", label=NULL, value="")),
+           column(2, textInput("obsDG1", label=NULL, value="")),
+           column(2, textInput("outDG1", label=NULL, value=""))
          ),
          fluidRow(
            column(2, h6("User guide")),
-           column(2, rating_options("scoreDG2"))
+           column(2, rating_options("scoreDG2")),
+           column(2, textInput("assessDG2",label=NULL, value="")),
+           column(2, textInput("summaryDG2", label=NULL, value="")),
+           column(2, textInput("obsDG2", label=NULL, value="")),
+           column(2, textInput("outDG2", label=NULL, value=""))
          ),
          fluidRow(
            column(2, h6("Technical guide")),
-           column(2, rating_options("scoreDG3"))
+           column(2, rating_options("scoreDG3")),
+           column(2, textInput("assessDG3",label=NULL, value="")),
+           column(2, textInput("summaryDG3", label=NULL, value="")),
+           column(2, textInput("obsDG3", label=NULL, value="")),
+           column(2, textInput("outDG3", label=NULL, value=""))
          ),
          fluidRow(
            column(2, h6("KIM")),
-           column(2, rating_options("scoreDG4"))
+           column(2, rating_options("scoreDG4")),
+           column(2, textInput("assessDG4",label=NULL, value="")),
+           column(2, textInput("summaryDG4", label=NULL, value="")),
+           column(2, textInput("obsDG4", label=NULL, value="")),
+           column(2, textInput("outDG4", label=NULL, value=""))
          ),
          fluidRow(
            column(2, h6("Version control")),
-           column(2, rating_options("scoreDG5"))
+           column(2, rating_options("scoreDG5")),
+           column(2, textInput("assessDG5",label=NULL, value="")),
+           column(2, textInput("summaryDG5", label=NULL, value="")),
+           column(2, textInput("obsDG5", label=NULL, value="")),
+           column(2, textInput("outDG5", label=NULL, value=""))
          ),
          fluidRow(
            column(2, h6("Responsibilities")),
-           column(2, rating_options("scoreDG6"))
+           column(2, rating_options("scoreDG6")),
+           column(2, textInput("assessDG6",label=NULL, value="")),
+           column(2, textInput("summaryDG6", label=NULL, value="")),
+           column(2, textInput("obsDG6", label=NULL, value="")),
+           column(2, textInput("outDG6", label=NULL, value=""))
          ),
          fluidRow(
            column(2, h6("QA planning and resourcing")),
-           column(2, rating_options("scoreDG7"))
+           column(2, rating_options("scoreDG7")),
+           column(2, textInput("assessDG7",label=NULL, value="")),
+           column(2, textInput("summaryDG7", label=NULL, value="")),
+           column(2, textInput("obsDG7", label=NULL, value="")),
+           column(2, textInput("outDG7", label=NULL, value=""))
          ),
          fluidRow(
            column(2, h6("Record of QA")),
-           column(2, rating_options("scoreDG8"))
+           column(2, rating_options("scoreDG8")),
+           column(2, textInput("assessDG8",label=NULL, value="")),
+           column(2, textInput("summaryDG8", label=NULL, value="")),
+           column(2, textInput("obsDG8", label=NULL, value="")),
+           column(2, textInput("outDG8", label=NULL, value=""))
          ),
 
 #----Generate HTML and saving to SQL----
          fluidRow(
-           column(3, downloadButton("report", "Generate QA Log")),
+           column(2, downloadButton("report", "Generate QA Log")),
            column(2, actionButton("saveSQL", "Save"))
          )
 )

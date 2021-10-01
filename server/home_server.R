@@ -1,28 +1,96 @@
 #----Selecting type of log----
 types <- reactiveValues(log = "blank")
+unsure <- reactiveValues(log = "blank")
+
+output$startPanel <- renderUI({
+  if (types$log == "blank"){
+    fluidRow(column(12,"Welcome to the Department for Education QA log.
+         Would you like to create a new QA log, or update an existing one?",
+         align="center"),
+         br(),
+         column(6,actionButton("newlog","New QA Log"), align="right"),
+         column(6,actionButton("updatelog","Update QA Log"),align="left"))
+  }
+})
 
 observeEvent(input$newlog, {
   types$log <- "new"
 })
 
+#----Modelling QA log----
 observeEvent(input$modelling,{
-  updateTabsetPanel(session, "inTabset", selected="panel2")
+  
+  types$log <- "modelling"
+  
+  #we generate a random 4 digit number for the project ID
+  newID <- floor(runif(1, 1000, 9999))
+  #we need to test to check that the number generated is not already being used
+  #select relevant row from SQL database
+  checkselect <- paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", newID, sep="")
+  checkselect <- sqlQuery(myConn, checkselect)
+  if(nrow(checkselect)==0){
+  updateTextInput(session,inputId = "projectID", value = newID)
+  updateTabsetPanel(session, "inTabset", selected="panel2")}
+  #if the ID isn't being used, the project ID gets updated and the log is displayed.
+  #if the ID is being used, nothing happens and the user has to click on the button again
 })
 
+#----Data analysis QA log----
 observeEvent(input$analysis,{
   updateTabsetPanel(session, "inTabset", selected="panel2")
+  
+  types$log <- "analysis"
+  
+  newID <- floor(runif(1,1000,9999))
+  
+  updateTextInput(session, inputId = "projectID", value = newID)
+  #we need to test to check that the number generated is not already being used
+  #select relevant row from SQL database
+  checkselect <- paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", newID, sep="")
+  checkselect <- sqlQuery(myConn, checkselect)
+  if(nrow(checkselect)==0){
+    updateTextInput(session,inputId = "projectID", value = newID)
+    updateTabsetPanel(session, "inTabset", selected="panel2")}
+  #if the ID isn't being used, the project ID gets updated and the log is displayed.
 })
 
+#----Dashboard QA log----
 observeEvent(input$dashboard,{
   updateTabsetPanel(session, "inTabset", selected="panel2")
+  
+  types$log <- "dashboard"
+  
+  newID <- floor(runif(1,1000, 9999))
+  
+  updateTextInput(session, inputId = "projectID", value = newID)
+  #we need to test to check that the number generated is not already being used
+  #select relevant row from SQL database
+  checkselect <- paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", newID, sep="")
+  checkselect <- sqlQuery(myConn, checkselect)
+  if(nrow(checkselect)==0){
+    updateTextInput(session,inputId = "projectID", value = newID)
+    updateTabsetPanel(session, "inTabset", selected="panel2")}
+  #if the ID isn't being used, the project ID gets updated and the log is displayed.
 })
 
+#----Official Statistics QA log----
 observeEvent(input$statistics,{
   updateTabsetPanel(session, "inTabset", selected="panel2")
-})
-
-observeEvent(input$updatelog, {
-  types$log <- "update"
+  
+  types$log <- "statistics"
+  
+  newID <- floor(runif(1,1000,9999))
+  
+  updateTextInput(session, inputId = "projectID", value = newID)
+  #we need to test to check that the number generated is not already being used
+  #select relevant row from SQL database
+  checkselect <- paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", newID, sep="")
+  checkselect <- sqlQuery(myConn, checkselect)
+  if(nrow(checkselect)==0){
+    updateTextInput(session,inputId = "projectID", value = newID)
+    updateTabsetPanel(session, "inTabset", selected="panel2")}
+  #if the ID isn't being used, the project ID gets updated and the log is displayed.
+  
 })
 
 #----Generating UI when "Create New Log" selected----
@@ -36,7 +104,27 @@ output$newPanel <- renderUI({
                        actionButton("dashboard", "Dashboard"),
                        actionButton("statistics", "Official Statistics"), align="center"),
              br(), br(), br(),
-             column(12,actionButton("unsure", "Unsure which to use?"), align="center"))
+             column(12,actionButton("unsure", "Unsure which to use?"), align="center"),
+             br(), br(), br(),
+             column(12,actionButton("back", "Back"), align="center"))
+  }
+})
+
+observeEvent(input$unsure, {
+  unsure$log <- "unsure"
+})
+
+#Pressing 'Back' reverts app to original state
+observeEvent(input$back, {
+  types$log <- "blank"
+  unsure$log <- "blank"
+})
+
+#Pressing unsure offers more information about each log
+output$unsurePanel <- renderUI({
+  if (unsure$log == "unsure"){
+    fluidRow(br(),
+             column(12,"Here is some information on the different logs to help you decide.", align="center"))
   }
 })
 
@@ -84,6 +172,7 @@ observeEvent(input$submitprojectID, {
   else{
     output$errormessage <- renderText({""})
     updateTabsetPanel(session, "inTabset", selected="panel2")
+    
     #UPDATE ANALYST INPUTS
     updateTextInput(session, inputId = "projectname", value = paste(selectrow[1,2]))
     
@@ -123,8 +212,12 @@ observeEvent(input$submitprojectID, {
 })
 
 #----Generating UI when "Update log" selected----
+observeEvent(input$updatelog, {
+  types$log <- "update"
+})
+
 output$updatePanel <- renderUI({
-  if(types$log=="update"){
+  if(types$log=="update" || types$log=="modelling" || types$log=="analysis" || types$log=="dashboard" || types$log=="statistics"){
     fluidRow(br(),
              column(12, textInput("projectID", "Project ID", value=""), align="center"),
              br(),
