@@ -269,3 +269,30 @@ output$scoreDGorange <- renderValueBox({valueBox(paste(percentage_DG()," %"),sub
 output$scoreDGred <- renderValueBox({valueBox(paste(percentage_DG()," %"),subtitle="Documentation and Governance")})
 
 output$projectIDtext <- renderValueBox({valueBox(paste(input$projectID), subtitle="Project ID")})
+
+output$QAlogtypetext <- renderValueBox({valueBox(paste(input$QAlogtype), subtitle="Project ID")})
+
+#---- Displaying more info on checks -----
+observeEvent(input$DG1info, {
+  showModal(modalDialog(
+    title = "Scope and specification",
+    conditionalPanel(condition="input.QAlogtype == 'Modelling'",
+    "Does a clear and comprehensive project scope and specification exist with evidence of key stakeholder involvement and sign off?",
+    br(), br(),
+    "Has the information in the scope template been identified?",
+    br(),
+    "Have all relevant stakeholders been identified and their requirements collected?",
+    br(),
+    "Has the methodology selection been documented and subject to appropriate scrutiny?",
+    br(),
+    "This may take a number of different forms, eg separate scope and specification document(s), an exchange of emails or embedded into the model itself.",
+    br(),br(),
+    "See QA Guidance chapter 3."
+    ),
+    conditionalPanel(condition="input.QAlogtype == 'Data Analysis'",
+    "Does a clear and comprehensive project scope and specification exist with evidence of key stakeholder involvement and sign off?",
+    br(), br(),
+    "This may take a number of different forms, e.g., separate scope and specification document(s), an exchange of emails or embedded into the code/spreadsheet itself.",
+    br(),br(),
+    "See QA Guidance chapter 3.")))
+})

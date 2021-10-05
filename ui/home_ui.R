@@ -12,5 +12,8 @@ tabPanel(title = "Home", value = "panel1",
   uiOutput('unsurePanel'),
   
   #If updating log, enter project ID  
-  uiOutput('updatePanel')
+  uiOutput('updatePanel'),
+  
+  #Hidden panel - user cannot manually update log type
+  uiOutput('logtypepanel')
 )

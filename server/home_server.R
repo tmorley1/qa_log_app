@@ -1,6 +1,7 @@
 #----Selecting type of log----
 types <- reactiveValues(log = "blank")
 unsure <- reactiveValues(log = "blank")
+nexttab <- reactiveValues(log= "blank")
 
 output$startPanel <- renderUI({
   if (types$log == "blank"){
@@ -21,6 +22,7 @@ observeEvent(input$newlog, {
 observeEvent(input$modelling,{
   
   types$log <- "modelling"
+  nexttab$log <- "next"
   
   #we generate a random 4 digit number for the project ID
   newID <- floor(runif(1, 1000, 9999))
@@ -30,6 +32,7 @@ observeEvent(input$modelling,{
   checkselect <- sqlQuery(myConn, checkselect)
   if(nrow(checkselect)==0){
   updateTextInput(session,inputId = "projectID", value = newID)
+  updateTextInput(session,inputId = "QAlogtype", value = 'Modelling')
   updateTabsetPanel(session, "inTabset", selected="panel2")}
   #if the ID isn't being used, the project ID gets updated and the log is displayed.
   #if the ID is being used, nothing happens and the user has to click on the button again
@@ -40,6 +43,7 @@ observeEvent(input$analysis,{
   updateTabsetPanel(session, "inTabset", selected="panel2")
   
   types$log <- "analysis"
+  nexttab$log <- "next"
   
   newID <- floor(runif(1,1000,9999))
   
@@ -50,6 +54,7 @@ observeEvent(input$analysis,{
   checkselect <- sqlQuery(myConn, checkselect)
   if(nrow(checkselect)==0){
     updateTextInput(session,inputId = "projectID", value = newID)
+    updateTextInput(session,inputId = "QAlogtype", value = 'Data Analysis')
     updateTabsetPanel(session, "inTabset", selected="panel2")}
   #if the ID isn't being used, the project ID gets updated and the log is displayed.
 })
@@ -59,6 +64,7 @@ observeEvent(input$dashboard,{
   updateTabsetPanel(session, "inTabset", selected="panel2")
   
   types$log <- "dashboard"
+  nexttab$log <- "next"
   
   newID <- floor(runif(1,1000, 9999))
   
@@ -69,6 +75,7 @@ observeEvent(input$dashboard,{
   checkselect <- sqlQuery(myConn, checkselect)
   if(nrow(checkselect)==0){
     updateTextInput(session,inputId = "projectID", value = newID)
+    updateTextInput(session,inputId = "QAlogtype", value = 'Dashboard')
     updateTabsetPanel(session, "inTabset", selected="panel2")}
   #if the ID isn't being used, the project ID gets updated and the log is displayed.
 })
@@ -78,6 +85,7 @@ observeEvent(input$statistics,{
   updateTabsetPanel(session, "inTabset", selected="panel2")
   
   types$log <- "statistics"
+  nexttab$log <- "next"
   
   newID <- floor(runif(1,1000,9999))
   
@@ -88,6 +96,7 @@ observeEvent(input$statistics,{
   checkselect <- sqlQuery(myConn, checkselect)
   if(nrow(checkselect)==0){
     updateTextInput(session,inputId = "projectID", value = newID)
+    updateTextInput(session,inputId = "QAlogtype", value = 'Official Statistics')
     updateTabsetPanel(session, "inTabset", selected="panel2")}
   #if the ID isn't being used, the project ID gets updated and the log is displayed.
   
@@ -172,6 +181,7 @@ observeEvent(input$submitprojectID, {
   else{
     output$errormessage <- renderText({""})
     updateTabsetPanel(session, "inTabset", selected="panel2")
+    nexttab$log <- "next"
     
     #UPDATE ANALYST INPUTS
     updateTextInput(session, inputId = "projectname", value = paste(selectrow[1,2]))
@@ -183,6 +193,8 @@ observeEvent(input$submitprojectID, {
     updateTextInput(session, inputId = "analyticalassurer", value = paste(selectrow[1,5]))
     
     updateSelectizeInput(session, inputId = "BCM", selected = selectrow[1,6])
+    
+    updateTextInput(session, inputId = "QAlogtype", value = paste(selectrow[1,7]))
     
     #UPDATE ALL DG CHECKS
     #DG1
@@ -262,5 +274,13 @@ output$updatePanel <- renderUI({
                   font-size: 20px;
                   }"
                     )), align="center"))
+  }
+})
+
+#Don't want user to be able to edit QAlogtype manually
+#So this panel is only visible once we have moved to next tab
+output$logtypepanel <- renderUI({
+  if(nexttab$log=="next"){
+    fluidRow(column(12, textInput("QAlogtype", "QA Log Type", value=""), align="center"))
   }
 })
