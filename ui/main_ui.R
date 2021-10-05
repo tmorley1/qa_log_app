@@ -84,7 +84,7 @@ conditionalPanel(
            column(2, textInput("outDG1", label=NULL, value=""))
          ),
          fluidRow(
-           column(2, h6("User guide")),
+           column(2, actionButton("DG2info", "User guide")),
            column(2, rating_options("scoreDG2")),
            column(2, textInput("assessDG2",label=NULL, value="")),
            column(2, textInput("summaryDG2", label=NULL, value="")),
@@ -92,7 +92,7 @@ conditionalPanel(
            column(2, textInput("outDG2", label=NULL, value=""))
          ),
          fluidRow(
-           column(2, h6("Technical guide")),
+           column(2, actionButton("DG3info", "Technical guide")),
            column(2, rating_options("scoreDG3")),
            column(2, textInput("assessDG3",label=NULL, value="")),
            column(2, textInput("summaryDG3", label=NULL, value="")),
@@ -100,7 +100,7 @@ conditionalPanel(
            column(2, textInput("outDG3", label=NULL, value=""))
          ),
          fluidRow(
-           column(2, h6("KIM")),
+           column(2, actionButton("DG4info", "KIM")),
            column(2, rating_options("scoreDG4")),
            column(2, textInput("assessDG4",label=NULL, value="")),
            column(2, textInput("summaryDG4", label=NULL, value="")),
@@ -108,7 +108,7 @@ conditionalPanel(
            column(2, textInput("outDG4", label=NULL, value=""))
          ),
          fluidRow(
-           column(2, h6("Version control")),
+           column(2, actionButton("DG5info", "Version control")),
            column(2, rating_options("scoreDG5")),
            column(2, textInput("assessDG5",label=NULL, value="")),
            column(2, textInput("summaryDG5", label=NULL, value="")),
@@ -116,7 +116,7 @@ conditionalPanel(
            column(2, textInput("outDG5", label=NULL, value=""))
          ),
          fluidRow(
-           column(2, h6("Responsibilities")),
+           column(2, actionButton("DG6info", "Responsibilities")),
            column(2, rating_options("scoreDG6")),
            column(2, textInput("assessDG6",label=NULL, value="")),
            column(2, textInput("summaryDG6", label=NULL, value="")),
@@ -124,7 +124,7 @@ conditionalPanel(
            column(2, textInput("outDG6", label=NULL, value=""))
          ),
          fluidRow(
-           column(2, h6("QA planning and resourcing")),
+           column(2, actionButton("DG7info", "QA plannin and resourcing")),
            column(2, rating_options("scoreDG7")),
            column(2, textInput("assessDG7",label=NULL, value="")),
            column(2, textInput("summaryDG7", label=NULL, value="")),
@@ -132,7 +132,7 @@ conditionalPanel(
            column(2, textInput("outDG7", label=NULL, value=""))
          ),
          fluidRow(
-           column(2, h6("Record of QA")),
+           column(2, actionButton("DG8info", "Record of QA")),
            column(2, rating_options("scoreDG8")),
            column(2, textInput("assessDG8",label=NULL, value="")),
            column(2, textInput("summaryDG8", label=NULL, value="")),
