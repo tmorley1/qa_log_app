@@ -33,6 +33,8 @@ observeEvent(input$modelling,{
   if(nrow(checkselect)==0){
   updateTextInput(session,inputId = "projectID", value = newID)
   updateTextInput(session,inputId = "QAlogtype", value = 'Modelling')
+  #make scores n/a if not required
+  #updateSelectizeInput(session,inputId = "scoreDG9", value="N/A")
   updateTabsetPanel(session, "inTabset", selected="panel2")}
   #if the ID isn't being used, the project ID gets updated and the log is displayed.
   #if the ID is being used, nothing happens and the user has to click on the button again
@@ -55,6 +57,10 @@ observeEvent(input$analysis,{
   if(nrow(checkselect)==0){
     updateTextInput(session,inputId = "projectID", value = newID)
     updateTextInput(session,inputId = "QAlogtype", value = 'Data Analysis')
+    #Set some checks to N/A
+    #updateSelectizeInput(session,inputId = "scoreDG3", value="N/A")
+    #updateSelectizeInput(session,inputId = "scoreDG9", value="N/A")
+    #Send to next tab
     updateTabsetPanel(session, "inTabset", selected="panel2")}
   #if the ID isn't being used, the project ID gets updated and the log is displayed.
 })
@@ -76,6 +82,10 @@ observeEvent(input$dashboard,{
   if(nrow(checkselect)==0){
     updateTextInput(session,inputId = "projectID", value = newID)
     updateTextInput(session,inputId = "QAlogtype", value = 'Dashboard')
+    #Set some checks to N/A
+    #updateSelectizeInput(session,inputId = "scoreDG3", value="N/A")
+    #updateSelectizeInput(session,inputId = "scoreDG9", value="N/A")
+    #Send to next tab
     updateTabsetPanel(session, "inTabset", selected="panel2")}
   #if the ID isn't being used, the project ID gets updated and the log is displayed.
 })
@@ -177,6 +187,7 @@ observeEvent(input$submitprojectID, {
     updateSelectizeInput(session, inputId = "scoreDG6", selected = "TO BE CHECKED")
     updateSelectizeInput(session, inputId = "scoreDG7", selected = "TO BE CHECKED")
     updateSelectizeInput(session, inputId = "scoreDG8", selected = "TO BE CHECKED")
+    updateSelectizeInput(session, inputId = "scoreDG9", selected = "TO BE CHECKED")
   }
   else{
     output$errormessage <- renderText({""})
@@ -253,6 +264,13 @@ observeEvent(input$submitprojectID, {
     updateTextInput(session, inputId = "summaryDG8", value=paste(selectrow[1,45]))
     updateTextInput(session, inputId = "obsDG8", value=paste(selectrow[1,46]))
     updateTextInput(session, inputId = "outDG8", value=paste(selectrow[1,47]))
+    
+    DG9output <- readingOutput(selectrow[1,48])
+    updateSelectizeInput(session, inputId = "scoreDG9", selected = DG9output)
+    updateTextInput(session, inputId = "assessDG9", value=paste(selectrow[1,49]))
+    updateTextInput(session, inputId = "summaryDG9", value=paste(selectrow[1,50]))
+    updateTextInput(session, inputId = "obsDG9", value=paste(selectrow[1,51]))
+    updateTextInput(session, inputId = "outDG9", value=paste(selectrow[1,52]))
   }
 })
 

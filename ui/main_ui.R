@@ -91,14 +91,16 @@ conditionalPanel(
            column(2, textInput("obsDG2", label=NULL, value="")),
            column(2, textInput("outDG2", label=NULL, value=""))
          ),
-         fluidRow(
+         conditionalPanel(
+           condition="input.QAlogtype == 'Modelling'|'Official Statistics'",
+           fluidRow(
            column(2, actionButton("DG3info", "Technical guide")),
            column(2, rating_options("scoreDG3")),
            column(2, textInput("assessDG3",label=NULL, value="")),
            column(2, textInput("summaryDG3", label=NULL, value="")),
            column(2, textInput("obsDG3", label=NULL, value="")),
            column(2, textInput("outDG3", label=NULL, value=""))
-         ),
+         )),
          fluidRow(
            column(2, actionButton("DG4info", "KIM")),
            column(2, rating_options("scoreDG4")),
@@ -139,6 +141,16 @@ conditionalPanel(
            column(2, textInput("obsDG8", label=NULL, value="")),
            column(2, textInput("outDG8", label=NULL, value=""))
          ),
+         fluidRow(
+           conditionalPanel(
+           condition="input.QAlogtype == 'Official Statistics'",
+           column(2, actionButton("DG9info", "Risk and Issues log")),
+           column(2, rating_options("scoreDG9")),
+           column(2, textInput("assessDG9",label=NULL, value="")),
+           column(2, textInput("summaryDG9", label=NULL, value="")),
+           column(2, textInput("obsDG9", label=NULL, value="")),
+           column(2, textInput("outDG9", label=NULL, value=""))
+         )),
 
 #----Generate HTML and saving to SQL----
          fluidRow(
