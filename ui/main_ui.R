@@ -78,8 +78,8 @@ conditionalPanel(
          UI_check("DG1","Scope and Specification"),
          UI_check("DG2","User guide"),
          conditionalPanel(
-           condition="input.QAlogtype == 'Official Statistics'||'Modelling'",
-           UI_check("DG3","Technical guide")
+         condition="input.QAlogtype == 'Official Statistics' || input.QAlogtype == 'Modelling'",
+         UI_check("DG3","Technical guide")
          ),
          UI_check("DG4","KIM"),
          UI_check("DG5", "Version control"),

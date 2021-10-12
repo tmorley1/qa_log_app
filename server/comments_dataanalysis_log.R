@@ -18,7 +18,8 @@ output$DG2dataanalysis <- renderUI({fluidRow(column(12,
       view outputs?"))})
 
 #----DG3 Technical guide----
-#Not required for this log
+output$DG3dataanalysis <- renderUI({fluidRow(column(12,
+      "This check is not required."))})
 
 #----DG4 KIM----
 output$DG4dataanalysis <- renderUI({fluidRow(column(12,
@@ -73,3 +74,7 @@ output$DG8dataanalysis <- renderUI({fluidRow(column(12,
       br(), br(),
       "This log, along with linked evidence to actual QA activities, will 
       provide most of the evidence needed."))})
+
+#----DG9 Risk and issues log
+output$DG9dataanalysis <- renderUI({fluidRow(column(12,
+      "This check is not required."))})

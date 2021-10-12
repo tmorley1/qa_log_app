@@ -112,3 +112,7 @@ output$DG8modelling <- renderUI({fluidRow(column(12,
     "Are all documents (as set out in the Scope/ specification / QA plan 
     avaliable for review and up to date (including risk / assumption / decision 
     logs)?"))})
+
+#----DG9 Risk and issues log
+output$DG9modelling <- renderUI({fluidRow(column(12,
+    "This check is not required."))})

@@ -220,165 +220,30 @@ output$QAlogtypetext <- renderValueBox({valueBox(paste(input$QAlogtype), subtitl
 #Info is different for each type of log
 #The info is read in from comments_'model name'_log.R
 
-#----DG1 ----
 observeEvent(input$DG1info, {
-  showModal(modalDialog(
-    title = "Scope and specification",
-    conditionalPanel(condition="input.QAlogtype == 'Modelling'",
-    uiOutput("DG1modelling")),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Data Analysis'",
-    uiOutput("DG1dataanalysis")),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Dashboard'",
-    uiOutput("DG1dashboard")),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Official Statistics'",
-    uiOutput("DG1statistics"))
-    ))
+  modal_check("Scope and specification", "DG1")
 })
-#----DG2-----
 observeEvent(input$DG2info, {
-  showModal(modalDialog(
-    title = "User guide",
-    conditionalPanel(condition="input.QAlogtype == 'Modelling'",
-    uiOutput("DG2modelling")),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Data Analysis'",
-    uiOutput("DG2dataanalysis")),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Dashboard'",
-    uiOutput("DG2dashboard")),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Official Statistics'",
-    uiOutput("DG2statistics"))
-    ))
+  modal_check("User guide", "DG2")
 })
-
-
-#----DG3-----
 observeEvent(input$DG3info, {
-  showModal(modalDialog(
-    title = "Technical guide",
-    conditionalPanel(condition="input.QAlogtype == 'Modelling'",
-    uiOutput("DG3modelling")),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Data Analysis'",
-    "This check is not required."),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Dashboard'",
-    "This check is not required."),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Official Statistics'",
-    uiOutput("DG3statistics"))
-    ))
+  modal_check("Technical guide", "DG3")
 })
-
-#----DG4-----
 observeEvent(input$DG4info, {
-  showModal(modalDialog(
-    title = "KIM",
-    conditionalPanel(condition="input.QAlogtype == 'Modelling'",
-    uiOutput("DG4modelling")),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Data Analysis'",
-    uiOutput("DG4dataanalysis")),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Dashboard'",
-    uiOutput("DG4dashboard")),
-                     
-    conditionalPanel(condition="input.QAlogtype == 'Official Statistics'",
-    uiOutput("DG4statistics"))
-    ))
+  modal_check("KIM", "DG4")
 })
-
-#----DG5-----
 observeEvent(input$DG5info, {
-  showModal(modalDialog(
-    title = "Version control",
-    conditionalPanel(condition="input.QAlogtype == 'Modelling'",
-    uiOutput("DG5modelling")),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Data Analysis'",
-    uiOutput("DG5dataanalysis")),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Dashboard'",
-    uiOutput("DG5dashboard")),
-
-    conditionalPanel(condition="input.QAlogtype == 'Official Statistics'",
-    uiOutput("DG5statistics"))
-    ))
+  modal_check("Version control", "DG5")
 })
-
-#----DG6-----
 observeEvent(input$DG6info, {
-  showModal(modalDialog(
-    title = "Responsibilities",
-    conditionalPanel(condition="input.QAlogtype == 'Modelling'",
-    uiOutput("DG6modelling")),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Data Analysis'",
-    uiOutput("DG6dataanalysis")),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Dashboard'",
-    uiOutput("DG6dashboard")),
-                     
-    conditionalPanel(condition="input.QAlogtype == 'Official Statistics'",
-    uiOutput("DG6statistics"))
-    ))
+  modal_check("Responsibilities", "DG6")
 })
-
-#----DG7-----
 observeEvent(input$DG7info, {
-  showModal(modalDialog(
-    title = "QA planning and resourcing",
-    conditionalPanel(condition="input.QAlogtype == 'Modelling'",
-    uiOutput("DG7modelling")),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Data Analysis'",
-    uiOutput("DG7dataanalysis")),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Dashboard'",
-    uiOutput("DG7dashboard")),
-                     
-    conditionalPanel(condition="input.QAlogtype == 'Official Statistics'",
-    uiOutput("DG7statistics"))
-    ))
+  modal_check("QA planning and resourcing", "DG7")
 })
-
-#----DG8-----
 observeEvent(input$DG8info, {
-  showModal(modalDialog(
-    title = "Record of QA",
-    conditionalPanel(condition="input.QAlogtype == 'Modelling'",
-    uiOutput("DG8modelling")),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Data Analysis'",
-    uiOutput("DG8dataanalysis")),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Dashboard'",
-    uiOutput("DG8dashboard")),
-                     
-    conditionalPanel(condition="input.QAlogtype == 'Official Statistics'",
-    uiOutput("DG8statistics"))
-    ))
+  modal_check("Record of QA", "DG8")
 })
-
-#----DG9----
 observeEvent(input$DG9info, {
-  showModal(modalDialog(
-    title = "Risk and Issues log",
-    conditionalPanel(condition="input.QAlogtype == 'Modelling'",
-                     "This check is not required"),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Data Analysis'",
-                     "This check is not required"),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Dashboard'",
-                     "This check is not required"),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Official Statistics'",
-                     uiOutput("DG9statistics"))
-  ))
+  modal_check("Risk and Issues log", "DG9")
 })
-

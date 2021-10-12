@@ -32,7 +32,8 @@ output$DG2dashboard <- renderUI({fluidRow(column(12,
     feedback/issues?"))})
 
 #----DG3 Technical guide----
-#Not required for this log
+output$DG3dashboard <- renderUI({fluidRow(column(12,
+    "This check is not required."))})
 
 #----DG4 KIM----
 output$DG4dashboard <- renderUI({fluidRow(column(12,
@@ -110,3 +111,7 @@ output$DG8dashboard <- renderUI({fluidRow(column(12,
     br(), br(),
     "This log, along with linked evidence to actual QA activities will provide
     most of the evidence needed."))})
+
+#----DG9 Risk and issues log----
+output$DG9dashboard <- renderUI({fluidRow(column(12,
+    "This check is not required."))})

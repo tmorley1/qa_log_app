@@ -1,16 +1,4 @@
 #------Functions for generating log-------------
-#Different rating options
-rating_options <- function(score_index){selectizeInput(score_index, 
-                                                       choices=c("1) Excellent",
-                                                                 "2) Good",
-                                                                 "3) Some issues",
-                                                                 "4) Needs improvement",
-                                                                 "5) Significant issues",
-                                                                 "N/A",
-                                                                 "TO BE CHECKED"
-                                                       ),
-                                                       selected="TO BE CHECKED", label=NULL)}
-
 #create_log is called when button to create new log is pressed
 #Generates project ID and fills in relevant text boxes to display log type
 create_log <- function(log_type,log_type_name,session1,types1,nexttab1){
@@ -30,18 +18,22 @@ create_log <- function(log_type,log_type_name,session1,types1,nexttab1){
   #if the ID is being used, nothing happens and the user has to click on the button again
 }
 
-#Generating UI for different checks
-UI_check <- function(checkID,checkname){
-  renderUI({
-    fluidRow(
-      column(2, actionButton(paste(checkID,"info",sep=""), checkname)),
-      column(2, rating_options(paste("score",checkID,sep=""))),
-      column(2, textInput(paste("assess",checkID,sep=""),label=NULL, value="")),
-      column(2, textInput(paste("summary",checkID,sep=""), label=NULL, value="")),
-      column(2, textInput(paste("obs",checkID,sep=""), label=NULL, value="")),
-      column(2, textInput(paste("out",checkID,sep=""), label=NULL, value=""))
-    )
-  })
+#Generating modal for more info on individual check
+modal_check <- function(check, checkID){
+  showModal(modalDialog(
+    title = check,
+    conditionalPanel(condition="input.QAlogtype == 'Modelling'",
+                     uiOutput(paste(checkID,"modelling",sep=""))),
+    
+    conditionalPanel(condition="input.QAlogtype == 'Data Analysis'",
+                     uiOutput(paste(checkID,"dataanalysis",sep=""))),
+    
+    conditionalPanel(condition="input.QAlogtype == 'Dashboard'",
+                     uiOutput(paste(checkID,"dashboard",sep=""))),
+    
+    conditionalPanel(condition="input.QAlogtype == 'Official Statistics'",
+                     uiOutput(paste(checkID,"statistics",sep="")))
+  ))
 }
 
 #--- Functions for reading in from SQL ----
@@ -54,6 +46,17 @@ readingOutput <- function(number){if(number==1){"1) Excellent"}
   else if(number==5){"5) Significant issues"}
   else if(number==6){"N/A"}
   else {"TO BE CHECKED"}}
+
+#Updating checks
+#'number' is the relevant column number within SQL database
+update_checks <- function(checkID1, number,session1,selectrow1){
+  checkoutput <- readingOutput(selectrow1[1,number])
+  updateSelectizeInput(session1, inputId = paste("score",checkID1,sep=""), selected = checkoutput)
+  updateTextInput(session1, inputId = paste("assess", checkID1,sep=""), value=paste(selectrow1[1,number+1]))
+  updateTextInput(session1, inputId = paste("summary", checkID1,sep=""), value=paste(selectrow1[1,number+2]))
+  updateTextInput(session1, inputId = paste("obs", checkID1,sep=""), value=paste(selectrow1[1,number+3]))
+  updateTextInput(session1, inputId = paste("out", checkID1,sep=""), value=paste(selectrow1[1,number+4]))
+}
 
 #---- Functions for saving to SQL----
 
