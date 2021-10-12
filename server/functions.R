@@ -58,6 +58,15 @@ update_checks <- function(checkID1, number,session1,selectrow1){
   updateTextInput(session1, inputId = paste("out", checkID1,sep=""), value=paste(selectrow1[1,number+4]))
 }
 
+#Reset checks
+reset_checks <- function(checkID1,session1){
+  updateSelectizeInput(session1, inputId = paste("score",checkID1,sep=""), selected = "TO BE CHECKED")
+  updateTextInput(session1, inputId = paste("assess", checkID1,sep=""), value="")
+  updateTextInput(session1, inputId = paste("summary", checkID1,sep=""), value="")
+  updateTextInput(session1, inputId = paste("obs", checkID1,sep=""), value="")
+  updateTextInput(session1, inputId = paste("out", checkID1,sep=""), value="")
+}
+
 #---- Functions for saving to SQL----
 
 #function to insert list in SQL query

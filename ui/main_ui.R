@@ -36,7 +36,8 @@ tabPanel(title = "QA Log", value = "panel2", #button in navigation panel
          h1(strong("QA Log"), align="center"),
 #----Displaying project name, version, lead analyst, analytical assurer, BCM----
 fluidRow(column(2, uiOutput("projectIDtext")),
-         column(2, uiOutput("QAlogtypetext"))),
+         column(2, uiOutput("QAlogtypetext")),
+         column(6, actionButton("backtohome","Back"), align="right")),
 fluidRow(column(2, textInput("projectname", "Project name", value="")),
          column(2, textInput("version", "Version", value="")),
          column(2, textInput("leadanalyst", "Lead Analyst", value="")),

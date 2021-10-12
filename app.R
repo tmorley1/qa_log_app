@@ -6,6 +6,7 @@ library(shinydashboard)
 library(shinyWidgets)
 library(RODBC)
 library(stringr)
+library(shinyjs)
 
 #location of app files
 username <- "tmorley"
@@ -26,15 +27,15 @@ myConn <- odbcDriverConnect(connection=paste("Driver={SQL Server}; Server=",
 
 #Different rating options
 rating_options <- function(score_index){selectizeInput(score_index, 
-                                                       choices=c("1) Excellent",
-                                                                 "2) Good",
-                                                                 "3) Some issues",
-                                                                 "4) Needs improvement",
-                                                                 "5) Significant issues",
-                                                                 "N/A",
-                                                                 "TO BE CHECKED"
-                                                       ),
-                                                       selected="TO BE CHECKED", label=NULL)}
+                  choices=c("1) Excellent",
+                            "2) Good",
+                            "3) Some issues",
+                            "4) Needs improvement",
+                            "5) Significant issues",
+                            "N/A",
+                            "TO BE CHECKED"
+                            ),
+                   selected="TO BE CHECKED", label=NULL)}
 
 #Generating UI for different checks
 UI_check <- function(checkID,checkname){
@@ -52,13 +53,25 @@ UI_check <- function(checkID,checkname){
 
 #---App--------------------------------------------------------
 
-ui <- navbarPage("QA Log", id="inTabset",
+ui <- fluidPage( #Removing navigation bar between tabs
+                 useShinyjs(),
+                 tags$style(type='text/css', "nav.navbar.navbar-default.navbar-static-top{border-color: #f5f5f5;background-color: #f5f5f5;}"),
+                 tags$style(type='text/css', ".navbar{min-height: 0px; margin-bottom: 0px;}"),
+                 tags$style(type='text/css', ".navbar-brand{height: 0px; padding: 0px 0px;}"),
+                 #Defining theme etc. and reading in UI files
+                 navbarPage("QA Log", id="inTabset",
                  theme = shinytheme("united"),
                  source(paste(pathway,"\\ui\\home_ui.R",sep=""), local=TRUE)$value,
                  source(paste(pathway,"\\ui\\main_ui.R", sep=""), local=TRUE)$value
-                 )
+                 ))
 
 server <- function(input, output, session) {
+  #removing navigation bar between tabs
+  observe({
+    hide(selector = "#inTabset li a[data-value=panel02]")
+    hide(selector = "#inTabset")
+    })
+  #Reading in server files
   source(paste(pathway,"\\server\\functions.R", sep=""), local=TRUE)$value
   source(paste(pathway,"\\server\\home_server.R", sep=""), local=TRUE)$value
   source(paste(pathway,"\\server\\main_server.R", sep=""), local=TRUE)$value

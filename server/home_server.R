@@ -18,22 +18,18 @@ observeEvent(input$newlog, {
   types$log <- "new"
 })
 
-#----Modelling QA log----
 observeEvent(input$modelling,{
   create_log("modelling","Modelling",session,types,nexttab)
 })
 
-#----Data analysis QA log----
 observeEvent(input$analysis,{
   create_log("analysis","Data Analysis",session,types,nexttab)
 })
 
-#----Dashboard QA log----
 observeEvent(input$dashboard,{
   create_log("dashboard","Dashboard",session,types,nexttab)
 })
 
-#----Official Statistics QA log----
 observeEvent(input$statistics,{
   create_log("statistics","Official Statistics",session,types,nexttab)
 })
@@ -136,8 +132,15 @@ output$updatePanel <- renderUI({
                     tags$head(tags$style("#errormessage{color: red;
                   font-size: 20px;
                   }"
-                    )), align="center"))
+                    )), align="center"),
+             br(),br(),
+             column(12,actionButton("backupdate","Back"), align="center"))
   }
+})
+
+observeEvent(input$backupdate, {
+  types$log <- "blank"
+  unsure$log <- "blank"
 })
 
 #Don't want user to be able to edit QAlogtype manually

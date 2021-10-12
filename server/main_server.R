@@ -247,3 +247,41 @@ observeEvent(input$DG8info, {
 observeEvent(input$DG9info, {
   modal_check("Risk and Issues log", "DG9")
 })
+
+#---- Back to home-----
+observeEvent(input$backtohome,{
+  showModal(modalDialog(
+    "Are you sure you want to go back? Your work will not be saved!",
+    br(), br(),
+    actionButton("definitelygoback","I'm sure")))
+})
+
+observeEvent(input$definitelygoback,{
+  #reset all checks
+  #resetting data at top of log
+  updateTextInput(session, inputId = "projectname", value = "")
+  updateTextInput(session, inputId = "version", value = "")
+  updateTextInput(session, inputId = "leadanalyst", value = "")
+  updateTextInput(session, inputId = "analyticalassurer", value = "")
+  updateSelectizeInput(session, inputId = "BCM", selected = "No")
+  updateTextInput(session, inputId = "QAlogtype", value = "")
+  #resetting documentation and governance checks
+  reset_checks("DG1",session)
+  reset_checks("DG2",session)
+  reset_checks("DG3",session)
+  reset_checks("DG4",session)
+  reset_checks("DG5",session)
+  reset_checks("DG6",session)
+  reset_checks("DG7",session)
+  reset_checks("DG8",session)
+  reset_checks("DG9",session)
+  
+  #reset home screen
+  types$log <- "blank"
+  unsure$log <- "blank"
+  nexttab$log <- "blank"
+  
+  #switch tabs
+  updateTabsetPanel(session, "inTabset", selected="panel1")
+  removeModal()
+})
