@@ -20,96 +20,22 @@ observeEvent(input$newlog, {
 
 #----Modelling QA log----
 observeEvent(input$modelling,{
-  
-  types$log <- "modelling"
-  nexttab$log <- "next"
-  
-  #we generate a random 4 digit number for the project ID
-  newID <- floor(runif(1, 1000, 9999))
-  #we need to test to check that the number generated is not already being used
-  #select relevant row from SQL database
-  checkselect <- paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", newID, sep="")
-  checkselect <- sqlQuery(myConn, checkselect)
-  if(nrow(checkselect)==0){
-  updateTextInput(session,inputId = "projectID", value = newID)
-  updateTextInput(session,inputId = "QAlogtype", value = 'Modelling')
-  #make scores n/a if not required
-  #updateSelectizeInput(session,inputId = "scoreDG9", value="N/A")
-  updateTabsetPanel(session, "inTabset", selected="panel2")}
-  #if the ID isn't being used, the project ID gets updated and the log is displayed.
-  #if the ID is being used, nothing happens and the user has to click on the button again
+  create_log("modelling","Modelling",session,types,nexttab)
 })
 
 #----Data analysis QA log----
 observeEvent(input$analysis,{
-  updateTabsetPanel(session, "inTabset", selected="panel2")
-  
-  types$log <- "analysis"
-  nexttab$log <- "next"
-  
-  newID <- floor(runif(1,1000,9999))
-  
-  updateTextInput(session, inputId = "projectID", value = newID)
-  #we need to test to check that the number generated is not already being used
-  #select relevant row from SQL database
-  checkselect <- paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", newID, sep="")
-  checkselect <- sqlQuery(myConn, checkselect)
-  if(nrow(checkselect)==0){
-    updateTextInput(session,inputId = "projectID", value = newID)
-    updateTextInput(session,inputId = "QAlogtype", value = 'Data Analysis')
-    #Set some checks to N/A
-    #updateSelectizeInput(session,inputId = "scoreDG3", value="N/A")
-    #updateSelectizeInput(session,inputId = "scoreDG9", value="N/A")
-    #Send to next tab
-    updateTabsetPanel(session, "inTabset", selected="panel2")}
-  #if the ID isn't being used, the project ID gets updated and the log is displayed.
+  create_log("analysis","Data Analysis",session,types,nexttab)
 })
 
 #----Dashboard QA log----
 observeEvent(input$dashboard,{
-  updateTabsetPanel(session, "inTabset", selected="panel2")
-  
-  types$log <- "dashboard"
-  nexttab$log <- "next"
-  
-  newID <- floor(runif(1,1000, 9999))
-  
-  updateTextInput(session, inputId = "projectID", value = newID)
-  #we need to test to check that the number generated is not already being used
-  #select relevant row from SQL database
-  checkselect <- paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", newID, sep="")
-  checkselect <- sqlQuery(myConn, checkselect)
-  if(nrow(checkselect)==0){
-    updateTextInput(session,inputId = "projectID", value = newID)
-    updateTextInput(session,inputId = "QAlogtype", value = 'Dashboard')
-    #Set some checks to N/A
-    #updateSelectizeInput(session,inputId = "scoreDG3", value="N/A")
-    #updateSelectizeInput(session,inputId = "scoreDG9", value="N/A")
-    #Send to next tab
-    updateTabsetPanel(session, "inTabset", selected="panel2")}
-  #if the ID isn't being used, the project ID gets updated and the log is displayed.
+  create_log("dashboard","Dashboard",session,types,nexttab)
 })
 
 #----Official Statistics QA log----
 observeEvent(input$statistics,{
-  updateTabsetPanel(session, "inTabset", selected="panel2")
-  
-  types$log <- "statistics"
-  nexttab$log <- "next"
-  
-  newID <- floor(runif(1,1000,9999))
-  
-  updateTextInput(session, inputId = "projectID", value = newID)
-  #we need to test to check that the number generated is not already being used
-  #select relevant row from SQL database
-  checkselect <- paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", newID, sep="")
-  checkselect <- sqlQuery(myConn, checkselect)
-  if(nrow(checkselect)==0){
-    updateTextInput(session,inputId = "projectID", value = newID)
-    updateTextInput(session,inputId = "QAlogtype", value = 'Official Statistics')
-    updateTabsetPanel(session, "inTabset", selected="panel2")}
-  #if the ID isn't being used, the project ID gets updated and the log is displayed.
-  
+  create_log("statistics","Official Statistics",session,types,nexttab)
 })
 
 #----Generating UI when "Create New Log" selected----
@@ -146,19 +72,6 @@ output$unsurePanel <- renderUI({
              column(12,"Here is some information on the different logs to help you decide.", align="center"))
   }
 })
-
-#--- Functions for reading in from SQL ----
-
-#Selected rating based on number
-readingOutput <- function(number){if(number==1){"1) Excellent"}
-  else if(number==2){"2) Good"}
-  else if(number==3){"3) Some issues"}
-  else if(number==4){"4) Needs improvement"}
-  else if(number==5){"5) Significant issues"}
-  else if(number==6){"N/A"}
-  else {"TO BE CHECKED"}}
-
-
 
 #--- Reading in data from SQL database----
 observeEvent(input$submitprojectID, {

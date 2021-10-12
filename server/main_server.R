@@ -36,45 +36,6 @@ output$report <- downloadHandler(
   }
 )
 
-#---- Functions for saving to SQL----
-
-#function to insert list in SQL query
-InsertListInQuery <- function(querySentence, InList) {
-  InValues <- ""
-  for (i in 1:length(InList)){
-    if (i < length(InList)) {
-      InValues <- paste(InValues,"'",InList[[i]],"', ",sep="")}
-    else {
-      InValues <- paste(InValues,"'",InList[[i]],"'",sep="")
-    }
-    
-  }
-  LocOpenParenthesis <- gregexpr('[(]', querySentence)[[1]][[1]]
-  LocCloseParenthesis <- gregexpr('[)]', querySentence)[[1]][[1]]
-  if (LocCloseParenthesis-LocOpenParenthesis==1) {
-    querySentence<- gsub("[(]", paste("(",InValues,sep = ""), querySentence)
-  }
-  return (querySentence )
-}
-
-#writing score as an integer for SQL table
-write_score <- function(inputscore){
-  if(inputscore == "1) Excellent")
-    return('1')
-  else if(inputscore == "2) Good")
-    return('2')
-  else if(inputscore == "3) Some issues")
-    return('3')
-  else if (inputscore == "4) Needs improvement")
-    return('4')
-  else if (inputscore == "5) Significant issues")
-    return('5')
-  else if (inputscore == "N/A")
-    return('6')
-  else{
-    return('7')}
-}
-
 #---- Saving to SQL database----
 observeEvent(input$saveSQL, {
   chosennumber <- input$projectID
@@ -200,34 +161,6 @@ observeEvent(input$saveSQL, {
 })
 
 
-#--- Functions for calculating scores -----
-
-#calculate_score gives a base score (in probability) for each QA activity
-calculate_score <- function(inputscore){
-    if(inputscore == "1) Excellent")
-      return(100)
-    else if(inputscore == "2) Good")
-      return(80)
-    else if(inputscore == "3) Some issues")
-      return(60)
-    else if (inputscore == "4) Needs improvement")
-      return(40)
-    else if (inputscore == "5) Significant issues")
-      return(20)
-    else
-      return(0)
-}
-
-#adds up number of non-zero scores
-iszero <- function(inputscore){
-  if(inputscore == "TO BE CHECKED")
-    return(0)
-  else if(inputscore == "N/A")
-    return(0)
-  else
-    return(1)
-}
-
 #---- Calculating scores ----
 
 reactive_score_DG1 <- reactive({calculate_score(input$scoreDG1)})
@@ -280,7 +213,7 @@ output$scoreDGred <- renderValueBox({valueBox(paste(percentage_DG()," %"),subtit
 
 output$projectIDtext <- renderValueBox({valueBox(paste(input$projectID), subtitle="Project ID")})
 
-output$QAlogtypetext <- renderValueBox({valueBox(paste(input$QAlogtype), subtitle="Project ID")})
+output$QAlogtypetext <- renderValueBox({valueBox(paste(input$QAlogtype), subtitle="QA log type")})
 
 #---- Displaying more info on checks -----
 #The following code provides the extra info when you click on the checks.

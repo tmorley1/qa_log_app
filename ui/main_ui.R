@@ -75,82 +75,21 @@ conditionalPanel(
            column(2, h5("Observations")),
            column(2, h5("Outstanding (potential) work"))
          ),
-         fluidRow(
-           column(2, actionButton("DG1info", "Scope and specification")),
-           column(2, rating_options("scoreDG1")),
-           column(2, textInput("assessDG1",label=NULL, value="")),
-           column(2, textInput("summaryDG1", label=NULL, value="")),
-           column(2, textInput("obsDG1", label=NULL, value="")),
-           column(2, textInput("outDG1", label=NULL, value=""))
-         ),
-         fluidRow(
-           column(2, actionButton("DG2info", "User guide")),
-           column(2, rating_options("scoreDG2")),
-           column(2, textInput("assessDG2",label=NULL, value="")),
-           column(2, textInput("summaryDG2", label=NULL, value="")),
-           column(2, textInput("obsDG2", label=NULL, value="")),
-           column(2, textInput("outDG2", label=NULL, value=""))
-         ),
+         UI_check("DG1","Scope and Specification"),
+         UI_check("DG2","User guide"),
          conditionalPanel(
-           condition="input.QAlogtype == 'Modelling'|'Official Statistics'",
-           fluidRow(
-           column(2, actionButton("DG3info", "Technical guide")),
-           column(2, rating_options("scoreDG3")),
-           column(2, textInput("assessDG3",label=NULL, value="")),
-           column(2, textInput("summaryDG3", label=NULL, value="")),
-           column(2, textInput("obsDG3", label=NULL, value="")),
-           column(2, textInput("outDG3", label=NULL, value=""))
-         )),
-         fluidRow(
-           column(2, actionButton("DG4info", "KIM")),
-           column(2, rating_options("scoreDG4")),
-           column(2, textInput("assessDG4",label=NULL, value="")),
-           column(2, textInput("summaryDG4", label=NULL, value="")),
-           column(2, textInput("obsDG4", label=NULL, value="")),
-           column(2, textInput("outDG4", label=NULL, value=""))
+           condition="input.QAlogtype == 'Official Statistics'||'Modelling'",
+           UI_check("DG3","Technical guide")
          ),
-         fluidRow(
-           column(2, actionButton("DG5info", "Version control")),
-           column(2, rating_options("scoreDG5")),
-           column(2, textInput("assessDG5",label=NULL, value="")),
-           column(2, textInput("summaryDG5", label=NULL, value="")),
-           column(2, textInput("obsDG5", label=NULL, value="")),
-           column(2, textInput("outDG5", label=NULL, value=""))
-         ),
-         fluidRow(
-           column(2, actionButton("DG6info", "Responsibilities")),
-           column(2, rating_options("scoreDG6")),
-           column(2, textInput("assessDG6",label=NULL, value="")),
-           column(2, textInput("summaryDG6", label=NULL, value="")),
-           column(2, textInput("obsDG6", label=NULL, value="")),
-           column(2, textInput("outDG6", label=NULL, value=""))
-         ),
-         fluidRow(
-           column(2, actionButton("DG7info", "QA plannin and resourcing")),
-           column(2, rating_options("scoreDG7")),
-           column(2, textInput("assessDG7",label=NULL, value="")),
-           column(2, textInput("summaryDG7", label=NULL, value="")),
-           column(2, textInput("obsDG7", label=NULL, value="")),
-           column(2, textInput("outDG7", label=NULL, value=""))
-         ),
-         fluidRow(
-           column(2, actionButton("DG8info", "Record of QA")),
-           column(2, rating_options("scoreDG8")),
-           column(2, textInput("assessDG8",label=NULL, value="")),
-           column(2, textInput("summaryDG8", label=NULL, value="")),
-           column(2, textInput("obsDG8", label=NULL, value="")),
-           column(2, textInput("outDG8", label=NULL, value=""))
-         ),
-         fluidRow(
-           conditionalPanel(
+         UI_check("DG4","KIM"),
+         UI_check("DG5", "Version control"),
+         UI_check("DG6", "Responsibilities"),
+         UI_check("DG7", "QA planning and resourcing"),
+         UI_check("DG8", "Record of QA"),
+         conditionalPanel(
            condition="input.QAlogtype == 'Official Statistics'",
-           column(2, actionButton("DG9info", "Risk and Issues log")),
-           column(2, rating_options("scoreDG9")),
-           column(2, textInput("assessDG9",label=NULL, value="")),
-           column(2, textInput("summaryDG9", label=NULL, value="")),
-           column(2, textInput("obsDG9", label=NULL, value="")),
-           column(2, textInput("outDG9", label=NULL, value=""))
-         )),
+           UI_check("DG9","Risk and Issues log")
+         ),
 
 #----Generate HTML and saving to SQL----
          fluidRow(
