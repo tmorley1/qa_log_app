@@ -246,16 +246,18 @@ observeEvent(input$DG9info, {
   modal_check("Risk and Issues log", "DG9")
 })
 #---- Tooltips-----
+#This displays extra tips on ratings when hovering over selection menu
+#Tips are different depending on type of log
 DG1tip = reactive({
-  if (input$QAlogtype == "Modelling") {"Modelling tip"}
-  else if (input$QAlogtype == "Data Analysis") {"Analysis tip"}
-  else if (input$QAlogtype == "Dashboard") {"Dashboard tip"}
-  else if (input$QAlogtype == "Official Statistics") {"Statistics tip"}
+  if (input$QAlogtype == "Modelling") {DG1tooltipmodelling}
+  else if (input$QAlogtype == "Data Analysis") {DG1tooltipanalysis}
+  else if (input$QAlogtype == "Dashboard") {DG1tooltipdashboard}
+  else if (input$QAlogtype == "Official Statistics") {DG1tooltipstatistics}
   else {"Error"}
 })
 
 output$tooltips <- renderUI({
-  bsTooltip(id="scoreDG1", title = paste0(DG1tip()), trigger= "hover")
+  bsTooltip(id="scoreDG1", title = paste0(DG1tip()), trigger= "hover", placement="right")
 })
 
 #---- Back to home-----

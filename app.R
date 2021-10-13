@@ -53,9 +53,6 @@ UI_check <- function(checkID,checkname){
 }
 
 #---App--------------------------------------------------------
-
-source(paste(pathway, "\\server\\tooltips.R", sep=""))
-
 ui <- fluidPage( #Removing navigation bar between tabs
                  useShinyjs(),
                  tags$style(type='text/css', "nav.navbar.navbar-default.navbar-static-top{border-color: #f5f5f5;background-color: #f5f5f5;}"),
@@ -82,6 +79,7 @@ server <- function(input, output, session) {
   source(paste(pathway,"\\server\\comments_dataanalysis_log.R", sep=""), local=TRUE)$value
   source(paste(pathway,"\\server\\comments_dashboard_log.R", sep=""), local=TRUE)$value
   source(paste(pathway,"\\server\\comments_statistics_log.R", sep=""), local=TRUE)$value
+  source(paste(pathway,"\\server\\tooltips.R", sep=""), local=TRUE)$value
 }
 
 shinyApp(ui,server)

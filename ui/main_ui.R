@@ -100,6 +100,7 @@ conditionalPanel(
 
 #----Tooltips----
 uiOutput("tooltips"),
+tags$style(HTML(".tooltip {width: 1000px;}")),
 
 #----Generate HTML and saving to SQL----
          fluidRow(
