@@ -37,6 +37,24 @@ output$report <- downloadHandler(
 )
 
 #---- Saving to SQL database----
+writing_score_DG1 <- reactive({write_score(input$scoreDG1)})
+
+writing_score_DG2 <- reactive({write_score(input$scoreDG2)})
+
+writing_score_DG3 <- reactive({write_score(input$scoreDG3)})
+
+writing_score_DG4 <- reactive({write_score(input$scoreDG4)})
+
+writing_score_DG5 <- reactive({write_score(input$scoreDG5)})
+
+writing_score_DG6 <- reactive({write_score(input$scoreDG6)})
+
+writing_score_DG7 <- reactive({write_score(input$scoreDG7)})
+
+writing_score_DG8 <- reactive({write_score(input$scoreDG8)})
+
+writing_score_DG9 <- reactive({write_score(input$scoreDG9)})
+
 observeEvent(input$saveSQL, {
   chosennumber <- input$projectID
   
@@ -45,24 +63,6 @@ observeEvent(input$saveSQL, {
   
   #now run the query to get our output.
   selectrow <- sqlQuery(myConn, selectrow)
-  
-  writing_score_DG1 <- reactive({write_score(input$scoreDG1)})
-  
-  writing_score_DG2 <- reactive({write_score(input$scoreDG2)})
-  
-  writing_score_DG3 <- reactive({write_score(input$scoreDG3)})
-  
-  writing_score_DG4 <- reactive({write_score(input$scoreDG4)})
-  
-  writing_score_DG5 <- reactive({write_score(input$scoreDG5)})
-  
-  writing_score_DG6 <- reactive({write_score(input$scoreDG6)})
-  
-  writing_score_DG7 <- reactive({write_score(input$scoreDG7)})
-  
-  writing_score_DG8 <- reactive({write_score(input$scoreDG8)})
-  
-  writing_score_DG9 <- reactive({write_score(input$scoreDG9)})
   
   #if project ID does not already exist, create new entry
   if(nrow(selectrow)==0) {
@@ -246,13 +246,42 @@ observeEvent(input$DG8info, {
 observeEvent(input$DG9info, {
   modal_check("Risk and Issues log", "DG9")
 })
-
 #---- Back to home-----
 observeEvent(input$backtohome,{
-  showModal(modalDialog(
+  if(savetext()=="You have unsaved changes!"){
+    showModal(modalDialog(
     "Are you sure you want to go back? Your work will not be saved!",
     br(), br(),
     actionButton("definitelygoback","I'm sure")))
+  }
+  else {
+    #reset all checks
+    #resetting data at top of log
+    updateTextInput(session, inputId = "projectname", value = "")
+    updateTextInput(session, inputId = "version", value = "")
+    updateTextInput(session, inputId = "leadanalyst", value = "")
+    updateTextInput(session, inputId = "analyticalassurer", value = "")
+    updateSelectizeInput(session, inputId = "BCM", selected = "No")
+    updateTextInput(session, inputId = "QAlogtype", value = "")
+    #resetting documentation and governance checks
+    reset_checks("DG1",session)
+    reset_checks("DG2",session)
+    reset_checks("DG3",session)
+    reset_checks("DG4",session)
+    reset_checks("DG5",session)
+    reset_checks("DG6",session)
+    reset_checks("DG7",session)
+    reset_checks("DG8",session)
+    reset_checks("DG9",session)
+    
+    #reset home screen
+    types$log <- "blank"
+    unsure$log <- "blank"
+    nexttab$log <- "blank"
+    
+    #switch tabs
+    updateTabsetPanel(session, "inTabset", selected="panel1")
+  }
 })
 
 observeEvent(input$definitelygoback,{
@@ -283,4 +312,66 @@ observeEvent(input$definitelygoback,{
   #switch tabs
   updateTabsetPanel(session, "inTabset", selected="panel1")
   removeModal()
+})
+#---- Checking for save----
+#To check whether new changes have been saved or not, we generate a list
+#of current entries in app and compare with list from SQL
+
+#first, read in list from SQL
+currentid <- reactive({input$projectID})
+#select correct row from SQL
+selectcurrentrow <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", currentid(), sep="")})
+#now run the query to get our output.
+currentrow <- reactive({sqlQuery(myConn, selectcurrentrow())})
+
+#now we create the same list, with all info taken from the app
+applist <- reactive({c(input$projectID, input$projectname, input$version, 
+                       input$leadanalyst, input$analyticalassurer, input$BCM, 
+                       input$QAlogtype, writing_score_DG1(), input$assessDG1, 
+                       input$summaryDG1, input$obsDG1, input$outDG1,
+                       writing_score_DG2(), input$assessDG2, 
+                       input$summaryDG2, input$obsDG2, input$outDG2,
+                       writing_score_DG3(), input$assessDG3, 
+                       input$summaryDG3, input$obsDG3, input$outDG3,
+                       writing_score_DG4(), input$assessDG4, 
+                       input$summaryDG4, input$obsDG4, input$outDG4,
+                       writing_score_DG5(), input$assessDG5, 
+                       input$summaryDG5, input$obsDG5, input$outDG5,
+                       writing_score_DG6(), input$assessDG6, 
+                       input$summaryDG6, input$obsDG6, input$outDG6,
+                       writing_score_DG7(), input$assessDG7, 
+                       input$summaryDG7, input$obsDG7, input$outDG7,
+                       writing_score_DG8(), input$assessDG8, 
+                       input$summaryDG8, input$obsDG8, input$outDG8,
+                       writing_score_DG9(), input$assessDG9, 
+                       input$summaryDG9, input$obsDG9, input$outDG9)})
+
+#we now compare the lists
+comparison <- reactive({applist()==currentrow()})
+#display warning message if there are unsaved changes
+savetext <- reactive({
+  #if project id is not in SQL database print error message
+  if(nrow(currentrow())==0){
+  "You have unsaved changes!"
+    #if it is then we need to compare lists
+  } else {
+    #if both lists are the same, no error message
+    if ("FALSE" %in% comparison() == "FALSE"){""}
+    #otherwise, print error message
+    else {"You have unsaved changes!"}}})
+
+output$savedialogue <- renderText(paste(savetext()))
+
+#we need to update the list each time new data is saved, and re-compare lists
+observeEvent(input$saveSQL, {
+  #select correct row from SQL
+  selectonsave <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", currentid(), sep="")})
+  #now run the query to get our output.
+  currentrow <- reactive({sqlQuery(myConn, selectonsave())})
+  #re-compare the lists
+  comparison <- reactive({applist()==currentrow()})
+  #display warning message if there are unsaved changes
+  savetext <- reactive({if ("FALSE" %in% comparison() == "FALSE"){""}
+    else {"You have unsaved changes!"}})
+  output$savedialogue <- renderText(paste(savetext()))
 })

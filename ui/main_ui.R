@@ -37,7 +37,13 @@ tabPanel(title = "QA Log", value = "panel2", #button in navigation panel
 #----Displaying project name, version, lead analyst, analytical assurer, BCM----
 fluidRow(column(2, uiOutput("projectIDtext")),
          column(2, uiOutput("QAlogtypetext")),
-         column(6, actionButton("backtohome","Back"), align="right")),
+         column(4, uiOutput("savedialogue"), align="right"),
+         #making save warning appear in red!
+         tags$head(tags$style("#savedialogue{color: red;
+                                 font-size: 25px;
+                                 font-style: italic;
+                                 }")),
+         column(2, actionButton("backtohome","Back"), align="right")),
 fluidRow(column(2, textInput("projectname", "Project name", value="")),
          column(2, textInput("version", "Version", value="")),
          column(2, textInput("leadanalyst", "Lead Analyst", value="")),
@@ -91,6 +97,10 @@ conditionalPanel(
            condition="input.QAlogtype == 'Official Statistics'",
            UI_check("DG9","Risk and Issues log")
          ),
+
+#----Tooltips----
+#bsTooltip(id="scoreDG1", title = if("input.QAlogtype" == 'Modelling'){paste(DG1tooltipmodelling)}
+#          else {paste(DG1tooltipanalysis)}, trigger= "hover"),
 
 #----Generate HTML and saving to SQL----
          fluidRow(

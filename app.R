@@ -7,6 +7,7 @@ library(shinyWidgets)
 library(RODBC)
 library(stringr)
 library(shinyjs)
+library(shinyBS)
 
 #location of app files
 username <- "tmorley"
@@ -52,6 +53,8 @@ UI_check <- function(checkID,checkname){
 }
 
 #---App--------------------------------------------------------
+
+source(paste(pathway, "\\server\\tooltips.R", sep=""))
 
 ui <- fluidPage( #Removing navigation bar between tabs
                  useShinyjs(),
