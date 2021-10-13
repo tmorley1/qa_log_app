@@ -99,8 +99,7 @@ conditionalPanel(
          ),
 
 #----Tooltips----
-#bsTooltip(id="scoreDG1", title = if("input.QAlogtype" == 'Modelling'){paste(DG1tooltipmodelling)}
-#          else {paste(DG1tooltipanalysis)}, trigger= "hover"),
+uiOutput("tooltips"),
 
 #----Generate HTML and saving to SQL----
          fluidRow(

@@ -159,7 +159,6 @@ observeEvent(input$saveSQL, {
  
 })
 
-
 #---- Calculating scores ----
 
 reactive_score_DG1 <- reactive({calculate_score(input$scoreDG1)})
@@ -246,6 +245,19 @@ observeEvent(input$DG8info, {
 observeEvent(input$DG9info, {
   modal_check("Risk and Issues log", "DG9")
 })
+#---- Tooltips-----
+DG1tip = reactive({
+  if (input$QAlogtype == "Modelling") {"Modelling tip"}
+  else if (input$QAlogtype == "Data Analysis") {"Analysis tip"}
+  else if (input$QAlogtype == "Dashboard") {"Dashboard tip"}
+  else if (input$QAlogtype == "Official Statistics") {"Statistics tip"}
+  else {"Error"}
+})
+
+output$tooltips <- renderUI({
+  bsTooltip(id="scoreDG1", title = paste0(DG1tip()), trigger= "hover")
+})
+
 #---- Back to home-----
 observeEvent(input$backtohome,{
   if(savetext()=="You have unsaved changes!"){
