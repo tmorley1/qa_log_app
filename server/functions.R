@@ -49,14 +49,20 @@ readingOutput <- function(number){if(number==1){"1) Excellent"}
 
 #Updating checks
 #'number' is the relevant column number within SQL database
-update_checks <- function(checkID1, number,session1,selectrow1){
-  checkoutput <- readingOutput(selectrow1[1,number])
+update_checks <- function(checkID1, session1, qachecks){
+  specificrow <- qachecks[qachecks$checkID %in% c(checkID1),]
+  
+  if(nrow(specificrow)==0) {
+    updateSelectizeInput(session1, inputId = paste("score", checkID1,sep=""), selected="TO BE CHECKED")
+  }
+  else{
+  checkoutput <- readingOutput(specificrow[1,3])
   updateSelectizeInput(session1, inputId = paste("score",checkID1,sep=""), selected = checkoutput)
-  updateTextInput(session1, inputId = paste("assess", checkID1,sep=""), value=paste(selectrow1[1,number+1]))
-  updateTextInput(session1, inputId = paste("summary", checkID1,sep=""), value=paste(selectrow1[1,number+2]))
-  updateTextInput(session1, inputId = paste("obs", checkID1,sep=""), value=paste(selectrow1[1,number+3]))
-  updateTextInput(session1, inputId = paste("out", checkID1,sep=""), value=paste(selectrow1[1,number+4]))
-}
+  updateTextInput(session1, inputId = paste("assess", checkID1,sep=""), value=paste(specificrow[1,4]))
+  updateTextInput(session1, inputId = paste("summary", checkID1,sep=""), value=paste(specificrow[1,5]))
+  updateTextInput(session1, inputId = paste("obs", checkID1,sep=""), value=paste(specificrow[1,6]))
+  updateTextInput(session1, inputId = paste("out", checkID1,sep=""), value=paste(specificrow[1,7]))
+}}
 
 #Reset checks
 reset_checks <- function(checkID1,session1){
@@ -105,6 +111,39 @@ write_score <- function(inputscore){
   else{
     return('7')}
 }
+
+#Function for saving to QA_checks SQL DB
+savingscore <- function(scoreID,qacheckSave,projectID,checkscore,assessor,evidence,obs,out,databasename,myConn){
+  #We don't want to create empty rows where checks haven't been filled in
+  if(checkscore=='7' && assessor=="" && evidence=="" && obs=="" && out==""){
+  #do nothing  
+  }
+  else {
+    specificrow <- qacheckSave[qacheckSave$checkID %in% c(scoreID),]
+    
+    #if there is no current row with check saved, add new
+    if(nrow(specificrow)==0) {
+      newRowcheck <- c(projectID,scoreID,checkscore,assessor,evidence,obs,out)
+      
+      newRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_checks VALUES ();")
+      
+      newRowSQL <- InsertListInQuery(newRowQuery, newRowcheck)
+      
+      newRowSet <- sqlQuery(myConn,newRowSQL)
+    }
+    #if there exists a row, then we edit
+    else{
+      rowEditQuerysave <- paste("UPDATE ", databasename,".dbo.QA_checks 
+                          SET checkscore = '", checkscore,
+                                "', Assessor = '", assessor,
+                                "', Evidence = '", evidence,
+                                "', Observations = '", obs,
+                                "', Outstanding = '", out,
+                                "' WHERE projectID = ", projectID, " AND checkID = '", scoreID, "';", sep="")
+      
+      rowEditSetsave <- sqlQuery(myConn,rowEditQuerysave)
+    }
+  }}
 
 #--- Functions for calculating scores -----
 

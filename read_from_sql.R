@@ -38,6 +38,11 @@ myTable1 <- gsub("\t","", myTable1)
 #now run the query to get our output.
 myTable1 <- sqlQuery(myConn, myTable1)
 
+DG1bits <- myTable1[myTable1$checkID %in% c("DG1"),]
+
+listoftable <- c(myTable,myTable1[1])
+
+testrow <- myTable1[myTable1$checkID %in% c("DG2"),]
 #---- Adding extra row of data----
 
 #Now we want to export data. We can add a new row of data to the table as follows:

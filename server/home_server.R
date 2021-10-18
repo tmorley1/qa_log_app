@@ -73,8 +73,8 @@ output$unsurePanel <- renderUI({
 observeEvent(input$submitprojectID, {
   chosennumber <- input$projectID
   
-  #select correct row from SQL
-  selectrow <- paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", chosennumber, sep="")
+  #selecting project name, SRO, AA, BCM from SQL
+  selectrow <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_log] WHERE ProjectID = ", chosennumber, sep="")
   
   #now run the query to get our output.
   selectrow <- sqlQuery(myConn, selectrow)
@@ -101,17 +101,21 @@ observeEvent(input$submitprojectID, {
     
     updateTextInput(session, inputId = "QAlogtype", value = paste(selectrow[1,7]))
     
+    #selecting QA check scores from SQL
+    qachecks <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", chosennumber, sep="")
+    #now run the query to get our output.
+    qachecks <- sqlQuery(myConn, qachecks)
+    
     #UPDATE ALL DG CHECKS
-    #DG1
-    update_checks("DG1",8,session, selectrow)
-    update_checks("DG2",13,session,selectrow)
-    update_checks("DG3",18,session,selectrow)
-    update_checks("DG4",23,session,selectrow)
-    update_checks("DG5",28,session,selectrow)
-    update_checks("DG6",33,session,selectrow)
-    update_checks("DG7",38,session,selectrow)
-    update_checks("DG8",43,session,selectrow)
-    update_checks("DG9",48,session,selectrow)
+    update_checks("DG1",session, qachecks)
+    update_checks("DG2",session, qachecks)
+    update_checks("DG3",session, qachecks)
+    update_checks("DG4",session, qachecks)
+    update_checks("DG5",session, qachecks)
+    update_checks("DG6",session, qachecks)
+    update_checks("DG7",session, qachecks)
+    update_checks("DG8",session, qachecks)
+    update_checks("DG9",session, qachecks)
   }
 })
 

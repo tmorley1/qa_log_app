@@ -58,8 +58,8 @@ writing_score_DG9 <- reactive({write_score(input$scoreDG9)})
 observeEvent(input$saveSQL, {
   chosennumber <- input$projectID
   
-  #select correct row from SQL
-  selectrow <- paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", chosennumber, sep="")
+  #first we edit QA_log SQL database
+  selectrow <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_log] WHERE ProjectID = ", chosennumber, sep="")
   
   #now run the query to get our output.
   selectrow <- sqlQuery(myConn, selectrow)
@@ -71,27 +71,9 @@ observeEvent(input$saveSQL, {
                 paste(input$leadanalyst),
                 paste(input$analyticalassurer),
                 paste(input$BCM),
-                paste(input$QAlogtype),
-                writing_score_DG1(),
-                paste(input$assessDG1),paste(input$summaryDG1),paste(input$obsDG1),paste(input$outDG1),
-                writing_score_DG2(),
-                paste(input$assessDG2),paste(input$summaryDG2),paste(input$obsDG2),paste(input$outDG2),
-                writing_score_DG3(), 
-                paste(input$assessDG3),paste(input$summaryDG3),paste(input$obsDG3),paste(input$outDG3),
-                writing_score_DG4(), 
-                paste(input$assessDG4),paste(input$summaryDG4),paste(input$obsDG4),paste(input$outDG4),
-                writing_score_DG5(), 
-                paste(input$assessDG5),paste(input$summaryDG5),paste(input$obsDG5),paste(input$outDG5),
-                writing_score_DG6(), 
-                paste(input$assessDG6),paste(input$summaryDG6),paste(input$obsDG6),paste(input$outDG6),
-                writing_score_DG7(), 
-                paste(input$assessDG7),paste(input$summaryDG7),paste(input$obsDG7),paste(input$outDG7),
-                writing_score_DG8(),
-                paste(input$assessDG8),paste(input$summaryDG8),paste(input$obsDG8),paste(input$outDG8),
-                writing_score_DG9(),
-                paste(input$assessDG9),paste(input$summaryDG9),paste(input$obsDG9),paste(input$outDG9))
+                paste(input$QAlogtype))
     
-    newRowQuery <- paste("INSERT INTO", databasename,".dbo.test VALUES ();")
+    newRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_log VALUES ();")
     
     newRowSQL <- InsertListInQuery(newRowQuery, newRow)
     
@@ -101,64 +83,37 @@ observeEvent(input$saveSQL, {
   
   #if project ID does exist, update existing row
   else{
-    rowEditQuery <- paste("UPDATE ", databasename,".dbo.test 
+    rowEditQuery <- paste("UPDATE ", databasename,".dbo.QA_log 
                           SET ProjectName = '", input$projectname,
-                          "', DG1 = ", writing_score_DG1(),
-                          ", DG2 = ", writing_score_DG2(),
-                          ", DG3 = ", writing_score_DG3(),
-                          ", DG4 = ", writing_score_DG4(),
-                          ", DG5 = ", writing_score_DG5(),
-                          ", DG6 = ", writing_score_DG6(),
-                          ", DG7 = ", writing_score_DG7(),
-                          ", DG8 = ", writing_score_DG8(),
-                          ", DG9 = ", writing_score_DG9(),
-                          ", vers = '", input$version,
+                          "', vers = '", input$version,
                           "', leadanalyst = '", input$leadanalyst,
                           "', AnalyticalAssurer = '", input$analyticalassurer,
                           "', BusinessCritical = '", input$BCM,
-                          "', DG1Assessor = '", input$assessDG1,
-                          "', DG1Evidence = '", input$summaryDG1,
-                          "', DG1Observations ='", input$obsDG1,
-                          "', DG1Outstanding = '", input$outDG1,
-                          "', DG2Assessor = '", input$assessDG2,
-                          "', DG2Evidence = '", input$summaryDG2,
-                          "', DG2Observations ='", input$obsDG2,
-                          "', DG2Outstanding = '", input$outDG2,
-                          "', DG3Assessor = '", input$assessDG3,
-                          "', DG3Evidence = '", input$summaryDG3,
-                          "', DG3Observations ='", input$obsDG3,
-                          "', DG3Outstanding = '", input$outDG3,
-                          "', DG4Assessor = '", input$assessDG4,
-                          "', DG4Evidence = '", input$summaryDG4,
-                          "', DG4Observations ='", input$obsDG4,
-                          "', DG4Outstanding = '", input$outDG4,
-                          "', DG5Assessor = '", input$assessDG5,
-                          "', DG5Evidence = '", input$summaryDG5,
-                          "', DG5Observations ='", input$obsDG5,
-                          "', DG5Outstanding = '", input$outDG5,
-                          "', DG6Assessor = '", input$assessDG6,
-                          "', DG6Evidence = '", input$summaryDG6,
-                          "', DG6Observations ='", input$obsDG6,
-                          "', DG6Outstanding = '", input$outDG6,
-                          "', DG7Assessor = '", input$assessDG7,
-                          "', DG7Evidence = '", input$summaryDG7,
-                          "', DG7Observations ='", input$obsDG7,
-                          "', DG7Outstanding = '", input$outDG7,
-                          "', DG8Assessor = '", input$assessDG8,
-                          "', DG8Evidence = '", input$summaryDG8,
-                          "', DG8Observations ='", input$obsDG8,
-                          "', DG8Outstanding = '", input$outDG8,
-                          "', DG9Assessor = '", input$assessDG9,
-                          "', DG9Evidence = '", input$summaryDG9,
-                          "', DG9Observations ='", input$obsDG9,
-                          "', DG9Outstanding = '", input$outDG9,
                           "' WHERE projectID = ", input$projectID, ";", sep="")
     
     rowEditSet <- sqlQuery(myConn,rowEditQuery)
   }
- 
-})
+  
+  #now we edit QA_checks SQL database
+  qacheckSave <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", chosennumber, sep="")
+  
+  #now run the query to get our output.
+  qacheckSave <- sqlQuery(myConn, qacheckSave)
 
+  #Saving scores
+  savingscore("DG1",qacheckSave,input$projectID, writing_score_DG1(),input$assessDG1,input$summaryDG1,input$obsDG1,input$outDG1,databasename,myConn)
+  savingscore("DG2",qacheckSave,input$projectID, writing_score_DG2(),input$assessDG2,input$summaryDG2,input$obsDG2,input$outDG2,databasename,myConn)
+  savingscore("DG3",qacheckSave,input$projectID, writing_score_DG3(),input$assessDG3,input$summaryDG3,input$obsDG3,input$outDG3,databasename,myConn)
+  savingscore("DG4",qacheckSave,input$projectID, writing_score_DG4(),input$assessDG4,input$summaryDG4,input$obsDG4,input$outDG4,databasename,myConn)
+  savingscore("DG5",qacheckSave,input$projectID, writing_score_DG5(),input$assessDG5,input$summaryDG5,input$obsDG5,input$outDG5,databasename,myConn)
+  savingscore("DG6",qacheckSave,input$projectID, writing_score_DG6(),input$assessDG6,input$summaryDG6,input$obsDG6,input$outDG6,databasename,myConn)
+  savingscore("DG7",qacheckSave,input$projectID, writing_score_DG7(),input$assessDG7,input$summaryDG7,input$obsDG7,input$outDG7,databasename,myConn)
+  savingscore("DG8",qacheckSave,input$projectID, writing_score_DG8(),input$assessDG8,input$summaryDG8,input$obsDG8,input$outDG8,databasename,myConn)
+  savingscore("DG9",qacheckSave,input$projectID, writing_score_DG9(),input$assessDG9,input$summaryDG9,input$obsDG9,input$outDG9,databasename,myConn)
+
+
+})
+  
 #---- Calculating scores ----
 
 reactive_score_DG1 <- reactive({calculate_score(input$scoreDG1)})
@@ -371,10 +326,45 @@ observeEvent(input$definitelygoback,{
 
 #first, read in list from SQL
 currentid <- reactive({input$projectID})
-#select correct row from SQL
-selectcurrentrow <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", currentid(), sep="")})
+#select correct row from QA_log SQL
+selectlogrow <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[QA_log] WHERE ProjectID = ", currentid(), sep="")})
 #now run the query to get our output.
-currentrow <- reactive({sqlQuery(myConn, selectcurrentrow())})
+logrow <- reactive({sqlQuery(myConn, selectlogrow())})
+#select correct rows from QA_checks SQL
+selectchecks <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", currentid(), sep="")})
+#now run the query to get our output.
+checks <- reactive({sqlQuery(myConn, selectchecks())})
+#The function pulls in info on individual checks
+individualChecks <- function(checkID,checks){
+  somebits <- check[checks$checkID %in% c(checkID)]
+  if (nrow(somebits)==0){
+    newrow <- c("ID",checkID,7,"","","","")
+    somebits <- rbind(somebits,newrow)
+  }
+  return(somebits)
+}
+#We create dataframe for each check
+DG1bits <- reactive({individualChecks("DG1",checks)})
+DG2bits <- reactive({individualChecks("DG2",checks)})
+DG3bits <- reactive({individualChecks("DG3",checks)})
+DG4bits <- reactive({individualChecks("DG4",checks)})
+DG5bits <- reactive({individualChecks("DG5",checks)})
+DG6bits <- reactive({individualChecks("DG6",checks)})
+DG7bits <- reactive({individualChecks("DG7",checks)})
+DG8bits <- reactive({individualChecks("DG8",checks)})
+DG9bits <- reactive({individualChecks("DG9",checks)})
+#Read out everything from SQL as one long row to compare with app input
+finallist <- reactive({c(logrow[1,1],logrow[1,2],logrow[1,3],logrow[1,4],
+                         logrow[1,5],logrow[1,6],logrow[1,7],
+                         DG1bits[1,3],DG1bits[1,4],DG1bits[1,5],DG1bits[1,6],DG1bits[1,7],
+                         DG2bits[1,3],DG2bits[1,4],DG2bits[1,5],DG2bits[1,6],DG2bits[1,7],
+                         DG3bits[1,3],DG3bits[1,4],DG3bits[1,5],DG3bits[1,6],DG3bits[1,7],
+                         DG4bits[1,3],DG4bits[1,4],DG4bits[1,5],DG4bits[1,6],DG4bits[1,7],
+                         DG5bits[1,3],DG5bits[1,4],DG5bits[1,5],DG5bits[1,6],DG5bits[1,7],
+                         DG6bits[1,3],DG6bits[1,4],DG6bits[1,5],DG6bits[1,6],DG6bits[1,7],
+                         DG7bits[1,3],DG7bits[1,4],DG7bits[1,5],DG7bits[1,6],DG7bits[1,7],
+                         DG8bits[1,3],DG8bits[1,4],DG8bits[1,5],DG8bits[1,6],DG8bits[1,7],
+                         DG9bits[1,3],DG9bits[1,4],DG9bits[1,5],DG9bits[1,6],DG9bits[1,7])})
 
 #now we create the same list, with all info taken from the app
 applist <- reactive({c(input$projectID, input$projectname, input$version, 
@@ -399,27 +389,58 @@ applist <- reactive({c(input$projectID, input$projectname, input$version,
                        input$summaryDG9, input$obsDG9, input$outDG9)})
 
 #we now compare the lists
-comparison <- reactive({applist()==currentrow()})
+comparison <- reactive({applist()==finallist()})
 #display warning message if there are unsaved changes
 savetext <- reactive({
-  #if project id is not in SQL database print error message
-  if(nrow(currentrow())==0){
-  "You have unsaved changes!"
-    #if it is then we need to compare lists
-  } else {
     #if both lists are the same, no error message
     if ("FALSE" %in% comparison() == "FALSE"){""}
     #otherwise, print error message
-    else {"You have unsaved changes!"}}})
+    else {"You have unsaved changes!"}})
 
 output$savedialogue <- renderText(paste(savetext()))
 
 #we need to update the list each time new data is saved, and re-compare lists
 observeEvent(input$saveSQL, {
   #select correct row from SQL
-  selectonsave <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", currentid(), sep="")})
+  #select correct row from QA_log SQL
+  selectlogrow <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[QA_log] WHERE ProjectID = ", currentid(), sep="")})
   #now run the query to get our output.
-  currentrow <- reactive({sqlQuery(myConn, selectonsave())})
+  logrow <- reactive({sqlQuery(myConn, selectlogrow())})
+  #select correct rows from QA_checks SQL
+  selectchecks <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", currentid(), sep="")})
+  #now run the query to get our output.
+  checks <- reactive({sqlQuery(myConn, selectchecks())})
+  #The function pulls in info on individual checks
+  individualChecks <- function(checkID,checks){
+    somebits <- check[checks$checkID %in% c(checkID)]
+    if (nrow(somebits)==0){
+      newrow <- c("ID",checkID,7,"","","","")
+      somebits <- rbind(somebits,newrow)
+    }
+    return(somebits)
+  }
+  #We create dataframe for each check
+  DG1bits <- reactive({individualChecks("DG1",checks)})
+  DG2bits <- reactive({individualChecks("DG2",checks)})
+  DG3bits <- reactive({individualChecks("DG3",checks)})
+  DG4bits <- reactive({individualChecks("DG4",checks)})
+  DG5bits <- reactive({individualChecks("DG5",checks)})
+  DG6bits <- reactive({individualChecks("DG6",checks)})
+  DG7bits <- reactive({individualChecks("DG7",checks)})
+  DG8bits <- reactive({individualChecks("DG8",checks)})
+  DG9bits <- reactive({individualChecks("DG9",checks)})
+  #Read out everything from SQL as one long row to compare with app input
+  finallist <- reactive({c(logrow[1,1],logrow[1,2],logrow[1,3],logrow[1,4],
+                           logrow[1,5],logrow[1,6],logrow[1,7],
+                           DG1bits[1,3],DG1bits[1,4],DG1bits[1,5],DG1bits[1,6],DG1bits[1,7],
+                           DG2bits[1,3],DG2bits[1,4],DG2bits[1,5],DG2bits[1,6],DG2bits[1,7],
+                           DG3bits[1,3],DG3bits[1,4],DG3bits[1,5],DG3bits[1,6],DG3bits[1,7],
+                           DG4bits[1,3],DG4bits[1,4],DG4bits[1,5],DG4bits[1,6],DG4bits[1,7],
+                           DG5bits[1,3],DG5bits[1,4],DG5bits[1,5],DG5bits[1,6],DG5bits[1,7],
+                           DG6bits[1,3],DG6bits[1,4],DG6bits[1,5],DG6bits[1,6],DG6bits[1,7],
+                           DG7bits[1,3],DG7bits[1,4],DG7bits[1,5],DG7bits[1,6],DG7bits[1,7],
+                           DG8bits[1,3],DG8bits[1,4],DG8bits[1,5],DG8bits[1,6],DG8bits[1,7],
+                           DG9bits[1,3],DG9bits[1,4],DG9bits[1,5],DG9bits[1,6],DG9bits[1,7])})
   #re-compare the lists
   comparison <- reactive({applist()==currentrow()})
   #display warning message if there are unsaved changes
