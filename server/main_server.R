@@ -335,36 +335,37 @@ selectchecks <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[QA_chec
 #now run the query to get our output.
 checks <- reactive({sqlQuery(myConn, selectchecks())})
 #The function pulls in info on individual checks
-individualChecks <- function(checkID,checks){
-  somebits <- check[checks$checkID %in% c(checkID)]
+individualChecks <- function(checkIDtext,checks){
+  somebits <- checks %>% filter(checkID==checkIDtext)
   if (nrow(somebits)==0){
-    newrow <- c("ID",checkID,7,"","","","")
+    newrow <- c("ID",checkIDtext,7,"","","","")
     somebits <- rbind(somebits,newrow)
   }
   return(somebits)
 }
 #We create dataframe for each check
-DG1bits <- reactive({individualChecks("DG1",checks)})
-DG2bits <- reactive({individualChecks("DG2",checks)})
-DG3bits <- reactive({individualChecks("DG3",checks)})
-DG4bits <- reactive({individualChecks("DG4",checks)})
-DG5bits <- reactive({individualChecks("DG5",checks)})
-DG6bits <- reactive({individualChecks("DG6",checks)})
-DG7bits <- reactive({individualChecks("DG7",checks)})
-DG8bits <- reactive({individualChecks("DG8",checks)})
-DG9bits <- reactive({individualChecks("DG9",checks)})
+DG1bits <- reactive({individualChecks("DG1",checks())})
+DG2bits <- reactive({individualChecks("DG2",checks())})
+DG3bits <- reactive({individualChecks("DG3",checks())})
+DG4bits <- reactive({individualChecks("DG4",checks())})
+DG5bits <- reactive({individualChecks("DG5",checks())})
+DG6bits <- reactive({individualChecks("DG6",checks())})
+DG7bits <- reactive({individualChecks("DG7",checks())})
+DG8bits <- reactive({individualChecks("DG8",checks())})
+DG9bits <- reactive({individualChecks("DG9",checks())})
+
 #Read out everything from SQL as one long row to compare with app input
-finallist <- reactive({c(logrow[1,1],logrow[1,2],logrow[1,3],logrow[1,4],
-                         logrow[1,5],logrow[1,6],logrow[1,7],
-                         DG1bits[1,3],DG1bits[1,4],DG1bits[1,5],DG1bits[1,6],DG1bits[1,7],
-                         DG2bits[1,3],DG2bits[1,4],DG2bits[1,5],DG2bits[1,6],DG2bits[1,7],
-                         DG3bits[1,3],DG3bits[1,4],DG3bits[1,5],DG3bits[1,6],DG3bits[1,7],
-                         DG4bits[1,3],DG4bits[1,4],DG4bits[1,5],DG4bits[1,6],DG4bits[1,7],
-                         DG5bits[1,3],DG5bits[1,4],DG5bits[1,5],DG5bits[1,6],DG5bits[1,7],
-                         DG6bits[1,3],DG6bits[1,4],DG6bits[1,5],DG6bits[1,6],DG6bits[1,7],
-                         DG7bits[1,3],DG7bits[1,4],DG7bits[1,5],DG7bits[1,6],DG7bits[1,7],
-                         DG8bits[1,3],DG8bits[1,4],DG8bits[1,5],DG8bits[1,6],DG8bits[1,7],
-                         DG9bits[1,3],DG9bits[1,4],DG9bits[1,5],DG9bits[1,6],DG9bits[1,7])})
+finallist <- reactive({c(logrow()[1,1],logrow()[1,2],logrow()[1,3],logrow()[1,4],
+                         logrow()[1,5],logrow()[1,6],logrow()[1,7],
+                         DG1bits()[1,3],DG1bits()[1,4],DG1bits()[1,5],DG1bits()[1,6],DG1bits()[1,7],
+                         DG2bits()[1,3],DG2bits()[1,4],DG2bits()[1,5],DG2bits()[1,6],DG2bits()[1,7],
+                         DG3bits()[1,3],DG3bits()[1,4],DG3bits()[1,5],DG3bits()[1,6],DG3bits()[1,7],
+                         DG4bits()[1,3],DG4bits()[1,4],DG4bits()[1,5],DG4bits()[1,6],DG4bits()[1,7],
+                         DG5bits()[1,3],DG5bits()[1,4],DG5bits()[1,5],DG5bits()[1,6],DG5bits()[1,7],
+                         DG6bits()[1,3],DG6bits()[1,4],DG6bits()[1,5],DG6bits()[1,6],DG6bits()[1,7],
+                         DG7bits()[1,3],DG7bits()[1,4],DG7bits()[1,5],DG7bits()[1,6],DG7bits()[1,7],
+                         DG8bits()[1,3],DG8bits()[1,4],DG8bits()[1,5],DG8bits()[1,6],DG8bits()[1,7],
+                         DG9bits()[1,3],DG9bits()[1,4],DG9bits()[1,5],DG9bits()[1,6],DG9bits()[1,7])})
 
 #now we create the same list, with all info taken from the app
 applist <- reactive({c(input$projectID, input$projectname, input$version, 
@@ -410,39 +411,30 @@ observeEvent(input$saveSQL, {
   selectchecks <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", currentid(), sep="")})
   #now run the query to get our output.
   checks <- reactive({sqlQuery(myConn, selectchecks())})
-  #The function pulls in info on individual checks
-  individualChecks <- function(checkID,checks){
-    somebits <- check[checks$checkID %in% c(checkID)]
-    if (nrow(somebits)==0){
-      newrow <- c("ID",checkID,7,"","","","")
-      somebits <- rbind(somebits,newrow)
-    }
-    return(somebits)
-  }
   #We create dataframe for each check
-  DG1bits <- reactive({individualChecks("DG1",checks)})
-  DG2bits <- reactive({individualChecks("DG2",checks)})
-  DG3bits <- reactive({individualChecks("DG3",checks)})
-  DG4bits <- reactive({individualChecks("DG4",checks)})
-  DG5bits <- reactive({individualChecks("DG5",checks)})
-  DG6bits <- reactive({individualChecks("DG6",checks)})
-  DG7bits <- reactive({individualChecks("DG7",checks)})
-  DG8bits <- reactive({individualChecks("DG8",checks)})
-  DG9bits <- reactive({individualChecks("DG9",checks)})
+  DG1bits <- reactive({individualChecks("DG1",checks())})
+  DG2bits <- reactive({individualChecks("DG2",checks())})
+  DG3bits <- reactive({individualChecks("DG3",checks())})
+  DG4bits <- reactive({individualChecks("DG4",checks())})
+  DG5bits <- reactive({individualChecks("DG5",checks())})
+  DG6bits <- reactive({individualChecks("DG6",checks())})
+  DG7bits <- reactive({individualChecks("DG7",checks())})
+  DG8bits <- reactive({individualChecks("DG8",checks())})
+  DG9bits <- reactive({individualChecks("DG9",checks())})
   #Read out everything from SQL as one long row to compare with app input
-  finallist <- reactive({c(logrow[1,1],logrow[1,2],logrow[1,3],logrow[1,4],
-                           logrow[1,5],logrow[1,6],logrow[1,7],
-                           DG1bits[1,3],DG1bits[1,4],DG1bits[1,5],DG1bits[1,6],DG1bits[1,7],
-                           DG2bits[1,3],DG2bits[1,4],DG2bits[1,5],DG2bits[1,6],DG2bits[1,7],
-                           DG3bits[1,3],DG3bits[1,4],DG3bits[1,5],DG3bits[1,6],DG3bits[1,7],
-                           DG4bits[1,3],DG4bits[1,4],DG4bits[1,5],DG4bits[1,6],DG4bits[1,7],
-                           DG5bits[1,3],DG5bits[1,4],DG5bits[1,5],DG5bits[1,6],DG5bits[1,7],
-                           DG6bits[1,3],DG6bits[1,4],DG6bits[1,5],DG6bits[1,6],DG6bits[1,7],
-                           DG7bits[1,3],DG7bits[1,4],DG7bits[1,5],DG7bits[1,6],DG7bits[1,7],
-                           DG8bits[1,3],DG8bits[1,4],DG8bits[1,5],DG8bits[1,6],DG8bits[1,7],
-                           DG9bits[1,3],DG9bits[1,4],DG9bits[1,5],DG9bits[1,6],DG9bits[1,7])})
+  finallist <- reactive({c(logrow()[1,1],logrow()[1,2],logrow()[1,3],logrow()[1,4],
+                           logrow()[1,5],logrow()[1,6],logrow()[1,7],
+                           DG1bits()[1,3],DG1bits()[1,4],DG1bits()[1,5],DG1bits()[1,6],DG1bits()[1,7],
+                           DG2bits()[1,3],DG2bits()[1,4],DG2bits()[1,5],DG2bits()[1,6],DG2bits()[1,7],
+                           DG3bits()[1,3],DG3bits()[1,4],DG3bits()[1,5],DG3bits()[1,6],DG3bits()[1,7],
+                           DG4bits()[1,3],DG4bits()[1,4],DG4bits()[1,5],DG4bits()[1,6],DG4bits()[1,7],
+                           DG5bits()[1,3],DG5bits()[1,4],DG5bits()[1,5],DG5bits()[1,6],DG5bits()[1,7],
+                           DG6bits()[1,3],DG6bits()[1,4],DG6bits()[1,5],DG6bits()[1,6],DG6bits()[1,7],
+                           DG7bits()[1,3],DG7bits()[1,4],DG7bits()[1,5],DG7bits()[1,6],DG7bits()[1,7],
+                           DG8bits()[1,3],DG8bits()[1,4],DG8bits()[1,5],DG8bits()[1,6],DG8bits()[1,7],
+                           DG9bits()[1,3],DG9bits()[1,4],DG9bits()[1,5],DG9bits()[1,6],DG9bits()[1,7])})
   #re-compare the lists
-  comparison <- reactive({applist()==currentrow()})
+  comparison <- reactive({applist()==finallist()})
   #display warning message if there are unsaved changes
   savetext <- reactive({if ("FALSE" %in% comparison() == "FALSE"){""}
     else {"You have unsaved changes!"}})
