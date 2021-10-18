@@ -14,7 +14,8 @@ myConn <- odbcDriverConnect(connection=paste("Driver={SQL Server}; Server=", ser
 # as running it line by line won't work.
 myTable <- paste("
 SELECT *
-FROM ", databasename, ".[dbo].[test] 
+FROM ", databasename, ".[dbo].[QA_log]
+WHERE projectID = '1'
 ", sep="")
 #Tidy it up a bit
 myTable <- gsub("\n","", myTable)
@@ -22,6 +23,20 @@ myTable <- gsub("\t","", myTable)
 
 #now run the query to get our output.
 myTable <- sqlQuery(myConn, myTable)
+
+#Create the query to pull in data - make sure you run this whole block at once,
+# as running it line by line won't work.
+myTable1 <- paste("
+SELECT *
+FROM ", databasename, ".[dbo].[QA_checks]
+WHERE projectID = '1'
+", sep="")
+#Tidy it up a bit
+myTable1 <- gsub("\n","", myTable1)
+myTable1 <- gsub("\t","", myTable1)
+
+#now run the query to get our output.
+myTable1 <- sqlQuery(myConn, myTable1)
 
 #---- Adding extra row of data----
 

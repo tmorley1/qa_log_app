@@ -99,9 +99,17 @@ conditionalPanel(
          ),
 
 #----Tooltips----
-uiOutput("tooltips"),
+uiOutput("tooltipsDG1"),
+uiOutput("tooltipsDG2"),
+uiOutput("tooltipsDG3"),
+uiOutput("tooltipsDG4"),
+uiOutput("tooltipsDG5"),
+uiOutput("tooltipsDG6"),
+uiOutput("tooltipsDG7"),
+uiOutput("tooltipsDG8"),
+uiOutput("tooltipsDG9"),
 tags$style(HTML(".tooltip {width: 1000px;}")),
-
+HTML("<br><br><br>"),
 #----Generate HTML and saving to SQL----
          fluidRow(
            column(2, downloadButton("report", "Generate QA Log")),

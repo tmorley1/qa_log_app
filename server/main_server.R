@@ -248,16 +248,54 @@ observeEvent(input$DG9info, {
 #---- Tooltips-----
 #This displays extra tips on ratings when hovering over selection menu
 #Tips are different depending on type of log
-DG1tip = reactive({
-  if (input$QAlogtype == "Modelling") {DG1tooltipmodelling}
-  else if (input$QAlogtype == "Data Analysis") {DG1tooltipanalysis}
-  else if (input$QAlogtype == "Dashboard") {DG1tooltipdashboard}
-  else if (input$QAlogtype == "Official Statistics") {DG1tooltipstatistics}
-  else {"Error"}
-})
+tooltipfunc <- function(modelling,analysis, dashboard, statistics){
+  tooltiptext <- reactive({
+    if (input$QAlogtype == "Modelling") {modelling}
+    else if (input$QAlogtype == "Data Analysis") {analysis}
+    else if (input$QAlogtype == "Dashboard") {dashboard}
+    else if (input$QAlogtype == "Official Statistics") {statistics}
+    else {"Error"}
+  })
+  return(tooltiptext)
+}
 
-output$tooltips <- renderUI({
+DG1tip <- tooltipfunc(DG1tooltipmodelling,DG1tooltipanalysis,DG1tooltipdashboard,DG1tooltipstatistics)
+DG2tip <- tooltipfunc(DG2tooltipmodelling,DG2tooltipanalysis,DG2tooltipdashboard,DG2tooltipstatistics)
+DG3tip <- tooltipfunc(DG3tooltipmodelling,DG3tooltipanalysis,DG3tooltipdashboard,DG3tooltipstatistics)
+DG4tip <- tooltipfunc(DG4tooltipmodelling,DG4tooltipanalysis,DG4tooltipdashboard,DG4tooltipstatistics)
+DG5tip <- tooltipfunc(DG5tooltipmodelling,DG5tooltipanalysis,DG5tooltipdashboard,DG5tooltipstatistics)
+DG6tip <- tooltipfunc(DG6tooltipmodelling,DG6tooltipanalysis,DG6tooltipdashboard,DG6tooltipstatistics)
+DG7tip <- tooltipfunc(DG7tooltipmodelling,DG7tooltipanalysis,DG7tooltipdashboard,DG7tooltipstatistics)
+DG8tip <- tooltipfunc(DG8tooltipmodelling,DG8tooltipanalysis,DG8tooltipdashboard,DG8tooltipstatistics)
+DG9tip <- tooltipfunc(DG9tooltipmodelling,DG9tooltipanalysis,DG9tooltipdashboard,DG9tooltipstatistics)
+
+#R Shiny only likes it when each tooltip is wrapped in a different renderUI function
+output$tooltipsDG1 <- renderUI({
   bsTooltip(id="scoreDG1", title = paste0(DG1tip()), trigger= "hover", placement="right")
+})
+output$tooltipsDG2 <- renderUI({
+  bsTooltip(id="scoreDG2", title = paste0(DG2tip()), trigger= "hover", placement="right")
+})
+output$tooltipsDG3 <- renderUI({
+  bsTooltip(id="scoreDG3", title = paste0(DG3tip()), trigger= "hover", placement="right")
+})
+output$tooltipsDG4 <- renderUI({
+  bsTooltip(id="scoreDG4", title = paste0(DG4tip()), trigger= "hover", placement="right")
+})
+output$tooltipsDG5 <- renderUI({
+  bsTooltip(id="scoreDG5", title = paste0(DG5tip()), trigger= "hover", placement="right")
+})
+output$tooltipsDG6 <- renderUI({
+  bsTooltip(id="scoreDG6", title = paste0(DG6tip()), trigger= "hover", placement="right")
+})
+output$tooltipsDG7 <- renderUI({
+  bsTooltip(id="scoreDG7", title = paste0(DG7tip()), trigger= "hover", placement="right")
+})
+output$tooltipsDG8 <- renderUI({
+  bsTooltip(id="scoreDG8", title = paste0(DG8tip()), trigger= "hover", placement="right")
+})
+output$tooltipsDG9 <- renderUI({
+  bsTooltip(id="scoreDG9", title = paste0(DG9tip()), trigger= "hover", placement="right")
 })
 
 #---- Back to home-----
