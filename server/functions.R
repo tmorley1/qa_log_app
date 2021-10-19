@@ -155,7 +155,8 @@ savingscore <- function(scoreID, dataframe,qacheckSave,projectID,databasename,my
 #--- Functions for calculating scores -----
 
 #calculate_score gives a base score (in probability) for each QA activity
-calculate_score <- function(inputscore){
+calculate_score <- function(qacheck){
+  inputscore<-input[[paste0("score",qacheck)]]
   if(inputscore == "1) Excellent")
     return(100)
   else if(inputscore == "2) Good")
@@ -171,7 +172,8 @@ calculate_score <- function(inputscore){
 }
 
 #adds up number of non-zero scores
-iszero <- function(inputscore){
+iszero <- function(qacheck){
+  inputscore<-input[[paste0("score",qacheck)]]
   if(inputscore == "TO BE CHECKED")
     return(0)
   else if(inputscore == "N/A")

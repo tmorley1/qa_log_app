@@ -60,16 +60,6 @@ paste_other_input <- function(checkname){
 otherinput <- reactive({sapply(QAcheckslist,paste_other_input)})
 otherinputdf <- reactive({data.frame(otherinput())})
 
-#writing_score_DG1 <- reactive({write_score(input$scoreDG1)})
-#writing_score_DG2 <- reactive({write_score(input$scoreDG2)})
-#writing_score_DG3 <- reactive({write_score(input$scoreDG3)})
-#writing_score_DG4 <- reactive({write_score(input$scoreDG4)})
-#writing_score_DG5 <- reactive({write_score(input$scoreDG5)})
-#writing_score_DG6 <- reactive({write_score(input$scoreDG6)})
-#writing_score_DG7 <- reactive({write_score(input$scoreDG7)})
-#writing_score_DG8 <- reactive({write_score(input$scoreDG8)})
-#writing_score_DG9 <- reactive({write_score(input$scoreDG9)})
-
 observeEvent(input$saveSQL, {
   chosennumber <- input$projectID
   
@@ -122,30 +112,17 @@ observeEvent(input$saveSQL, {
 })
   
 #---- Calculating scores ----
-
-reactive_score_DG1 <- reactive({calculate_score(input$scoreDG1)})
-
-reactive_score_DG2 <- reactive({calculate_score(input$scoreDG2)})
-
-reactive_score_DG3 <- reactive({calculate_score(input$scoreDG3)})
-
-reactive_score_DG4 <- reactive({calculate_score(input$scoreDG4)})
-
-reactive_score_DG5 <- reactive({calculate_score(input$scoreDG5)})
-
-reactive_score_DG6 <- reactive({calculate_score(input$scoreDG6)})
-
-reactive_score_DG7 <- reactive({calculate_score(input$scoreDG7)})
-
-reactive_score_DG8 <- reactive({calculate_score(input$scoreDG8)})
-
-reactive_score_DG9 <- reactive({calculate_score(input$scoreDG8)})
-
-#adds up all percentages
-total_DG <- reactive({reactive_score_DG1() + reactive_score_DG2() + reactive_score_DG3() + reactive_score_DG4() + reactive_score_DG5() + reactive_score_DG6() + reactive_score_DG7() + reactive_score_DG8() + reactive_score_DG9})
+#Assigns a numerical score to each rating
+allcheckscores<-reactive({sapply(QAcheckslist,calculate_score)})
+#adds up all scores
+total_DG <- reactive({sum(allcheckscores())})
 
 #adds up number of ratings
-number_DG <- reactive({iszero(input$scoreDG1)+iszero(input$scoreDG2)+iszero(input$scoreDG3)+iszero(input$scoreDG4)+iszero(input$scoreDG5)+iszero(input$scoreDG6)+iszero(input$scoreDG7)+iszero(input$scoreDG8)+iszero(input$scoreDG9)})
+numbercheckscores<-reactive({sapply(QAcheckslist,iszero)})
+number_DG <- reactive({sum(numbercheckscores())})
+
+
+#number_DG <- reactive({iszero(input$scoreDG1)+iszero(input$scoreDG2)+iszero(input$scoreDG3)+iszero(input$scoreDG4)+iszero(input$scoreDG5)+iszero(input$scoreDG6)+iszero(input$scoreDG7)+iszero(input$scoreDG8)+iszero(input$scoreDG9)})
 
 #calculates average percentage rating
 percentage_DG <- reactive(if(number_DG()==0){0}
