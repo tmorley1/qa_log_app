@@ -8,7 +8,7 @@ create_log <- function(log_type,log_type_name,session1,types1,nexttab1){
   newID <- floor(runif(1, 1000, 9999))
   #we need to test to check that the number generated is not already being used
   #select relevant row from SQL database
-  checkselect <- paste("SELECT * FROM ", databasename, ".[dbo].[test] WHERE ProjectID = ", newID, sep="")
+  checkselect <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_log] WHERE ProjectID = ", newID, sep="")
   checkselect <- sqlQuery(myConn, checkselect)
   if(nrow(checkselect)==0){
     updateTextInput(session1,inputId = "projectID", value = newID)
@@ -113,7 +113,15 @@ write_score <- function(inputscore){
 }
 
 #Function for saving to QA_checks SQL DB
-savingscore <- function(scoreID,qacheckSave,projectID,checkscore,assessor,evidence,obs,out,databasename,myConn){
+savingscore <- function(scoreID, dataframe,qacheckSave,projectID,databasename,myConn){
+  #select correct column of dataframe
+  correct_column <- dataframe %>% select(scoreID)
+  #Assign checkscore, assessor, evidence, obs, out
+  checkscore <- correct_column[2,1]
+  assessor <- correct_column[3,1]
+  evidence <- correct_column[4,1]
+  obs <- correct_column[5,1]
+  out <- correct_column[6,1]
   #We don't want to create empty rows where checks haven't been filled in
   if(checkscore=='7' && assessor=="" && evidence=="" && obs=="" && out==""){
   #do nothing  

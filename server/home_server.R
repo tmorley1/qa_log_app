@@ -1,3 +1,5 @@
+#----List of checks----
+QAcheckslist <- c("DG1", "DG2", "DG3", "DG4", "DG5", "DG6", "DG7", "DG8", "DG9")
 #----Selecting type of log----
 types <- reactiveValues(log = "blank")
 unsure <- reactiveValues(log = "blank")
@@ -106,16 +108,8 @@ observeEvent(input$submitprojectID, {
     #now run the query to get our output.
     qachecks <- sqlQuery(myConn, qachecks)
     
-    #UPDATE ALL DG CHECKS
-    update_checks("DG1",session, qachecks)
-    update_checks("DG2",session, qachecks)
-    update_checks("DG3",session, qachecks)
-    update_checks("DG4",session, qachecks)
-    update_checks("DG5",session, qachecks)
-    update_checks("DG6",session, qachecks)
-    update_checks("DG7",session, qachecks)
-    update_checks("DG8",session, qachecks)
-    update_checks("DG9",session, qachecks)
+    #UPDATE ALL CHECKS
+    lapply(QAcheckslist,update_checks,session1 = session,qachecks = qachecks)
   }
 })
 
