@@ -19,9 +19,8 @@ create_log <- function(log_type,log_type_name,session1,types1,nexttab1){
 }
 
 #Generating modal for more info on individual check
-modal_check <- function(check, checkID){
+modal_check <- function(checkID){
   showModal(modalDialog(
-    title = check,
     conditionalPanel(condition="input.QAlogtype == 'Modelling'",
                      uiOutput(paste(checkID,"modelling",sep=""))),
     

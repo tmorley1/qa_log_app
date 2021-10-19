@@ -182,33 +182,14 @@ output$QAlogtypetext <- renderValueBox({valueBox(paste(input$QAlogtype), subtitl
 #Info is different for each type of log
 #The info is read in from comments_'model name'_log.R
 
-observeEvent(input$DG1info, {
-  modal_check("Scope and specification", "DG1")
-})
-observeEvent(input$DG2info, {
-  modal_check("User guide", "DG2")
-})
-observeEvent(input$DG3info, {
-  modal_check("Technical guide", "DG3")
-})
-observeEvent(input$DG4info, {
-  modal_check("KIM", "DG4")
-})
-observeEvent(input$DG5info, {
-  modal_check("Version control", "DG5")
-})
-observeEvent(input$DG6info, {
-  modal_check("Responsibilities", "DG6")
-})
-observeEvent(input$DG7info, {
-  modal_check("QA planning and resourcing", "DG7")
-})
-observeEvent(input$DG8info, {
-  modal_check("Record of QA", "DG8")
-})
-observeEvent(input$DG9info, {
-  modal_check("Risk and Issues log", "DG9")
-})
+observe_info <- function(qacheck){
+  observeEvent(input[[paste0(qacheck,"info")]],{
+    modal_check(qacheck)
+  })
+}
+
+lapply(QAcheckslist,observe_info)
+
 #---- Tooltips-----
 #This displays extra tips on ratings when hovering over selection menu
 #Tips are different depending on type of log
