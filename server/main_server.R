@@ -59,19 +59,16 @@ paste_other_input <- function(checkname){
 #Applying above function to all checks
 otherinput <- reactive({sapply(QAcheckslist,paste_other_input)})
 otherinputdf <- reactive({data.frame(otherinput())})
-selectedcolumn <- reactive({otherinputdf()%>%select("DG1")})
 
-output$writingtest <- renderText(paste(selectedcolumn()[3,1]))
-
-writing_score_DG1 <- reactive({write_score(input$scoreDG1)})
-writing_score_DG2 <- reactive({write_score(input$scoreDG2)})
-writing_score_DG3 <- reactive({write_score(input$scoreDG3)})
-writing_score_DG4 <- reactive({write_score(input$scoreDG4)})
-writing_score_DG5 <- reactive({write_score(input$scoreDG5)})
-writing_score_DG6 <- reactive({write_score(input$scoreDG6)})
-writing_score_DG7 <- reactive({write_score(input$scoreDG7)})
-writing_score_DG8 <- reactive({write_score(input$scoreDG8)})
-writing_score_DG9 <- reactive({write_score(input$scoreDG9)})
+#writing_score_DG1 <- reactive({write_score(input$scoreDG1)})
+#writing_score_DG2 <- reactive({write_score(input$scoreDG2)})
+#writing_score_DG3 <- reactive({write_score(input$scoreDG3)})
+#writing_score_DG4 <- reactive({write_score(input$scoreDG4)})
+#writing_score_DG5 <- reactive({write_score(input$scoreDG5)})
+#writing_score_DG6 <- reactive({write_score(input$scoreDG6)})
+#writing_score_DG7 <- reactive({write_score(input$scoreDG7)})
+#writing_score_DG8 <- reactive({write_score(input$scoreDG8)})
+#writing_score_DG9 <- reactive({write_score(input$scoreDG9)})
 
 observeEvent(input$saveSQL, {
   chosennumber <- input$projectID
@@ -121,7 +118,6 @@ observeEvent(input$saveSQL, {
   #Saving scores
 
   lapply(QAcheckslist,savingscore, dataframe=otherinputdf(),qacheckSave=qacheckSave,projectID=input$projectID,databasename=databasename,myConn=myConn)
-
 
 })
   
@@ -216,55 +212,26 @@ observeEvent(input$DG9info, {
 #---- Tooltips-----
 #This displays extra tips on ratings when hovering over selection menu
 #Tips are different depending on type of log
-tooltipfunc <- function(modelling,analysis, dashboard, statistics){
-  tooltiptext <- reactive({
-    if (input$QAlogtype == "Modelling") {modelling}
-    else if (input$QAlogtype == "Data Analysis") {analysis}
-    else if (input$QAlogtype == "Dashboard") {dashboard}
-    else if (input$QAlogtype == "Official Statistics") {statistics}
+
+#This function decides which tips to display depending on type of log
+tooltipfunc <- function(input,QAchecks){
+  tooltiptext <- if (input == "Modelling") {eval(parse(text=paste0(QAchecks,"tooltipmodelling")))}
+    else if (input == "Data Analysis") {eval(parse(text=paste0(QAchecks,"tooltipanalysis")))}
+    else if (input == "Dashboard") {eval(parse(text=paste0(QAchecks,"tooltipdashboard")))}
+    else if (input == "Official Statistics") {eval(parse(text=paste0(QAchecks,"tooltipstatistics")))}
     else {"Error"}
-  })
   return(tooltiptext)
 }
 
-DG1tip <- tooltipfunc(DG1tooltipmodelling,DG1tooltipanalysis,DG1tooltipdashboard,DG1tooltipstatistics)
-DG2tip <- tooltipfunc(DG2tooltipmodelling,DG2tooltipanalysis,DG2tooltipdashboard,DG2tooltipstatistics)
-DG3tip <- tooltipfunc(DG3tooltipmodelling,DG3tooltipanalysis,DG3tooltipdashboard,DG3tooltipstatistics)
-DG4tip <- tooltipfunc(DG4tooltipmodelling,DG4tooltipanalysis,DG4tooltipdashboard,DG4tooltipstatistics)
-DG5tip <- tooltipfunc(DG5tooltipmodelling,DG5tooltipanalysis,DG5tooltipdashboard,DG5tooltipstatistics)
-DG6tip <- tooltipfunc(DG6tooltipmodelling,DG6tooltipanalysis,DG6tooltipdashboard,DG6tooltipstatistics)
-DG7tip <- tooltipfunc(DG7tooltipmodelling,DG7tooltipanalysis,DG7tooltipdashboard,DG7tooltipstatistics)
-DG8tip <- tooltipfunc(DG8tooltipmodelling,DG8tooltipanalysis,DG8tooltipdashboard,DG8tooltipstatistics)
-DG9tip <- tooltipfunc(DG9tooltipmodelling,DG9tooltipanalysis,DG9tooltipdashboard,DG9tooltipstatistics)
+#This function creates the UI necessary to render the tooltips
+tooltip_ui_render <- function(checkid,input){
+    bsTooltip(id=paste0("score",checkid),
+              title=tooltipfunc(input,checkid),
+              trigger="hover",placement="right")
+}
 
-#R Shiny only likes it when each tooltip is wrapped in a different renderUI function
-output$tooltipsDG1 <- renderUI({
-  bsTooltip(id="scoreDG1", title = paste0(DG1tip()), trigger= "hover", placement="right")
-})
-output$tooltipsDG2 <- renderUI({
-  bsTooltip(id="scoreDG2", title = paste0(DG2tip()), trigger= "hover", placement="right")
-})
-output$tooltipsDG3 <- renderUI({
-  bsTooltip(id="scoreDG3", title = paste0(DG3tip()), trigger= "hover", placement="right")
-})
-output$tooltipsDG4 <- renderUI({
-  bsTooltip(id="scoreDG4", title = paste0(DG4tip()), trigger= "hover", placement="right")
-})
-output$tooltipsDG5 <- renderUI({
-  bsTooltip(id="scoreDG5", title = paste0(DG5tip()), trigger= "hover", placement="right")
-})
-output$tooltipsDG6 <- renderUI({
-  bsTooltip(id="scoreDG6", title = paste0(DG6tip()), trigger= "hover", placement="right")
-})
-output$tooltipsDG7 <- renderUI({
-  bsTooltip(id="scoreDG7", title = paste0(DG7tip()), trigger= "hover", placement="right")
-})
-output$tooltipsDG8 <- renderUI({
-  bsTooltip(id="scoreDG8", title = paste0(DG8tip()), trigger= "hover", placement="right")
-})
-output$tooltipsDG9 <- renderUI({
-  bsTooltip(id="scoreDG9", title = paste0(DG9tip()), trigger= "hover", placement="right")
-})
+#This applies the above function to every QA check
+output$tooltips <- renderUI(lapply(QAcheckslist,tooltip_ui_render,input=input$QAlogtype))
 
 #---- Back to home-----
 observeEvent(input$backtohome,{
@@ -334,7 +301,7 @@ observeEvent(input$definitelygoback,{
   removeModal()
 })
 #---- Checking for save----
-#To check whether new changes have been saved or not, we generate a list
+#To check whether new changes have been saved or not, we generate a dataframe
 #of current entries in app and compare with list from SQL
 
 #first, read in list from SQL
@@ -343,11 +310,17 @@ currentid <- reactive({input$projectID})
 selectlogrow <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[QA_log] WHERE ProjectID = ", currentid(), sep="")})
 #now run the query to get our output.
 logrow <- reactive({sqlQuery(myConn, selectlogrow())})
+#if projectID doesn't exist in SQL, create dummy row of data
+logrowfinal <- reactive({if(nrow(logrow())==0){
+  t(c(input$projectID,"NA","NA","NA","NA","NA","NA"))
+} else{logrow()}})
+
 #select correct rows from QA_checks SQL
 selectchecks <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", currentid(), sep="")})
 #now run the query to get our output.
 checks <- reactive({sqlQuery(myConn, selectchecks())})
 #The function pulls in info on individual checks
+#And inserts "dummy info" where there is no data for that check
 individualChecks <- function(checkIDtext,checks){
   somebits <- checks %>% filter(checkID==checkIDtext)
   if (nrow(somebits)==0){
@@ -356,54 +329,23 @@ individualChecks <- function(checkIDtext,checks){
   }
   return(somebits)
 }
-#We create dataframe for each check
-DG1bits <- reactive({individualChecks("DG1",checks())})
-DG2bits <- reactive({individualChecks("DG2",checks())})
-DG3bits <- reactive({individualChecks("DG3",checks())})
-DG4bits <- reactive({individualChecks("DG4",checks())})
-DG5bits <- reactive({individualChecks("DG5",checks())})
-DG6bits <- reactive({individualChecks("DG6",checks())})
-DG7bits <- reactive({individualChecks("DG7",checks())})
-DG8bits <- reactive({individualChecks("DG8",checks())})
-DG9bits <- reactive({individualChecks("DG9",checks())})
+#build a dataframe with all current SQL data
+sqlinfo <- reactive({sapply(QAcheckslist,individualChecks,checks=checks())})
+sqlinfodf <- reactive({data.frame(sqlinfo())})
+allsqlinfodf <- reactive({cbind(t(logrowfinal()),sqlinfodf())[-1,]})
 
-#Read out everything from SQL as one long row to compare with app input
-finallist <- reactive({c(logrow()[1,1],logrow()[1,2],logrow()[1,3],logrow()[1,4],
-                         logrow()[1,5],logrow()[1,6],logrow()[1,7],
-                         DG1bits()[1,3],DG1bits()[1,4],DG1bits()[1,5],DG1bits()[1,6],DG1bits()[1,7],
-                         DG2bits()[1,3],DG2bits()[1,4],DG2bits()[1,5],DG2bits()[1,6],DG2bits()[1,7],
-                         DG3bits()[1,3],DG3bits()[1,4],DG3bits()[1,5],DG3bits()[1,6],DG3bits()[1,7],
-                         DG4bits()[1,3],DG4bits()[1,4],DG4bits()[1,5],DG4bits()[1,6],DG4bits()[1,7],
-                         DG5bits()[1,3],DG5bits()[1,4],DG5bits()[1,5],DG5bits()[1,6],DG5bits()[1,7],
-                         DG6bits()[1,3],DG6bits()[1,4],DG6bits()[1,5],DG6bits()[1,6],DG6bits()[1,7],
-                         DG7bits()[1,3],DG7bits()[1,4],DG7bits()[1,5],DG7bits()[1,6],DG7bits()[1,7],
-                         DG8bits()[1,3],DG8bits()[1,4],DG8bits()[1,5],DG8bits()[1,6],DG8bits()[1,7],
-                         DG9bits()[1,3],DG9bits()[1,4],DG9bits()[1,5],DG9bits()[1,6],DG9bits()[1,7])})
+output$writingtest<-renderDataTable(allsqlinfodf())
 
-#now we create the same list, with all info taken from the app
-applist <- reactive({c(input$projectID, input$projectname, input$version, 
-                       input$leadanalyst, input$analyticalassurer, input$BCM, 
-                       input$QAlogtype, writing_score_DG1(), input$assessDG1, 
-                       input$summaryDG1, input$obsDG1, input$outDG1,
-                       writing_score_DG2(), input$assessDG2, 
-                       input$summaryDG2, input$obsDG2, input$outDG2,
-                       writing_score_DG3(), input$assessDG3, 
-                       input$summaryDG3, input$obsDG3, input$outDG3,
-                       writing_score_DG4(), input$assessDG4, 
-                       input$summaryDG4, input$obsDG4, input$outDG4,
-                       writing_score_DG5(), input$assessDG5, 
-                       input$summaryDG5, input$obsDG5, input$outDG5,
-                       writing_score_DG6(), input$assessDG6, 
-                       input$summaryDG6, input$obsDG6, input$outDG6,
-                       writing_score_DG7(), input$assessDG7, 
-                       input$summaryDG7, input$obsDG7, input$outDG7,
-                       writing_score_DG8(), input$assessDG8, 
-                       input$summaryDG8, input$obsDG8, input$outDG8,
-                       writing_score_DG9(), input$assessDG9, 
-                       input$summaryDG9, input$obsDG9, input$outDG9)})
+#now create the same data frame, with info taken from the app
+appinfo <- reactive({c(input$projectname, input$version,
+                       input$leadanalyst, input$analyticalassurer, input$BCM,
+                       input$QAlogtype)})
+appinfodf <- reactive({data.frame(cbind(appinfo(),otherinput()))})
+
+output$writingtest2<-renderDataTable(appinfodf())
 
 #we now compare the lists
-comparison <- reactive({applist()==finallist()})
+comparison <- reactive({appinfodf()==allsqlinfodf()})
 #display warning message if there are unsaved changes
 savetext <- reactive({
     #if both lists are the same, no error message
@@ -415,39 +357,25 @@ output$savedialogue <- renderText(paste(savetext()))
 
 #we need to update the list each time new data is saved, and re-compare lists
 observeEvent(input$saveSQL, {
-  #select correct row from SQL
+  #first, read in list from SQL
+  currentid <- reactive({input$projectID})
   #select correct row from QA_log SQL
   selectlogrow <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[QA_log] WHERE ProjectID = ", currentid(), sep="")})
   #now run the query to get our output.
-  logrow <- reactive({sqlQuery(myConn, selectlogrow())})
+  logrowfinal <- reactive({sqlQuery(myConn, selectlogrow())})
   #select correct rows from QA_checks SQL
   selectchecks <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", currentid(), sep="")})
   #now run the query to get our output.
   checks <- reactive({sqlQuery(myConn, selectchecks())})
-  #We create dataframe for each check
-  DG1bits <- reactive({individualChecks("DG1",checks())})
-  DG2bits <- reactive({individualChecks("DG2",checks())})
-  DG3bits <- reactive({individualChecks("DG3",checks())})
-  DG4bits <- reactive({individualChecks("DG4",checks())})
-  DG5bits <- reactive({individualChecks("DG5",checks())})
-  DG6bits <- reactive({individualChecks("DG6",checks())})
-  DG7bits <- reactive({individualChecks("DG7",checks())})
-  DG8bits <- reactive({individualChecks("DG8",checks())})
-  DG9bits <- reactive({individualChecks("DG9",checks())})
-  #Read out everything from SQL as one long row to compare with app input
-  finallist <- reactive({c(logrow()[1,1],logrow()[1,2],logrow()[1,3],logrow()[1,4],
-                           logrow()[1,5],logrow()[1,6],logrow()[1,7],
-                           DG1bits()[1,3],DG1bits()[1,4],DG1bits()[1,5],DG1bits()[1,6],DG1bits()[1,7],
-                           DG2bits()[1,3],DG2bits()[1,4],DG2bits()[1,5],DG2bits()[1,6],DG2bits()[1,7],
-                           DG3bits()[1,3],DG3bits()[1,4],DG3bits()[1,5],DG3bits()[1,6],DG3bits()[1,7],
-                           DG4bits()[1,3],DG4bits()[1,4],DG4bits()[1,5],DG4bits()[1,6],DG4bits()[1,7],
-                           DG5bits()[1,3],DG5bits()[1,4],DG5bits()[1,5],DG5bits()[1,6],DG5bits()[1,7],
-                           DG6bits()[1,3],DG6bits()[1,4],DG6bits()[1,5],DG6bits()[1,6],DG6bits()[1,7],
-                           DG7bits()[1,3],DG7bits()[1,4],DG7bits()[1,5],DG7bits()[1,6],DG7bits()[1,7],
-                           DG8bits()[1,3],DG8bits()[1,4],DG8bits()[1,5],DG8bits()[1,6],DG8bits()[1,7],
-                           DG9bits()[1,3],DG9bits()[1,4],DG9bits()[1,5],DG9bits()[1,6],DG9bits()[1,7])})
+  #build a dataframe with all current SQL data
+  sqlinfo <- reactive({sapply(QAcheckslist,individualChecks,checks=checks())})
+  sqlinfodf <- reactive({data.frame(sqlinfo())})
+  allsqlinfodf <- reactive({cbind(t(logrowfinal()),sqlinfodf())[-1,]})
+  
+  output$writingtest<-renderDataTable(allsqlinfodf())
+  
   #re-compare the lists
-  comparison <- reactive({applist()==finallist()})
+  comparison <- reactive({appinfodf()==allsqlinfodf()})
   #display warning message if there are unsaved changes
   savetext <- reactive({if ("FALSE" %in% comparison() == "FALSE"){""}
     else {"You have unsaved changes!"}})

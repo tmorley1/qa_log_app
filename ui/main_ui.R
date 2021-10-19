@@ -43,7 +43,8 @@ fluidRow(column(2, uiOutput("projectIDtext")),
                                  font-size: 25px;
                                  font-style: italic;
                                  }")),
-         column(2, uiOutput("writingtest")),
+         #column(4, dataTableOutput("writingtest")),
+         #column(4, dataTableOutput("writingtest2")),
          column(2, actionButton("backtohome","Back"), align="right")),
 fluidRow(column(2, textInput("projectname", "Project name", value="")),
          column(2, textInput("version", "Version", value="")),
@@ -100,15 +101,7 @@ conditionalPanel(
          ),
 
 #----Tooltips----
-uiOutput("tooltipsDG1"),
-uiOutput("tooltipsDG2"),
-uiOutput("tooltipsDG3"),
-uiOutput("tooltipsDG4"),
-uiOutput("tooltipsDG5"),
-uiOutput("tooltipsDG6"),
-uiOutput("tooltipsDG7"),
-uiOutput("tooltipsDG8"),
-uiOutput("tooltipsDG9"),
+uiOutput("tooltips"),
 tags$style(HTML(".tooltip {width: 1000px;}")),
 HTML("<br><br><br>"),
 #----Generate HTML and saving to SQL----
