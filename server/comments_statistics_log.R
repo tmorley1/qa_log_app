@@ -129,3 +129,41 @@ output$DG9statistics <- renderUI({fluidRow(column(12,
     "Have appropriate mitigations been put into place?",
     br(),
     "Is there an appropriate governance process to review risks and issues?"))})
+
+#----Structure and clarity----
+
+#----SC1 Structure of analysis----
+output$SC1statistics <- renderUI({fluidRow(column(12,
+                                                "Note"))})
+
+#----SC2 Calculation structure----
+output$SC2statistics <- renderUI({fluidRow(column(12,
+                                                  "Note"))})
+
+#----SC3 Variable names and units----
+output$SC3statistics <- renderUI({fluidRow(column(12,
+                                                  "Note"))})
+
+#----SC4 Analysis comments----
+output$SC4statistics <- renderUI({fluidRow(column(12,
+                                                  "Note"))})
+
+#----SC5 Formula clarity and robustness----
+output$SC5statistics <- renderUI({fluidRow(column(12,
+                                                  "Note"))})
+
+#----SC6 Accessibility----
+output$SC6statistics <- renderUI({fluidRow(column(12,
+                                                  "This check is not required."))})
+
+#----SC7 Caveats and footnotes----
+output$SC7statistics <- renderUI({fluidRow(column(12,
+                                                  "Note"))})
+
+#----SC8 Output formatting----
+output$SC8statistics <- renderUI({fluidRow(column(12,
+                                                  "Note"))})
+
+#----SC9 RAP----
+output$SC9statistics <- renderUI({fluidRow(column(12,
+                                                  "Note"))})

@@ -116,3 +116,41 @@ output$DG8modelling <- renderUI({fluidRow(column(12,
 #----DG9 Risk and issues log-----
 output$DG9modelling <- renderUI({fluidRow(column(12,
     "This check is not required."))})
+
+#----Structure and clarity----
+
+#----SC1 Structure of model----
+output$SC1modelling <- renderUI({fluidRow(column(12,
+    "Note"))})
+
+#----SC2 Calculation structure----
+output$SC2modelling <- renderUI({fluidRow(column(12,
+                                                 "Note"))})
+
+#----SC3 Variable names and units----
+output$SC3modelling <- renderUI({fluidRow(column(12,
+                                                 "Note"))})
+
+#----SC4 Model comments----
+output$SC4modelling <- renderUI({fluidRow(column(12,
+                                                 "Note"))})
+
+#----SC5 Formula clarity and robustness----
+output$SC5modelling <- renderUI({fluidRow(column(12,
+                                                 "Note"))})
+
+#----SC6 Accessibility----
+output$SC6modelling <- renderUI({fluidRow(column(12,
+                                                 "This check is not required."))})
+
+#----SC7 Caveats and footnotes----
+output$SC7modelling <- renderUI({fluidRow(column(12,
+                                                 "This check is not required."))})
+
+#----SC8 Output formatting----
+output$SC8modelling <- renderUI({fluidRow(column(12,
+                                                 "This check is not required."))})
+
+#----SC9 RAP----
+output$SC9modelling <- renderUI({fluidRow(column(12,
+                                                 "This check is not required."))})

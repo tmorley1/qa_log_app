@@ -54,3 +54,59 @@ DG9tooltipmodelling <- "Not required"
 DG9tooltipanalysis <- "Not required"
 DG9tooltipdashboard <- "Not required"
 DG9tooltipstatistics <- "1) Clear and comprehensive record of all risks and issues, including mitigations and details of action undertaken.  Relevant stakeholders have scrutinised the log and signed off. <br> <br> 2) Clear and comprehensive record of all risks and issues, including miitigations and details of action undertaken. Not yet signed off. <br> <br> 3) A log exists, but it is not clear that it covers all risks and/or issues and has not been scrutinised. <br> <br> 4) Little evidence of a risks and issues log. <br> <br> 5) No evidence of a risks and issues log."
+
+#----Structure and clarity----
+
+#----SC1----
+SC1tooltipmodelling <- "Note"
+SC1tooltipanalysis <- "Note"
+SC1tooltipdashboard <- "Note"
+SC1tooltipstatistics <- "Note"
+
+#----SC2----
+SC2tooltipmodelling <- "Note"
+SC2tooltipanalysis <- "Note"
+SC2tooltipdashboard <- "Note"
+SC2tooltipstatistics <- "Note"
+
+#----SC3----
+SC3tooltipmodelling <- "Note"
+SC3tooltipanalysis <- "Note"
+SC3tooltipdashboard <- "Note"
+SC3tooltipstatistics <- "Note"
+
+#----SC4----
+SC4tooltipmodelling <- "Note"
+SC4tooltipanalysis <- "Note"
+SC4tooltipdashboard <- "Note"
+SC4tooltipstatistics <- "Note"
+
+#----SC5----
+SC5tooltipmodelling <- "Note"
+SC5tooltipanalysis <- "Note"
+SC5tooltipdashboard <- "Note"
+SC5tooltipstatistics <- "Note"
+
+#----SC6----
+SC6tooltipmodelling <- "Note"
+SC6tooltipanalysis <- "Note"
+SC6tooltipdashboard <- "Note"
+SC6tooltipstatistics <- "Note"
+
+#----SC7----
+SC7tooltipmodelling <- "Note"
+SC7tooltipanalysis <- "Note"
+SC7tooltipdashboard <- "Note"
+SC7tooltipstatistics <- "Note"
+
+#----SC8----
+SC8tooltipmodelling <- "Note"
+SC8tooltipanalysis <- "Note"
+SC8tooltipdashboard <- "Note"
+SC8tooltipstatistics <- "Note"
+
+#----SC9----
+SC9tooltipmodelling <- "Note"
+SC9tooltipanalysis <- "Note"
+SC9tooltipdashboard <- "Note"
+SC9tooltipstatistics <- "Note"

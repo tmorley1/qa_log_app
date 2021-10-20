@@ -1,4 +1,4 @@
-#----Documentation and governance
+#----Documentation and governance----
 
 #----DG1 Scope and specification----
 output$DG1dashboard <- renderUI({fluidRow(column(12,
@@ -115,3 +115,41 @@ output$DG8dashboard <- renderUI({fluidRow(column(12,
 #----DG9 Risk and issues log----
 output$DG9dashboard <- renderUI({fluidRow(column(12,
     "This check is not required."))})
+
+#----Structure and clarity----
+
+#----SC1 Structure of data model----
+output$SC1dashboard <- renderUI({fluidRow(column(12,
+                                                "Note"))})
+
+#----SC2 Dashboard structure----
+output$SC2dashboard <- renderUI({fluidRow(column(12,
+                                                 "Note"))})
+
+#----SC3 Variable names and units----
+output$SC3dashboard <- renderUI({fluidRow(column(12,
+                                                 "Note"))})
+
+#----SC4 Analysis comments----
+output$SC4dashboard <- renderUI({fluidRow(column(12,
+                                                 "This check is not required."))})
+
+#----SC5 Formula clarity and robustness----
+output$SC5dashboard <- renderUI({fluidRow(column(12,
+                                                 "Note"))})
+
+#----SC6 Accessibility----
+output$SC6dashboard <- renderUI({fluidRow(column(12,
+                                                 "Note"))})
+
+#----SC7 Caveats and footnotes----
+output$SC7dashboard <- renderUI({fluidRow(column(12,
+                                                 "This check is not required."))})
+
+#----SC8 Output formatting----
+output$SC8dashboard <- renderUI({fluidRow(column(12,
+                                                 "This check is not required."))})
+
+#----SC9 RAP----
+output$SC9dashboard <- renderUI({fluidRow(column(12,
+                                                 "This check is not required."))})

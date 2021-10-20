@@ -1,5 +1,3 @@
-#----List of checks----
-QAcheckslist <- c("DG1", "DG2", "DG3", "DG4", "DG5", "DG6", "DG7", "DG8", "DG9")
 #----Selecting type of log----
 types <- reactiveValues(log = "blank")
 unsure <- reactiveValues(log = "blank")

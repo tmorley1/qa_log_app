@@ -36,6 +36,14 @@ output$report <- downloadHandler(
   }
 )
 
+#---- UI output for checks----
+justDGchecks<-(data.frame(QAcheckslist)%>%filter(grepl("DG",QAcheckslist)==TRUE))$QAcheckslist
+output$DGuichecks <- renderUI(lapply(justDGchecks,UI_check,types=types,QAlogtype=input.QAlogtype))
+
+justSCchecks<-(data.frame(QAcheckslist)%>%filter(grepl("SC",QAcheckslist)==TRUE))$QAcheckslist
+output$SCuichecks <- renderUI(lapply(justSCchecks,UI_check,types=types,QAlogtype=input.QAlogtype))
+
+
 #---- Saving to SQL database----
 
 #This creates a list of current score inputs
@@ -120,9 +128,6 @@ total_DG <- reactive({sum(allcheckscores())})
 #adds up number of ratings
 numbercheckscores<-reactive({sapply(QAcheckslist,iszero)})
 number_DG <- reactive({sum(numbercheckscores())})
-
-
-#number_DG <- reactive({iszero(input$scoreDG1)+iszero(input$scoreDG2)+iszero(input$scoreDG3)+iszero(input$scoreDG4)+iszero(input$scoreDG5)+iszero(input$scoreDG6)+iszero(input$scoreDG7)+iszero(input$scoreDG8)+iszero(input$scoreDG9)})
 
 #calculates average percentage rating
 percentage_DG <- reactive(if(number_DG()==0){0}
@@ -209,15 +214,7 @@ observeEvent(input$backtohome,{
     updateSelectizeInput(session, inputId = "BCM", selected = "No")
     updateTextInput(session, inputId = "QAlogtype", value = "")
     #resetting documentation and governance checks
-    reset_checks("DG1",session)
-    reset_checks("DG2",session)
-    reset_checks("DG3",session)
-    reset_checks("DG4",session)
-    reset_checks("DG5",session)
-    reset_checks("DG6",session)
-    reset_checks("DG7",session)
-    reset_checks("DG8",session)
-    reset_checks("DG9",session)
+    lapply(QAcheckslist,reset_checks,session1=session)
     
     #reset home screen
     types$log <- "blank"
@@ -239,15 +236,7 @@ observeEvent(input$definitelygoback,{
   updateSelectizeInput(session, inputId = "BCM", selected = "No")
   updateTextInput(session, inputId = "QAlogtype", value = "")
   #resetting documentation and governance checks
-  reset_checks("DG1",session)
-  reset_checks("DG2",session)
-  reset_checks("DG3",session)
-  reset_checks("DG4",session)
-  reset_checks("DG5",session)
-  reset_checks("DG6",session)
-  reset_checks("DG7",session)
-  reset_checks("DG8",session)
-  reset_checks("DG9",session)
+  lapply(QAcheckslist,reset_checks,session1=session)
   
   #reset home screen
   types$log <- "blank"
