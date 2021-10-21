@@ -37,12 +37,24 @@ output$report <- downloadHandler(
 )
 
 #---- UI output for checks----
+output$projectIDtext <- renderValueBox({valueBox(paste(input$projectID), subtitle="Project ID")})
+
+output$QAlogtypetext <- renderValueBox({valueBox(paste(input$QAlogtype), subtitle="QA log type")})
+
 justDGchecks<-(data.frame(QAcheckslist)%>%filter(grepl("DG",QAcheckslist)==TRUE))$QAcheckslist
 output$DGuichecks <- renderUI(lapply(justDGchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
 
 justSCchecks<-(data.frame(QAcheckslist)%>%filter(grepl("SC",QAcheckslist)==TRUE))$QAcheckslist
 output$SCuichecks <- renderUI(lapply(justSCchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
 
+justVEchecks<-(data.frame(QAcheckslist)%>%filter(grepl("VE",QAcheckslist)==TRUE))$QAcheckslist
+output$VEuichecks <- renderUI(lapply(justVEchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
+
+justVAchecks<-(data.frame(QAcheckslist)%>%filter(grepl("VA",QAcheckslist)==TRUE))$QAcheckslist
+output$VAuichecks <- renderUI(lapply(justVAchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
+
+justDAchecks<-(data.frame(QAcheckslist)%>%filter(grepl("DA",QAcheckslist)==TRUE))$QAcheckslist
+output$DAuichecks <- renderUI(lapply(justDAchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
 
 #---- Saving to SQL database----
 
@@ -119,45 +131,67 @@ observeEvent(input$saveSQL, {
 
 })
   
-#---- Calculating scores ----
-#Assigns a numerical score to each rating
-allcheckscores<-reactive({sapply(QAcheckslist,calculate_score)})
-#adds up all scores
-total_DG <- reactive({sum(allcheckscores())})
+#---- Calculating score functions----
 
-#adds up number of ratings
-numbercheckscores<-reactive({sapply(QAcheckslist,iszero)})
-number_DG <- reactive({sum(numbercheckscores())})
+scoresfunc <- function(listchecks){
+  #Assigns a numerical score to each rating
+  checkscores <- sapply(listchecks,calculate_score)
+  #adds up all scores
+  total <- sum(checkscores)
+  
+  #adds up number of ratings
+  numberchecks<-sapply(listchecks,iszero)
+  number <- sum(numberchecks)
+  
+  #calculates average percentage rating
+  percentage <- if(number==0){0}
+                         else{round(total/number)}
+  
+  return(percentage)
+}
 
-#calculates average percentage rating
-percentage_DG <- reactive(if(number_DG()==0){0}
-                          else{round(total_DG()/number_DG())})
-
-#score colours
-output$scorecolour <- renderText({
-  if(percentage_DG() >= 90) {
-    "GREEN"
+scorecolours<-function(percentage){  
+  #score colours
+  scorecolour <- if(percentage >= 90) {
+    "Background-color: #32cd32;" #Green
   }
-  else if (percentage_DG() >= 70){
-    "YELLOW"
+  else if (percentage >= 70){
+    "Background-color: #ffff00;" #Yellow
   }
-  else if (percentage_DG() >= 50){
-    "ORANGE"
+  else if (percentage >= 50){
+    "Background-color: #ffa500;" #Orange
   }
   else{
-    "RED"
+    "Background-color: #ff0000;" #Red
   }
-})
-outputOptions(output, "scorecolour", suspendWhenHidden=FALSE)
+  
+  return(scorecolour)
+}
 
-output$scoreDGgreen <- renderValueBox({valueBox(paste(percentage_DG()," %"),subtitle="Documentation and Governance")})
-output$scoreDGyellow <- renderValueBox({valueBox(paste(percentage_DG()," %"),subtitle="Documentation and Governance")})
-output$scoreDGorange <- renderValueBox({valueBox(paste(percentage_DG()," %"),subtitle="Documentation and Governance")})
-output$scoreDGred <- renderValueBox({valueBox(paste(percentage_DG()," %"),subtitle="Documentation and Governance")})
+#Calculation for DG scores 
+output$DGscores <- renderValueBox({valueBox(paste(scoresfunc(justDGchecks)," %"),subtitle="Documentation and governance")})
 
-output$projectIDtext <- renderValueBox({valueBox(paste(input$projectID), subtitle="Project ID")})
+output$DGscorescolours <- renderUI(scorecolour("DGscores",scorecolours(scoresfunc(justDGchecks))))
 
-output$QAlogtypetext <- renderValueBox({valueBox(paste(input$QAlogtype), subtitle="QA log type")})
+#Calculation for SC scores 
+output$SCscores <- renderValueBox({valueBox(paste(scoresfunc(justSCchecks)," %"),subtitle="Structure and clarity")})
+
+output$SCscorescolours <- renderUI(scorecolour("SCscores",scorecolours(scoresfunc(justSCchecks))))
+
+#Calculation for VE scores 
+output$VEscores <- renderValueBox({valueBox(paste(scoresfunc(justVEchecks)," %"),subtitle="Verification")})
+
+output$VEscorescolours <- renderUI(scorecolour("VEscores",scorecolours(scoresfunc(justVEchecks))))
+
+#Calculation for VA scores 
+output$VAscores <- renderValueBox({valueBox(paste(scoresfunc(justVAchecks)," %"),subtitle="Validation")})
+
+output$VAscorescolours <- renderUI(scorecolour("VAscores",scorecolours(scoresfunc(justVAchecks))))
+
+#Calculation for DA scores 
+output$DAscores <- renderValueBox({valueBox(paste(scoresfunc(justDAchecks)," %"),subtitle="Data and assumptions")})
+
+output$DAscorescolours <- renderUI(scorecolour("DAscores",scorecolours(scoresfunc(justDAchecks))))
 
 #---- Displaying more info on checks -----
 #The following code provides the extra info when you click on the checks.
