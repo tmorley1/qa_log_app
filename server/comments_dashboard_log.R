@@ -276,3 +276,250 @@ output$SC8dashboard <- renderUI({fluidRow(column(12,
 #----SC9 RAP----
 output$SC9dashboard <- renderUI({fluidRow(column(12,
       "This check is not required."))})
+
+#----Verification----
+
+#----VE1 Formula and code correctness----
+output$VE1dashboard <- renderUI({fluidRow(column(12,
+      "Formula and code correctness",
+      br(),br(),
+      "Have you checked that all the formulae and code used in the dashboard
+      and data model to calculate new columns/measures have been implemented
+      correctly?",
+      br(),
+      "Do all formulae refer to the right inputs/variables/parameters?",
+      br(),
+      "Have you identified riskiest sections of the calculations and applied
+      particular scrutiny?",
+      br(),
+      "Can an independent modeller track back and reproduce parts of the
+      calculations off model?",
+      br(),
+      "Is the data being pulled into the calculation modules correctly?",
+      br(),
+      "Do numbers apply to the correct time period (e.g. the middle of the
+      month/year versus the beginning/end)? Is it consistent throughout the
+      model? Are financial year and calendar year data managed correctly? Are
+      discount rates (nominal/real) applied correctly?"))})
+
+#----VE2 Usability testing----
+output$VE2dashboard <- renderUI({fluidRow(column(12,
+      "Usability testing",
+      br(), br(),
+      "Can new users easily use the dashboard as intended?",
+      br(),
+      "Has the dashboard been tested with internal users and customers?",
+      br(),
+      "Can they access the dashboard and use it as anticipated? ",
+      br(),
+      "Do users have the correct level of permissions?",
+      br(),
+      "Is sensitive data being hidden from users that shouldn't have access to
+      it?",
+      br(),
+      "Have you discussed the visuals with users/the customer to confirm the
+      visuals are useful and relevant to their needs?",
+      br(),
+      "Does the dashboard function without any bugs? If bugs have been
+      encountered but can not be fixed (such as those inherent to the software
+      being used) have they been recorded."))})
+
+#----VE3 Autochecks----
+output$VE3dashboards <- renderUI({fluidRow(column(12,
+      "This check is not required."))})
+
+#----VE4 Regression testing----
+output$VE4dashboard <- renderUI({fluidRow(column(12,
+      "This check is not required."))})
+
+#----VE5 Use of model outputs----
+output$VE5dashboard <- renderUI({fluidRow(column(12,
+      "This check is not required."))})
+
+#----VE6 Visual correctness----
+output$VE6dashboard <- renderUI({fluidRow(column(12,
+      "Visual correctness",
+      br(),br(),
+      "Have you checked that all the visuals are linked to the right fields?
+      Are the right filters been applied? Is cross-filtering and
+      cross-highlighting being implemented correctly?",
+      br(),
+      "Visuals include the various formats in which data is displayed to users
+      such as charts, maps, tables, cards etc."))})
+
+#----Validation----
+
+#----VA1 Methodology correctness----
+output$VA1dashboard <- renderUI({fluidRow(column(12,
+      "Methodology correctness",
+      br(), br(),
+      "Are the visuals selected the correct visual and fit for purpose?",
+      br(),
+      "Have you created the right type of dashboard? (Operational vs Strategic
+      vs Analytical)",
+      br(),
+      "Do the included visuals match the business need?",
+      br(),
+      "Would a different chart or graph be more effective? Have you tried to
+      avoid 3-dimensional plots as they can lead to misinterpretation of data?",
+      br(),
+      "Are the important elements of visuals being emphasised?",
+      br(),
+      "Are separate pages for different customer types appropriate?"))})
+
+#----VA2 Comparison with historical data/backcasting/alternative models----
+output$VA2dashboard <- renderUI({fluidRow(column(12,
+      "Comparison with historical data/backcasting/alternative models",
+      br(), br(),
+      "Do the visuals produced match historical results when using historical 
+      input data, or match an alternative model, to within an agreed tolerance 
+      level?",
+      br(),
+      "Do the visuals in the dashboard present expected results when compared
+      with alternative models? (e.g. do the visuals match  those used in the
+      data model for sense checks)",
+      br(),
+      "Do the visuals match expectations when compared with historical data?
+      (e.g. do the visuals match those produced using previous data after a
+      data refresh)",
+      br(),
+      "There may be no historical/alternative models, in which case score as
+      N/A."))})
+
+#----VA3 Uncertainty testing----
+output$VA3dashboard <- renderUI({fluidRow(column(12,
+      "Uncertainty testing",
+      br(), br(),
+      "Has enough been done to understand the uncertainty inherent in the data,
+      assumptions and methodology of the analysis? Is the uncertainty in the
+      data communicated in the dashboard?",
+      br(),
+      "Has data (especially poor quality data) been addressed via sensitivity
+      testing and/or Monte Carlo analysis, and the results documented? Has
+      uncertainty about the structure of the analysis (e.g. equations or logic
+      used to combine the analysis inputs) been quantified through uncertainty
+      analysis?",
+      br(),
+      "Has sensitivity analysis been used to find out the most significant
+      inputs and assumptions?",
+      br(),
+      "Where random sampling is used, is it as consistent as possible with
+      real-world distributions?",
+      br(),
+      "Are poor quality assumptions managed via sensitivity testing to
+      determine the potential impact of an incorrect assumption?",
+      br(),
+      "Have scenario combinations been determined and performed to check
+      whether expected outputs are produced?",
+      br(),
+      "Where applicable, has uncertainty on data points been included on
+      visuals shown in the dashboard?",
+      br(),
+      "If the model just performs standards calculations and there is no
+      uncertainty mark the task as N/A"))})
+
+#----VA4 Extreme values testing/model breaking----
+output$VA4dashboard <- renderUI({fluidRow(column(12,
+      "This check is not required."))})
+
+#----VA5 Re-performance testing----
+output$VA5dashboard <- renderUI({fluidRow(column(12,
+      "This check is not required."))})
+
+#----Data and assumptions----
+
+#----DA1 Data----
+output$DA1dashboard <- renderUI({fluidRow(column(12,
+      "Data",
+      br(), br(),
+      "Does your assumptions log contain details of all data used in the
+      analysis?",
+      br(),
+      "Has key data been identified and prioritised?",
+      br(),
+      "Has appropriate data been used?",
+      br(),
+      "Is all the data up-to-date?",
+      br(),
+      "Is only useful data being imported into the dashboard?",
+      br(),
+      "Are the quality, characteristics, strengths and limitations of the data
+      set fully understood and recorded?",
+      br(),
+      "Have data quality, impact and risk been assessed?",
+      br(),
+      "Has the input data or data model been quality assured?",
+      br(),
+      "Have data inputs and their limitations been agreed with relevant
+      stakeholders and signed-off?",
+      br(),
+      "If Official Statistics are being used/created, have you liaised with the
+      statistics team to ensure they are used correctly?",
+      br(),
+      "Have relevant decisions taken about the data been recorded?",
+      br(),
+      "Does the data import correctly into the dashboard?",
+      br(),
+      "Is importing your data or using Direct Query more appropriate?",
+      br(),
+      "Have timelines been agreed for any future data refreshes? (if applicable)",
+      br(),
+      "If data is automatically refreshed are there checks in place so that
+      errors/data quality issues will be flagged?"))})
+
+#----DA2 Data transformation----
+output$DA2dashboard <- renderUI({fluidRow(column(12,
+      "Data transformation",
+      br(), br(),
+      "Has input data been checked against primary reference for potential
+      errors in copying / pasting / transforming?",
+      br(),
+      "If required, have details on how the data have been imported/transformed
+      or processed been recorded in the Assumptions Log?",
+      br(),
+      "Have sources of data been documented in the Assumptions Log?",
+      br(),
+      "Is it appropriate to perform data transformation performed in the
+      dashboard software? More extensive data transformation can be performed 
+      before importing the data to avoid affecting the user experience.",
+      br(),
+      "Examples of Data Transformation:",
+      br(),
+      "Renaming variables, changing variable formats, data cleansing,
+      adding/removing rows, combining two or more data sources etc."))})
+
+#----DA3 Assumptions----
+output$DA3dashboard <- renderUI({fluidRow(column(12,
+      "Assumptions",
+      br(), br(),
+      "Does your assumptions log contain details of all model assumptions?",
+      br(),
+      "Have key assumptions been identified and prioritised?",
+      br(),
+      "Are assumptions appropriate, applicable and logically coherent?",
+      br(),
+      "Are any limitations/caveats adequately described in the Assumptions log?",
+      br(),
+      "Have data quality, impact and risk been assessed?",
+      br(),
+      "Have assumptions been agreed with relevant stakeholders and signed-off? 
+      Are assumptions up-to-date?",
+      br(),
+      "Have relevant decisions taken about the assumptions been recorded?"))})
+
+#----DA4 Decisions----
+output$DA4dashboard <- renderUI({fluidRow(column(12,
+      "Decisions",
+      br(), br(),
+      "Does the specification and your implementation reflect the latest
+      decision log?",
+      br(),
+      "If no distinct log exists, then mark this as N/A but decisions should be 
+      covered elsewhere (eg blended with an assumptions log)",
+      br(),
+      "A separate decision log may exist particularly if the dashboard presents 
+      data belonging to a wider set of models. Decision logs may be external 
+      (eg. held by policy / delivery colleagues).",
+      br(),
+      "Where a decision log exists it must be clear how decisions have been 
+      implemented in the model and how the decision was approved / scrtinised."))})

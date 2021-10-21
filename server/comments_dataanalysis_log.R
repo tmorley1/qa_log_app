@@ -175,3 +175,113 @@ output$SC8analysis <- renderUI({fluidRow(column(12,
 #----SC9 RAP----
 output$SC9analysis <- renderUI({fluidRow(column(12,
       "This check is not required"))})
+
+#----Verification----
+
+#----VE1 Formula and code correctness----
+output$VE1analysis <- renderUI({fluidRow(column(12,
+      "Formula and code correctness",
+      br(), br(),
+      "Have you checked that all the formulae and code have been implemented
+      correctly? Use spreadsheet/code QA tab for detailed checks"))})
+
+#----VE2 Usability testing----
+output$VE2analysis <- renderUI({fluidRow(column(12,
+      "Usability testing",
+      br(), br(),
+      "Can a new user easily re-run the analysis and view outputs?"))})
+
+#----VE3 Autochecks----
+output$VE3analysis <- renderUI({fluidRow(column(12,
+      "Autochecks",
+      br(), br(),
+      "Are autochecks used to highlight correct functionality (e.g. some lines
+      of codes checking that the inputs are sensible), and are they implemented
+      correctly?"))})
+
+#----VE4 Regression testing----
+output$VE4analysis <- renderUI({fluidRow(column(12,
+      "This check is not required."))})
+
+#----VE5 Use of model outputs----
+output$VE5analysis <- renderUI({fluidRow(column(12,
+      "This check is not required."))})
+
+#----VE6 Visual correctness----
+output$VE6analysis <- renderUI({fluidRow(column(12,
+      "This check is not required."))})
+
+#----Validation----
+
+#----VA1 Methodology correctness----
+output$VA1analysis <- renderUI({fluidRow(column(12,
+      "Methodology correctness",
+      br(), br(),
+      "Is the methodology used sensible and fit for purpose?",
+      br(),
+      "Was the methodology reviewed and agreed with relevant stakeholders?",
+      br(),
+      "Has the selected methodology been tested with other experts (eg other
+      DfE analysts or external experts if appropriate?)",
+      br(),
+      "Have model outputs been sense / reality checked and agreed with relevant
+      stakeholders?"))})
+
+#----VA2 Comparison with historical data/backcasting----
+output$VA2analysis <- renderUI({fluidRow(column(12,
+      "Comparison with historical data/backcasting",
+      br(), br(),
+      "Do the outputs match historical results when using historical input data,
+      or match alternative analysis, to within an agreed tolerance level?",
+      br(),
+      "There may be no historical/alternative models, in which case score as
+      N/A."))})
+
+#----VA3 Uncertainty testing----
+output$VA3analysis <- renderUI({fluidRow(column(12,
+      "Uncertainty testing",
+      br(), br(),
+      "Has enough been done to understand the uncertainty inherent in the data,
+      assumptions and methodology of the analysis?",
+      br(),
+      "Has data (especially poor quality data) been addressed via sensitivity
+      testing and/or Monte Carlo analysis, and the results documented?",
+      br(),
+      "Has sensitivity analysis been used to find out the most significant
+      inputs and assumptions?",
+      br(),
+      "If the analysis just perform standards calculations and there is no
+      uncertainty mark the task as N/A"))})
+
+#----VA4 Extreme values testing/model breaking----
+output$VA4analysis <- renderUI({fluidRow(column(12,
+      "This check is not required."))})
+
+#----VA5 Re-performance testing----
+output$VA5analysis <- renderUI({fluidRow(column(12,
+      "This check is not required."))})
+
+#----Data and assumptions----
+
+#----DA1 Data----
+output$DA1analysis <- renderUI({fluidRow(column(12,
+      "Data",
+      br(), br(),
+      "Does your data log contain details of all data used in the analysis?"))})
+
+#----DA2 Data transformation----
+output$DA2analysis <- renderUI({fluidRow(column(12,
+      "Data transformation",
+      br(), br(),
+      "Has input data been checked against primary reference for potential
+      errors in copying / pasting / transforming?"))})
+
+#----DA3 Assumptions----
+output$DA3analysis <- renderUI({fluidRow(column(12,
+      "Assumptions",
+      br(), br(),
+      "Does your assumptions log contain details of all analytical assumptions?"))})
+
+#----DA4 Decisions----
+output$DA4analysis <- renderUI({fluidRow(column(12,
+      "This check is not required."))})

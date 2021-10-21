@@ -266,3 +266,243 @@ output$SC8modelling <- renderUI({fluidRow(column(12,
 #----SC9 RAP----
 output$SC9modelling <- renderUI({fluidRow(column(12,
     "This check is not required."))})
+#----Verification----
+
+#----VE1 Formula and code correctness----
+output$VE1modelling <- renderUI({fluidRow(column(12,
+    "Formula and code correctness",
+    br(),br(),
+    "Have you checked that all the formulae and code have been implemented correctly?",
+    br(),
+    "Do all formulae refer to the right inputs/variables/parameters?",
+    br(),
+    "Have you identified riskiest sections of the calculations and applied
+    particular scrutiny?",
+    br(),
+    "Can an independent modeller track back and reproduce parts of the
+    calculations off model?",
+    br(),
+    "Is the data being pulled into the calculation modules correctly?",
+    br(),
+    "Do numbers apply to the correct time period (e.g. the middle of the
+    month/year versus the beginning/end)? Is it consistent throughout the model?
+    Are financial year and calendar year data managed correctly? Are discount
+    rates (nominal/real) applied correctly?",
+    br(),
+    "Consider use of Adam Slim tool for spreadsheets."))})
+
+#----VE2 Usability testing----
+output$VE2modelling <- renderUI({fluidRow(column(12,
+    "Usability testing",
+    br(),br(),
+    "Can a new user easily operate the model and view outputs?",
+    br(),
+    "Is routine operation of the model smooth and free of bugs? If relevant, is 
+    there an appropriate user interface? Does it work correctly?",
+    br(),
+    "Does the model open in an acceptable amount of time? Is the runtime of the
+    model appropriate for the demand placed on the model and the complexity of
+    what is being modelled?",
+    br(),
+    "Is there a smooth and secure procedure to allow access to the software to
+    the users or the people who need to QA the model? Is the time needed to 
+    provide the access to a new user appropriate?",
+    br(),
+    "Have the appropriate control been put in place to avoid invalid
+    data/entries (e.g. not sensible inputs)?",
+    br(),
+    "Is the system able to provide and maintain an acceptable level of service
+    in the face of faults and challenges to normal operation? What is the 
+    impact of faults and challenges to normal operations?"))})
+
+#----VE3 Autochecks----
+output$VE3modelling <- renderUI({fluidRow(column(12,
+    "Autochecks",
+    br(), br(),
+    "Are autochecks used to highlight correct functionality (e.g. some lines of
+    code checking that the inputs are sensible), and are they implemented
+    correctly?"))})
+
+#----VE4 Regression testing----
+output$VE4modelling <- renderUI({fluidRow(column(12,
+    "Regression testing",
+    br(), br(),
+    "Does the model make use of a reference set of input data / output data to
+    test the model for unexpected outcomes after every significant
+    development?",
+    br(),
+    "Are there a number of quantitative scenarios that cover a wide range of
+    the possible inputs which can be run on old and new versions of the
+    model?"))})
+
+#----VE5 Use of model outputs----
+output$VE5modelling <- renderUI({fluidRow(column(12,
+    "Use of model outputs",
+    br(), br(),
+    "Are model outputs being correctly fed into dependent documents?",
+    br(),
+    "Have you compared outputs to previous model versions? Can you explain
+    changes? Check outputs are correctly copied/transcribed into any dependent
+    documents."))})
+
+#----VE6 Visual correctness----
+output$VE6modelling <- renderUI({fluidRow(column(12,
+    "This check is not required."))})
+
+#----Validation----
+
+#----VA1 Methodology correctness----
+output$VA1modelling <- renderUI({fluidRow(column(12,
+      "Methodology correctness",
+      br(), br(),
+      "Is the methodology used sensible and fit for purpose? (with \"purpose\"
+      defined in the model specification)",
+      br(),
+      "Was the model methodology reviewed and agreed with relevant stakeholders?",
+      br(),
+      "Has the selected methodology been tested with other experts (eg other
+      DfE analysts or external experts if appropriate?)",
+      br(),
+      "Does the model produce logical outputs?",
+      br(),
+      "- are outputs changes of the right direction and magnitude for relevant
+      input changes?",
+      br(),
+      "- consider testing sparklines / trends for time series",
+      br(),
+      "- can changes from previous versions be explained?",
+      br(),
+      "Have model outputs been sense / reality checked and agreed with relevant 
+      stakeholders?",
+      br(),
+      "Have appropraiate model walk-throughs been carried out?"))})
+
+#----VA2 Comparison with historical data/backcasting/alternative models----
+output$VA2modelling <- renderUI({fluidRow(column(12,
+      "Comparison with historical data/backcasting/alternative models",
+      br(), br(),
+      "Does the model match historical results when using historical input data, 
+      or match an alternative model, to within an agreed tolerance level?",
+      br(),
+      "There may be no historical/alternative models, in which case score as
+      N/A."))})
+
+#----VA3 Uncertainty testing----
+output$VA3modelling <- renderUI({fluidRow(column(12,
+      "Uncertainty testing",
+      br(), br(),
+      "Has enough been done to understand the uncertainty inherent in the data, 
+      assumptions and methodology of the analysis?",
+      br(),
+      "Has data (especially poor quality data) been addressed via sensitivity
+      testing and/or Monte Carlo analysis, and the results documented? Has
+      uncertainty about the structure of the analysis (e.g. equations or logic
+      used to combine the analysis inputs) been quantified through uncertainty
+      analysis?",
+      br(),
+      "Has sensitivity analysis been used to find out the most significant
+      inputs and assumptions?",
+      br(),
+      "Where random sampling is used, is it as consistent as possible with
+      real-world distributions?",
+      br(),
+      "Are poor quality assumptions managed via sensitivity testing to
+      determine the potential impact of an incorrect assumption?",
+      br(),
+      "Have scenario combinations been determined and performed to check
+      whether expected outputs are produced?",
+      br(),
+      "If the model just perform standards calculations and there is no
+      uncertainty mark the task as N/A."))})
+
+#----VA4 Extreme values testing/model breaking----
+output$VA4modelling <- renderUI({fluidRow(column(12,
+      "Extreme values testing/model breaking",
+      br(), br(),
+      "Does the model respond as expected to extreme values, zeroes, negative
+      values, critical limits?",
+      br(),
+      "Is it possible to 'break' the model or get implausible outcomes (e.g.
+      percentages adding to more than 100%, people adding up to more than the
+      population...)?",
+      br(),
+      "Use sparklines / trends to explore time series.",
+      br(),
+      "Test direction and magnitude for outputs in response to input change."))})
+
+#----VA5 Re-performance testing----
+output$VA5modelling <- renderUI({fluidRow(column(12,
+      "Re-performance testing",
+      br(), br(),
+      "Can you replicate model output by independently (e.g. offline)
+      re-performing key calculations on sections of the model?"))})
+
+#----Data and assumptions----
+
+#----DA1 Data----
+output$DA1modelling <- renderUI({fluidRow(column(12,
+      "Data",
+      br(), br(),
+      "Does your data log contain details of all model data?",
+      br(),
+      "Has key data been identified and prioritised?",
+      br(),
+      "Has appropriate data been used?",
+      br(),
+      "Are the quality, characteristics, strengths and limitations of the data
+      set fully understood and recorded?",
+      br(),
+      "Have data quality, impact and risk been assessed?",
+      br(),
+      "Have data inputs been agreed with relevant stakeholders and signed-off?
+      Are all data up-to-date?",
+      br(),
+      "Have relevant decisions taken about the data been recorded?"))})
+
+#----DA2 Data transformation----
+output$DA2modelling <- renderUI({fluidRow(column(12,
+      "Data transformation",
+      br(), br(),
+      "Has input data been checked against primary reference for potential
+      errors in copying / pasting / transforming?",
+      br(),
+      "If required, have details on how the data have been imported/transformed
+      or processed been recorded in the Assumptions Log?",
+      br(),
+      "Have sources of data been documented in the Assumptions Log?"))})
+
+#----DA3 Assumptions----
+output$DA3modelling <- renderUI({fluidRow(column(12,
+      "Assumptions",
+      br(), br(),
+      "Does your assumptions log contain details of all model assumptions?",
+      br(),
+      "Have key assumptions been identified and prioritised?",
+      br(),
+      "Are assumptions appropriate, applicable and logically coherent?",
+      br(),
+      "Are any limitations/caveats adequately described in the Assumptions log?",
+      br(),
+      "Have data quality, impact and risk been assessed?",
+      br(),
+      "Have assumptions been agreed with relevant stakeholders and signed-off?
+      Are assumptions up-to-date?",
+      br(),
+      "Have relevant decisions taken about the assumptions been recorded?"))})
+
+#----DA4 Decisions----
+output$DA4modelling <- renderUI({fluidRow(column(12,
+      "Decisions",
+      br(), br(),
+      "Does the specification and your implementation reflect the latest
+      decision log?",
+      br(),
+      "If no distinct log exists, then mark this as N/A but decisions should be
+      covered elsewhere (eg blended with an assumptions log)",
+      br(),
+      "Models may have a separate decision log particularly if they belong to a
+      wider set of models. Decision logs may be external (eg held by policy / 
+      delivery colleagues).",
+      br(),
+      "Where a decision log exists it must be clear how decisions have been
+      implemented in the model and how the decision was approved / scrutinised."))})
