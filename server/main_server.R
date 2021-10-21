@@ -38,10 +38,10 @@ output$report <- downloadHandler(
 
 #---- UI output for checks----
 justDGchecks<-(data.frame(QAcheckslist)%>%filter(grepl("DG",QAcheckslist)==TRUE))$QAcheckslist
-output$DGuichecks <- renderUI(lapply(justDGchecks,UI_check,types=types,QAlogtype=input.QAlogtype))
+output$DGuichecks <- renderUI(lapply(justDGchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
 
 justSCchecks<-(data.frame(QAcheckslist)%>%filter(grepl("SC",QAcheckslist)==TRUE))$QAcheckslist
-output$SCuichecks <- renderUI(lapply(justSCchecks,UI_check,types=types,QAlogtype=input.QAlogtype))
+output$SCuichecks <- renderUI(lapply(justSCchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
 
 
 #---- Saving to SQL database----

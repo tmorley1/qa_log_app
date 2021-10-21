@@ -1,10 +1,12 @@
-#----Documentation and governance
+#----Documentation and governance----
 
 #----DG1 Scope and specification----
 output$DG1statistics <- renderUI({fluidRow(column(12,
+    "Scope and specification",
+    br(), br(),
     "Does a clear and comprehensive project scope and specification exist with
     evidence of key stakeholder involvement and sign off?",
-    br(), br(),
+    br(),
     "Has the information in the scope template been identified?",
     br(),
     "Have all relevant stakeholders been identified and their requirements
@@ -22,19 +24,23 @@ output$DG1statistics <- renderUI({fluidRow(column(12,
 #----DG2 User guide----
 
 output$DG2statistics <- renderUI({fluidRow(column(12,
+    "User guide",
+    br(), br(),
     "Is the user documentation sufficiently clear to support independent use
     of the analysis for a new user who needs to run/operate the analysis and
     view outputs?",
-    br(), br(),
+    br(),
     "User guide could be a separate document or instructions within the
     analysis."))})
 
 #----DG3 Technical guide----
 
 output$DG3statistics <- renderUI({fluidRow(column(12,
+    "Technical guide",
+    br(), br(),
     "Is the technical documentation sufficiently clear to support independent
     maintenance and any future development of the analysis?",
-    br(), br(),
+    br(),
     "Any decisions taken on methodology and implementation should be recorded
     in the technical guide.",
     br(),
@@ -44,9 +50,11 @@ output$DG3statistics <- renderUI({fluidRow(column(12,
 #----DG4 KIM----
 
 output$DG4statistics <- renderUI({fluidRow(column(12,
+    "KIM",
+    br(), br(),
     "Is the analysis and documentation stored according to DfE and local
     protocols?",
-    br(), br(),
+    br(),
     "Are files appropriately labelled? Has an appropriate rating been applied?",
     br(),
     "Who can access data files, analysis, outputs?",
@@ -58,8 +66,10 @@ output$DG4statistics <- renderUI({fluidRow(column(12,
 #----DG5 Version Control----
 
 output$DG5statistics <- renderUI({fluidRow(column(12,
-    "Does an up to date and informative version control log exist?",
+    "Version Control",
     br(), br(),
+    "Does an up to date and informative version control log exist?",
+    br(),
     "Is it clear what is the current working version?",
     br(),
     "Is it clear what has been changed since the previous version, who has made 
@@ -75,9 +85,11 @@ output$DG5statistics <- renderUI({fluidRow(column(12,
 #----DG6 Responsibilities----
 
 output$DG6statistics <- renderUI({fluidRow(column(12,
+    "Responsibilities",
+    br(), br(),
     "Have responsibilities and accountabilities laid out in the DfE guidance
     been assigned with sign-off process completed?",
-    br(), br(),
+    br(),
     "Have the following roles been allocated - ",
     br(),
     "- a lead analyst",
@@ -93,9 +105,11 @@ output$DG6statistics <- renderUI({fluidRow(column(12,
 #----DG7 QA Planning and Resourcing----
 
 output$DG7statistics <- renderUI({fluidRow(column(12,
+    "QA Planning and Resourcing",
+    br(), br(),
     "Has an appropriate QA plan been agreed with adequate consideration of
     resource quantity and skills required?",
-    br(), br(),
+    br(),
     "Has this been agreed between analyst, analytical assurer and
     commissioner/analysis SRO?",
     br(),
@@ -111,9 +125,11 @@ output$DG7statistics <- renderUI({fluidRow(column(12,
 #----DG8 Record of QA----
 
 output$DG8statistics <- renderUI({fluidRow(column(12,
+    "Record of QA",
+    br(), br(),
     "Have all the checks and tests been recorded with evidence available to 
     review?",
-    br(), br(),
+    br(),
     "This log, along with linked evidence to actual QA activities will provide 
     most of the evidence needed.",
     br(),
@@ -124,8 +140,10 @@ output$DG8statistics <- renderUI({fluidRow(column(12,
 #----DG9 Risk and Issues log----
 
 output$DG9statistics <- renderUI({fluidRow(column(12,
-    "Have risks and issues been identified, documented, agreed and reviewed?",
+    "Risk and Issues log",
     br(), br(),
+    "Have risks and issues been identified, documented, agreed and reviewed?",
+    br(),
     "Have appropriate mitigations been put into place?",
     br(),
     "Is there an appropriate governance process to review risks and issues?"))})

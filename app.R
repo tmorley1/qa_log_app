@@ -28,8 +28,10 @@ myConn <- odbcDriverConnect(connection=paste("Driver={SQL Server}; Server=",
 
 #List of checks
 QAcheckslist <- c("DG1", "DG2", "DG3", "DG4", "DG5", "DG6", "DG7", "DG8", "DG9",
-                  "SC1","SC2","SC3","SC4","SC5","SC6","SC7","SC8","SC9")
+                  "SC1", "SC2", "SC3", "SC4", "SC5", "SC6", "SC7", "SC8", "SC9")
 
+#These are the names of each check
+#Sometimes names differ slightly depending on type of log
 names_of_checks <- function(checkID,types){
   if(checkID=="DG1"){"Scope and Specification"}
   else if (checkID=="DG2"){"User guide"}
@@ -56,15 +58,16 @@ names_of_checks <- function(checkID,types){
   else if (checkID=="SC9"){"RAP"}
 }
 
+#These are conditions since some checks are not required for all logs
 conditions <- function(checkID,QAlogtype){
-  if(checkID=="DG3"){"QAlogtype == 'Official Statistics' || input.QAlogtype == 'Modelling'"}
-  else if(checkID=="DG9"){"QAlogtype == 'Official Statistics'"}
-  else if(checkID=="SC2"){"QAlogtype == 'Official Statistics' || input.QAlogtype == 'Modelling' || input.QAlogtype == 'Dashboard'"}
-  else if(checkID=="SC4"){"QAlogtype == 'Official Statistics' || input.QAlogtype == 'Modelling' || input.QAlogtype == 'Data Analysis'"}
-  else if(checkID=="SC6"){"QAlogtype == 'Dashboard'"}
-  else if(checkID=="SC7"){"QAlogtype == 'Official Statistics'"}
-  else if(checkID=="SC8"){"QAlogtype == 'Official Statistics'"}
-  else if(checkID=="SC9"){"QAlogtype == 'Official Statistics'"}
+  if(checkID=="DG3"){"input.QAlogtype == 'Official Statistics' || input.QAlogtype == 'Modelling'"}
+  else if(checkID=="DG9"){"input.QAlogtype == 'Official Statistics'"}
+  else if(checkID=="SC2"){"input.QAlogtype == 'Official Statistics' || input.QAlogtype == 'Modelling' || input.QAlogtype == 'Dashboard'"}
+  else if(checkID=="SC4"){"input.QAlogtype == 'Official Statistics' || input.QAlogtype == 'Modelling' || input.QAlogtype == 'Data Analysis'"}
+  else if(checkID=="SC6"){"input.QAlogtype == 'Dashboard'"}
+  else if(checkID=="SC7"){"input.QAlogtype == 'Official Statistics'"}
+  else if(checkID=="SC8"){"input.QAlogtype == 'Official Statistics'"}
+  else if(checkID=="SC9"){"input.QAlogtype == 'Official Statistics'"}
   else {"No condition"}
 }
 
