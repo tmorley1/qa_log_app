@@ -198,13 +198,16 @@ output$DAscorescolours <- renderUI(scorecolour("DAscores",scorecolours(scoresfun
 #Info is different for each type of log
 #The info is read in from comments_'model name'_log.R
 
-observe_info <- function(qacheck){
+observe_info <- function(qacheck,log){
   observeEvent(input[[paste0(qacheck,"info")]],{
-    modal_check(qacheck)
+    modal_check(qacheck,log)
   })
 }
 
-lapply(QAcheckslist,observe_info)
+iterate_over_checks <- function(log){
+lapply(QAcheckslist,observe_info,log=log)}
+
+lapply(logslist,iterate_over_checks)
 
 #---- Tooltips-----
 #This displays extra tips on ratings when hovering over selection menu
@@ -293,7 +296,7 @@ selectlogrow <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[QA_log]
 logrow <- reactive({sqlQuery(myConn, selectlogrow())})
 #if projectID doesn't exist in SQL, create dummy row of data
 logrowfinal <- reactive({if(nrow(logrow())==0){
-  t(c(input$projectID,"NA","NA","NA","NA","NA","NA"))
+  t(c(input$projectID,"NA","NA","NA","NA","NA","NA")) #BATMAN!
 } else{logrow()}})
 
 #select correct rows from QA_checks SQL

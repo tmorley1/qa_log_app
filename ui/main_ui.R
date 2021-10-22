@@ -58,44 +58,6 @@ fluidRow(column(2,uiOutput("DGscorescolours")),
          column(2,uiOutput("VAscorescolours")),
          column(2,uiOutput("DAscorescolours"))),
 
-#----Colours for DG score----
-#fluidRow(column(4,
-#conditionalPanel(
-#  condition = ("output.DGscorecolour == 'GREEN'"),
-#         fluidRow(column(6,
-#           uiOutput("scoreDGgreen",style="Background-color: #32cd32;")))),
-#conditionalPanel(
-#  condition = ("output.DGscorecolour == 'YELLOW'"),
-#         fluidRow(column(6,
-#           uiOutput("scoreDGyellow",style="Background-color: #ffff00;")))),
-#conditionalPanel(
-#  condition = ("output.DGscorecolour == 'ORANGE'"),
-#  fluidRow(column(6,
-#                  uiOutput("scoreDGorange",style="Background-color: #ffa500;")))),
-#conditionalPanel(
-#  condition = ("output.DGscorecolour == 'RED'"),
-#  fluidRow(column(6,
-#                  uiOutput("scoreDGred",style="Background-color: #ff0000;")))),
-#),
-#----Colours for SC score----
-#  column(4,
-#conditionalPanel(
-#  condition = ("output.SCscorecolour == 'GREEN'"),
-#        fluidRow(column(6,
-#            uiOutput("scoreSCgreen",style="Background-color: #32cd32;")))),
-#conditionalPanel(
-#  condition = ("output.SCscorecolour == 'YELLOW'"),
-#        fluidRow(column(6,
-#              uiOutput("scoreSCyellow",style="Background-color: #ffff00;")))),
-#conditionalPanel(
-#  condition = ("output.SCscorecolour == 'ORANGE'"),
-#        fluidRow(column(6,
-#              uiOutput("scoreSCorange",style="Background-color: #ffa500;")))),
-#conditionalPanel(
-#  condition = ("output.SCscorecolour == 'RED'"),
-#        fluidRow(column(6,
-#                uiOutput("scoreSCred",style="Background-color: #ff0000;")))),
-#)),
 #----DG checks----
          fluidRow(
            column(12,
