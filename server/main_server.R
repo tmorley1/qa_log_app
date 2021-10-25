@@ -43,18 +43,23 @@ output$QAlogtypetext <- renderValueBox({valueBox(paste(input$QAlogtype), subtitl
 
 justDGchecks<-(data.frame(QAcheckslist)%>%filter(grepl("DG",QAcheckslist)==TRUE))$QAcheckslist
 output$DGuichecks <- renderUI(lapply(justDGchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
+outputOptions(output, "DGuichecks", suspendWhenHidden=FALSE)
 
 justSCchecks<-(data.frame(QAcheckslist)%>%filter(grepl("SC",QAcheckslist)==TRUE))$QAcheckslist
 output$SCuichecks <- renderUI(lapply(justSCchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
+outputOptions(output, "SCuichecks", suspendWhenHidden=FALSE)
 
 justVEchecks<-(data.frame(QAcheckslist)%>%filter(grepl("VE",QAcheckslist)==TRUE))$QAcheckslist
 output$VEuichecks <- renderUI(lapply(justVEchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
+outputOptions(output, "VEuichecks", suspendWhenHidden=FALSE)
 
 justVAchecks<-(data.frame(QAcheckslist)%>%filter(grepl("VA",QAcheckslist)==TRUE))$QAcheckslist
 output$VAuichecks <- renderUI(lapply(justVAchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
+outputOptions(output, "VAuichecks", suspendWhenHidden=FALSE)
 
 justDAchecks<-(data.frame(QAcheckslist)%>%filter(grepl("DA",QAcheckslist)==TRUE))$QAcheckslist
 output$DAuichecks <- renderUI(lapply(justDAchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
+outputOptions(output, "DAuichecks", suspendWhenHidden=FALSE)
 
 #---- Saving to SQL database----
 
