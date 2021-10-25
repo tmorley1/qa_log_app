@@ -198,40 +198,53 @@ output$DAscorescolours <- renderUI(scorecolour("DAscores",scorecolours(scoresfun
 #Info is different for each type of log
 #The info is read in from comments_'model name'_log.R
 
-observe_info <- function(qacheck,log){
-  observeEvent(input[[paste0(qacheck,"info")]],{
-    modal_check(qacheck,log)
-  })
+#Generating modal for more info on individual check
+#modal_check <- function(checkID,log){
+#  showModal(modalDialog(
+#    conditionalPanel(condition=paste0("input.QAlogtype == '",logname(log), "'"),
+#                     uiOutput(paste(checkID,log,sep="")))
+#  )
+#}
+
+conditional_log <- function(log){
+  if(log=="modelling"){"input.QAlogtype == 'Modelling'"}
+  else if (log=="analysis"){"input.QAlogtype == 'Data Analysis'"}
+  else if (log=="dashboard"){"input.QAlogtype == 'Dashboard'"}
+  else if (log=="statistics"){"input.QAlogtype == 'Official Statistics'"}
 }
 
-iterate_over_checks <- function(log){
-lapply(QAcheckslist,observe_info,log=log)}
+create_modal <- function(qacheck,log){
+    showModal(modalDialog(uiOutput(paste(qacheck,log,sep=""))))
+  }
 
-lapply(logslist,iterate_over_checks)
+observe_info <- function(qacheck,log){
+  observeEvent(input[[paste0(qacheck,"info",log)]],{
+    create_modal(qacheck, log)
+})}
+
+prepare_options <- expand.grid(x = QAcheckslist,y=logslist)
+
+mapply(observe_info,qacheck=prepare_options$x,log=prepare_options$y)
 
 #---- Tooltips-----
 #This displays extra tips on ratings when hovering over selection menu
 #Tips are different depending on type of log
 
 #This function decides which tips to display depending on type of log
-tooltipfunc <- function(input,QAchecks){
-  tooltiptext <- if (input == "Modelling") {eval(parse(text=paste0(QAchecks,"tooltipmodelling")))}
-    else if (input == "Data Analysis") {eval(parse(text=paste0(QAchecks,"tooltipanalysis")))}
-    else if (input == "Dashboard") {eval(parse(text=paste0(QAchecks,"tooltipdashboard")))}
-    else if (input == "Official Statistics") {eval(parse(text=paste0(QAchecks,"tooltipstatistics")))}
-    else {"Error"}
+tooltipfunc <- function(QAchecks,log){
+  tooltiptext <- eval(parse(text=paste0(QAchecks,"tooltip",log)))
   return(tooltiptext)
 }
 
 #This function creates the UI necessary to render the tooltips
-tooltip_ui_render <- function(checkid,input){
+tooltip_ui_render <- function(checkid,log){
     bsTooltip(id=paste0("score",checkid),
-              title=tooltipfunc(input,checkid),
+              title=tooltipfunc(checkid,log),
               trigger="hover",placement="right")
 }
 
 #This applies the above function to every QA check
-output$tooltips <- renderUI(lapply(QAcheckslist,tooltip_ui_render,input=input$QAlogtype))
+output$tooltips <- renderUI(mapply(tooltip_ui_render,checkid=prepare_options$x,log=prepare_options$y))
 
 #---- Back to home-----
 observeEvent(input$backtohome,{

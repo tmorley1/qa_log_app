@@ -18,14 +18,6 @@ create_log <- function(log_type,log_type_name,session1,types1,nexttab1){
   #if the ID is being used, nothing happens and the user has to click on the button again
 }
 
-#Generating modal for more info on individual check
-modal_check <- function(checkID,log){
-  showModal(modalDialog(
-    conditionalPanel(condition=paste0("input.QAlogtype == ",logname(log)),
-                     uiOutput(paste(checkID,log,sep="")))
-  ))
-}
-
 #--- Functions for reading in from SQL ----
 
 #Selected rating based on number

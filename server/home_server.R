@@ -18,32 +18,25 @@ observeEvent(input$newlog, {
   types$log <- "new"
 })
 
-observeEvent(input$modelling,{
-  create_log("modelling","Modelling",session,types,nexttab)
-})
+observe_logtype <- function(log,session,types,nexttab){
+  observeEvent(input[[paste0(log)]],{
+    create_log(log,logname(log),session,types,nexttab)
+  })
+}
 
-observeEvent(input$analysis,{
-  create_log("analysis","Data Analysis",session,types,nexttab)
-})
-
-observeEvent(input$dashboard,{
-  create_log("dashboard","Dashboard",session,types,nexttab)
-})
-
-observeEvent(input$statistics,{
-  create_log("statistics","Official Statistics",session,types,nexttab)
-})
+lapply(logslist,observe_logtype,session=session,types=types,nexttab=nexttab)
 
 #----Generating UI when "Create New Log" selected----
+create_actionbutton<-function(log){
+  actionButton(log,label=logname(log))
+}
+
 output$newPanel <- renderUI({
   if (types$log=="new"){
     fluidRow(br(),
              column(12,"What type of QA log would you like to create?",align="center"),
              br(),
-             column(12,actionButton("modelling","Modelling"),
-                       actionButton("analysis", "Data Analysis"),
-                       actionButton("dashboard", "Dashboard"),
-                       actionButton("statistics", "Official Statistics"), align="center"),
+             column(12,lapply(logslist,create_actionbutton), align="center"),
              br(), br(), br(),
              column(12,actionButton("unsure", "Unsure which to use?"), align="center"),
              br(), br(), br(),
@@ -117,7 +110,7 @@ observeEvent(input$updatelog, {
 })
 
 output$updatePanel <- renderUI({
-  if(types$log=="update" || types$log=="modelling" || types$log=="analysis" || types$log=="dashboard" || types$log=="statistics"){
+  if(types$log=="update" || types$log %in% logslist){
     fluidRow(br(),
              column(12, textInput("projectID", "Project ID", value=""), align="center"),
              br(),
