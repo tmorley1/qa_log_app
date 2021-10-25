@@ -229,7 +229,7 @@ observe_info <- function(qacheck,log){
 
 prepare_options <- expand.grid(x = QAcheckslist,y=logslist)
 
-mapply(observe_info,qacheck=prepare_options$x,log=prepare_options$y)
+#mapply(observe_info,qacheck=prepare_options$x,log=prepare_options$y)
 
 #---- Tooltips-----
 #This displays extra tips on ratings when hovering over selection menu

@@ -43,10 +43,10 @@ ui <- fluidPage( #Removing navigation bar between tabs
 
 server <- function(input, output, session) {
   #removing navigation bar between tabs
-  observe({
-    hide(selector = "#inTabset li a[data-value=panel02]")
-    hide(selector = "#inTabset")
-    })
+ # observe({
+#    hide(selector = "#inTabset li a[data-value=panel02]")
+ #   hide(selector = "#inTabset")
+  #  })
   #Reading in server files
   source(paste(pathway,"\\server\\functions.R", sep=""), local=TRUE)$value
   source(paste(pathway,"\\server\\home_server.R", sep=""), local=TRUE)$value

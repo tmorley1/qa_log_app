@@ -78,7 +78,6 @@ observeEvent(input$submitprojectID, {
   }
   else{
     output$errormessage <- renderText({""})
-    updateTabsetPanel(session, "inTabset", selected="panel2")
     nexttab$log <- "next"
     
     #UPDATE ANALYST INPUTS
@@ -94,6 +93,8 @@ observeEvent(input$submitprojectID, {
     
     updateTextInput(session, inputId = "QAlogtype", value = paste(selectrow[1,7]))
     
+    types$log <- paste(selectrow[1,7])
+    
     #selecting QA check scores from SQL
     qachecks <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", chosennumber, sep="")
     #now run the query to get our output.
@@ -101,6 +102,8 @@ observeEvent(input$submitprojectID, {
     
     #UPDATE ALL CHECKS
     lapply(QAcheckslist,update_checks,session1 = session,qachecks = qachecks)
+    
+    updateTabsetPanel(session, "inTabset", selected="panel2")
   }
 })
 
