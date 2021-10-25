@@ -18,22 +18,6 @@ observeEvent(input$newlog, {
   types$log <- "new"
 })
 
-observeEvent(input$modelling,{
-  create_log("modelling","Modelling",session,types,nexttab)
-})
-
-observeEvent(input$analysis,{
-  create_log("analysis","Data Analysis",session,types,nexttab)
-})
-
-observeEvent(input$dashboard,{
-  create_log("dashboard","Dashboard",session,types,nexttab)
-})
-
-observeEvent(input$statistics,{
-  create_log("statistics","Official Statistics",session,types,nexttab)
-})
-
 #----Generating UI when "Create New Log" selected----
 output$newPanel <- renderUI({
   if (types$log=="new"){
@@ -68,6 +52,75 @@ output$unsurePanel <- renderUI({
              column(12,"Here is some information on the different logs to help you decide.", align="center"))
   }
 })
+
+observeEvent(input$modelling,{
+  create_log("modelling","Modelling",session,types,nexttab)
+})
+
+observeEvent(input$analysis,{
+  create_log("analysis","Data Analysis",session,types,nexttab)
+})
+
+observeEvent(input$dashboard,{
+  create_log("dashboard","Dashboard",session,types,nexttab)
+})
+
+observeEvent(input$statistics,{
+  create_log("statistics","Official Statistics",session,types,nexttab)
+})
+
+#----Generating UI when "Update log" selected----
+observeEvent(input$updatelog, {
+  types$log <- "update"
+})
+
+output$updatePanel <- renderUI({
+  if(types$log=="update" || types$log=="modelling" || types$log=="analysis" || types$log=="dashboard" || types$log=="statistics"){
+    fluidRow(br(),
+             column(12, textInput("projectID", "Project ID", value=""), align="center"),
+             br(),
+             column(12, actionButton("submitprojectID", "Submit"), align="center"),
+             #Error message if project ID does not exist
+             column(12,br(),
+                    textOutput("errormessage"),
+                    tags$head(tags$style("#errormessage{color: red;
+                  font-size: 20px;
+                  }"
+                    )), align="center"),
+             br(),br(),
+             column(12,actionButton("backupdate","Back"), align="center"))
+  }
+})
+
+observeEvent(input$backupdate, {
+  types$log <- "blank"
+  unsure$log <- "blank"
+})
+
+#---- UI output for checks----
+output$projectIDtext <- renderValueBox({valueBox(paste(input$projectID), subtitle="Project ID")})
+
+output$QAlogtypetext <- renderValueBox({valueBox(paste(input$QAlogtype), subtitle="QA log type")})
+
+justDGchecks<-(data.frame(QAcheckslist)%>%filter(grepl("DG",QAcheckslist)==TRUE))$QAcheckslist
+output$DGuichecks <- renderUI(lapply(justDGchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
+outputOptions(output, "DGuichecks", suspendWhenHidden=FALSE)
+
+justSCchecks<-(data.frame(QAcheckslist)%>%filter(grepl("SC",QAcheckslist)==TRUE))$QAcheckslist
+output$SCuichecks <- renderUI(lapply(justSCchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
+outputOptions(output, "SCuichecks", suspendWhenHidden=FALSE)
+
+justVEchecks<-(data.frame(QAcheckslist)%>%filter(grepl("VE",QAcheckslist)==TRUE))$QAcheckslist
+output$VEuichecks <- renderUI(lapply(justVEchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
+outputOptions(output, "VEuichecks", suspendWhenHidden=FALSE)
+
+justVAchecks<-(data.frame(QAcheckslist)%>%filter(grepl("VA",QAcheckslist)==TRUE))$QAcheckslist
+output$VAuichecks <- renderUI(lapply(justVAchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
+outputOptions(output, "VAuichecks", suspendWhenHidden=FALSE)
+
+justDAchecks<-(data.frame(QAcheckslist)%>%filter(grepl("DA",QAcheckslist)==TRUE))$QAcheckslist
+output$DAuichecks <- renderUI(lapply(justDAchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
+outputOptions(output, "DAuichecks", suspendWhenHidden=FALSE)
 
 #--- Reading in data from SQL database----
 observeEvent(input$submitprojectID, {
@@ -109,34 +162,6 @@ observeEvent(input$submitprojectID, {
     #UPDATE ALL CHECKS
     lapply(QAcheckslist,update_checks,session1 = session,qachecks = qachecks)
   }
-})
-
-#----Generating UI when "Update log" selected----
-observeEvent(input$updatelog, {
-  types$log <- "update"
-})
-
-output$updatePanel <- renderUI({
-  if(types$log=="update" || types$log=="modelling" || types$log=="analysis" || types$log=="dashboard" || types$log=="statistics"){
-    fluidRow(br(),
-             column(12, textInput("projectID", "Project ID", value=""), align="center"),
-             br(),
-             column(12, actionButton("submitprojectID", "Submit"), align="center"),
-             #Error message if project ID does not exist
-             column(12,br(),
-                    textOutput("errormessage"),
-                    tags$head(tags$style("#errormessage{color: red;
-                  font-size: 20px;
-                  }"
-                    )), align="center"),
-             br(),br(),
-             column(12,actionButton("backupdate","Back"), align="center"))
-  }
-})
-
-observeEvent(input$backupdate, {
-  types$log <- "blank"
-  unsure$log <- "blank"
 })
 
 #Don't want user to be able to edit QAlogtype manually

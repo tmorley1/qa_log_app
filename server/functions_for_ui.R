@@ -20,10 +20,10 @@ UI_check <- function(checkID,types,QAlogtype){
   uicheck <- if(conditiontext=="No condition"){fluidRow(
     column(2, actionButton(paste(checkID,"info",sep=""), checkname)),
     column(2, rating_options(paste("score",checkID,sep=""))),
-    column(2, textInput(paste("assess",checkID,sep=""),label=NULL, value="")),
-    column(2, textInput(paste("summary",checkID,sep=""), label=NULL, value="")),
-    column(2, textInput(paste("obs",checkID,sep=""), label=NULL, value="")),
-    column(2, textInput(paste("out",checkID,sep=""), label=NULL, value=""))
+    column(2, textInput(paste("assess",checkID,sep=""),label=NULL)),
+    column(2, textInput(paste("summary",checkID,sep=""), label=NULL)),
+    column(2, textInput(paste("obs",checkID,sep=""), label=NULL)),
+    column(2, textInput(paste("out",checkID,sep=""), label=NULL))
   )}
   else{
     conditionalPanel(
@@ -31,10 +31,10 @@ UI_check <- function(checkID,types,QAlogtype){
       fluidRow(
         column(2, actionButton(paste(checkID,"info",sep=""), checkname)),
         column(2, rating_options(paste("score",checkID,sep=""))),
-        column(2, textInput(paste("assess",checkID,sep=""),label=NULL, value="")),
-        column(2, textInput(paste("summary",checkID,sep=""), label=NULL, value="")),
-        column(2, textInput(paste("obs",checkID,sep=""), label=NULL, value="")),
-        column(2, textInput(paste("out",checkID,sep=""), label=NULL, value=""))
+        column(2, textInput(paste("assess",checkID,sep=""),label=NULL)),
+        column(2, textInput(paste("summary",checkID,sep=""), label=NULL)),
+        column(2, textInput(paste("obs",checkID,sep=""), label=NULL)),
+        column(2, textInput(paste("out",checkID,sep=""), label=NULL))
       ))
   }
   
