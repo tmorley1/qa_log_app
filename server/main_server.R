@@ -166,7 +166,7 @@ output$DAscorescolours <- renderUI(scorecolour("DAscores",scorecolours(scoresfun
 #---- Displaying more info on checks -----
 #The following code provides the extra info when you click on the checks.
 #Info is different for each type of log
-#The info is read in from comments_'model name'_log.R
+#The info is read in from comments_'log name'_log.R
 
 #Generating modal for more info on individual check
 
@@ -186,19 +186,21 @@ output$DAscorescolours <- renderUI(scorecolour("DAscores",scorecolours(scoresfun
 #  ))
 #}
 
-#observe_info <- function(qacheck){
-#  observeEvent(input[[paste0(qacheck,"info")]],{
-#    modal_check(qacheck)
-#  })
-#}
-#
-#lapply(QAcheckslist,observe_info)
+observe_info <- function(qacheck,types){
+  observeEvent(input[[paste0(qacheck,"info")]],{
+      showModal(modalDialog(
+      uiOutput(paste(qacheck,types$log,sep=""))
+    ))
+  })
+}
+
+lapply(QAcheckslist,observe_info,types=types)
 
 #modal_check <- function(checkID,log){
 #  showModal(modalDialog(
 #    conditionalPanel(condition=paste0("input.QAlogtype == '",logname(log), "'"),
 #                     uiOutput(paste(checkID,log,sep="")))
-#  )
+#  ))
 #}
 
 #conditional_log <- function(log){
