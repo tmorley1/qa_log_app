@@ -82,6 +82,8 @@ observeEvent(input$submitprojectID, {
     nexttab$log <- "next"
     
     #UPDATE ANALYST INPUTS
+    updateTextInput(session, inputId = "projectID", value = paste(selectrow[1,1]))
+    
     updateTextInput(session, inputId = "projectname", value = paste(selectrow[1,2]))
     
     updateTextInput(session, inputId = "version", value = paste(selectrow[1,3]))
@@ -100,7 +102,7 @@ observeEvent(input$submitprojectID, {
     qachecks <- sqlQuery(myConn, qachecks)
     
     #UPDATE ALL CHECKS
-    lapply(QAcheckslist,update_checks,session1 = session,qachecks = qachecks)
+    lapply(logspecificchecks(),update_checks,session1 = session,qachecks = qachecks)
     
     updateTabsetPanel(session, "inTabset", selected="panel2")
   }
@@ -114,7 +116,7 @@ observeEvent(input$updatelog, {
 output$updatePanel <- renderUI({
   if(types$log=="update" || types$log %in% logslist){
     fluidRow(br(),
-             column(12, textInput("projectID", "Project ID", value=""), align="center"),
+             column(12, textInput("projectID", "Project ID", value="Enter here"), align="center"),
              br(),
              column(12, actionButton("submitprojectID", "Submit"), align="center"),
              #Error message if project ID does not exist
