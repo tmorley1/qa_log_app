@@ -42,23 +42,23 @@ output$projectIDtext <- renderValueBox({valueBox(paste(input$projectID), subtitl
 output$QAlogtypetext <- renderValueBox({valueBox(paste(input$QAlogtype), subtitle="QA log type")})
 
 justDGchecks<-(data.frame(QAcheckslist)%>%filter(grepl("DG",QAcheckslist)==TRUE))$QAcheckslist
-output$DGuichecks <- renderUI(lapply(justDGchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
+output$DGuichecks <- renderUI(lapply(justDGchecks,UI_check,types=types,names_df=names_df))
 outputOptions(output, "DGuichecks", suspendWhenHidden=FALSE)
 
 justSCchecks<-(data.frame(QAcheckslist)%>%filter(grepl("SC",QAcheckslist)==TRUE))$QAcheckslist
-output$SCuichecks <- renderUI(lapply(justSCchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
+output$SCuichecks <- renderUI(lapply(justSCchecks,UI_check,types=types,names_df=names_df))
 outputOptions(output, "SCuichecks", suspendWhenHidden=FALSE)
 
 justVEchecks<-(data.frame(QAcheckslist)%>%filter(grepl("VE",QAcheckslist)==TRUE))$QAcheckslist
-output$VEuichecks <- renderUI(lapply(justVEchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
+output$VEuichecks <- renderUI(lapply(justVEchecks,UI_check,types=types,names_df=names_df))
 outputOptions(output, "VEuichecks", suspendWhenHidden=FALSE)
 
 justVAchecks<-(data.frame(QAcheckslist)%>%filter(grepl("VA",QAcheckslist)==TRUE))$QAcheckslist
-output$VAuichecks <- renderUI(lapply(justVAchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
+output$VAuichecks <- renderUI(lapply(justVAchecks,UI_check,types=types,names_df=names_df))
 outputOptions(output, "VAuichecks", suspendWhenHidden=FALSE)
 
 justDAchecks<-(data.frame(QAcheckslist)%>%filter(grepl("DA",QAcheckslist)==TRUE))$QAcheckslist
-output$DAuichecks <- renderUI(lapply(justDAchecks,UI_check,types=types,QAlogtype=input$QAlogtype))
+output$DAuichecks <- renderUI(lapply(justDAchecks,UI_check,types=types,names_df=names_df))
 outputOptions(output, "DAuichecks", suspendWhenHidden=FALSE)
 
 #---- Saving to SQL database----
@@ -205,29 +205,29 @@ output$DAscorescolours <- renderUI(scorecolour("DAscores",scorecolours(scoresfun
 
 #Generating modal for more info on individual check
 
-modal_check <- function(checkID){
-  showModal(modalDialog(
-    conditionalPanel(condition="input.QAlogtype == 'Modelling'",
-                     uiOutput(paste(checkID,"modelling",sep=""))),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Data Analysis'",
-                     uiOutput(paste(checkID,"dataanalysis",sep=""))),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Dashboard'",
-                     uiOutput(paste(checkID,"dashboard",sep=""))),
-    
-    conditionalPanel(condition="input.QAlogtype == 'Official Statistics'",
-                     uiOutput(paste(checkID,"statistics",sep="")))
-  ))
-}
+#modal_check <- function(checkID){
+#  showModal(modalDialog(
+#    conditionalPanel(condition="input.QAlogtype == 'Modelling'",
+#                     uiOutput(paste(checkID,"modelling",sep=""))),
+#    
+#    conditionalPanel(condition="input.QAlogtype == 'Data Analysis'",
+#                     uiOutput(paste(checkID,"dataanalysis",sep=""))),
+#    
+#    conditionalPanel(condition="input.QAlogtype == 'Dashboard'",
+#                     uiOutput(paste(checkID,"dashboard",sep=""))),
+#    
+#    conditionalPanel(condition="input.QAlogtype == 'Official Statistics'",
+#                     uiOutput(paste(checkID,"statistics",sep="")))
+#  ))
+#}
 
-observe_info <- function(qacheck){
-  observeEvent(input[[paste0(qacheck,"info")]],{
-    modal_check(qacheck)
-  })
-}
-
-lapply(QAcheckslist,observe_info)
+#observe_info <- function(qacheck){
+#  observeEvent(input[[paste0(qacheck,"info")]],{
+#    modal_check(qacheck)
+#  })
+#}
+#
+#lapply(QAcheckslist,observe_info)
 
 #modal_check <- function(checkID,log){
 #  showModal(modalDialog(
@@ -258,23 +258,23 @@ lapply(QAcheckslist,observe_info)
 #This displays extra tips on ratings when hovering over selection menu
 #Tips are different depending on type of log
 
-prepare_options <- expand.grid(x = QAcheckslist,y=logslist)
+#prepare_options <- expand.grid(x = QAcheckslist,y=logslist)
 
 #This function decides which tips to display depending on type of log
-tooltipfunc <- function(QAchecks,log){
-  tooltiptext <- eval(parse(text=paste0(QAchecks,"tooltip",log)))
-  return(tooltiptext)
-}
+#tooltipfunc <- function(QAchecks,log){
+#  tooltiptext <- eval(parse(text=paste0(QAchecks,"tooltip",log)))
+#  return(tooltiptext)
+#}
 
 #This function creates the UI necessary to render the tooltips
-tooltip_ui_render <- function(checkid,log){
-    bsTooltip(id=paste0("score",checkid),
-              title=tooltipfunc(checkid,log),
-              trigger="hover",placement="right")
-}
+#tooltip_ui_render <- function(checkid,log){
+#    bsTooltip(id=paste0("score",checkid),
+#              title=tooltipfunc(checkid,log),
+#              trigger="hover",placement="right")
+#}
 
 #This applies the above function to every QA check
-output$tooltips <- renderUI(mapply(tooltip_ui_render,checkid=prepare_options$x,log=prepare_options$y))
+#output$tooltips <- renderUI(mapply(tooltip_ui_render,checkid=prepare_options$x,log=prepare_options$y))
 
 #---- Back to home-----
 observeEvent(input$backtohome,{
