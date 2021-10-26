@@ -1,64 +1,29 @@
-#---- Creating HTML report----
-output$report <- downloadHandler(
-  # For pdf output, change this to "report.pdf"
-  filename = "report.html",
-  content = function(file) {
-    # Copy the report file to a temporary directory before processing it, in
-    # case we don't have write permissions to the current working dir (which
-    # can happen when deployed).
-    tempReport <- file.path(tempdir(), "report.Rmd")
-    file.copy(paste(pathway,"\\report.Rmd", sep=""), tempReport, overwrite = TRUE)
-    
-    # Set up parameters for Documentation and Governance to pass to Rmd document
-    params <- list(id = input$projectID,
-                   name = input$projectname,
-                   version = input$version,
-                   leadanalyst = input$leadanalyst,
-                   analyticalassurer = input$analyticalassurer,
-                   BCM = input$BCM,
-                   DGscore = percentage_DG(),
-                     DG1 = input$scoreDG1,
-                     DG2 = input$scoreDG2,
-                     DG3 = input$scoreDG3,
-                     DG4 = input$scoreDG4,
-                     DG5 = input$scoreDG5,
-                     DG6 = input$scoreDG6,
-                     DG7 = input$scoreDG7,
-                     DG8 = input$scoreDG8)
-    
-    # Knit the document, passing in the `params` list, and eval it in a
-    # child of the global environment (this isolates the code in the document
-    # from the code in this app).
-    rmarkdown::render(tempReport, output_file = file,
-                      params = params,
-                      envir = new.env(parent = globalenv())
-    )
-  }
-)
-
 #---- UI output for checks----
+#Selecting specific pillar checks
+justDGchecks<-reactive({(names_df%>%filter(grepl("DG",QAcheckslist)==TRUE)%>%filter(eval(parse(text=paste0(types$log,"_names")))!=0))$QAcheckslist})
+justSCchecks<-reactive({(names_df%>%filter(grepl("SC",QAcheckslist)==TRUE)%>%filter(eval(parse(text=paste0(types$log,"_names")))!=0))$QAcheckslist})
+justVEchecks<-reactive({(names_df%>%filter(grepl("VE",QAcheckslist)==TRUE)%>%filter(eval(parse(text=paste0(types$log,"_names")))!=0))$QAcheckslist})
+justVAchecks<-reactive({(names_df%>%filter(grepl("VA",QAcheckslist)==TRUE)%>%filter(eval(parse(text=paste0(types$log,"_names")))!=0))$QAcheckslist})
+justDAchecks<-reactive({(names_df%>%filter(grepl("DA",QAcheckslist)==TRUE)%>%filter(eval(parse(text=paste0(types$log,"_names")))!=0))$QAcheckslist})
+logspecificchecks<-reactive({(names_df%>%filter(eval(parse(text=paste0(types$log,"_names")))!=0))$QAcheckslist})
+
 output$projectIDtext <- renderValueBox({valueBox(paste(input$projectID), subtitle="Project ID")})
 
 output$QAlogtypetext <- renderValueBox({valueBox(paste(input$QAlogtype), subtitle="QA log type")})
 
-justDGchecks<-(data.frame(QAcheckslist)%>%filter(grepl("DG",QAcheckslist)==TRUE))$QAcheckslist
-output$DGuichecks <- renderUI(lapply(justDGchecks,UI_check,types=types,names_df=names_df))
+output$DGuichecks <- renderUI(lapply(justDGchecks(),UI_check,types=types,names_df=names_df))
 outputOptions(output, "DGuichecks", suspendWhenHidden=FALSE)
 
-justSCchecks<-(data.frame(QAcheckslist)%>%filter(grepl("SC",QAcheckslist)==TRUE))$QAcheckslist
-output$SCuichecks <- renderUI(lapply(justSCchecks,UI_check,types=types,names_df=names_df))
+output$SCuichecks <- renderUI(lapply(justSCchecks(),UI_check,types=types,names_df=names_df))
 outputOptions(output, "SCuichecks", suspendWhenHidden=FALSE)
 
-justVEchecks<-(data.frame(QAcheckslist)%>%filter(grepl("VE",QAcheckslist)==TRUE))$QAcheckslist
-output$VEuichecks <- renderUI(lapply(justVEchecks,UI_check,types=types,names_df=names_df))
+output$VEuichecks <- renderUI(lapply(justVEchecks(),UI_check,types=types,names_df=names_df))
 outputOptions(output, "VEuichecks", suspendWhenHidden=FALSE)
 
-justVAchecks<-(data.frame(QAcheckslist)%>%filter(grepl("VA",QAcheckslist)==TRUE))$QAcheckslist
-output$VAuichecks <- renderUI(lapply(justVAchecks,UI_check,types=types,names_df=names_df))
+output$VAuichecks <- renderUI(lapply(justVAchecks(),UI_check,types=types,names_df=names_df))
 outputOptions(output, "VAuichecks", suspendWhenHidden=FALSE)
 
-justDAchecks<-(data.frame(QAcheckslist)%>%filter(grepl("DA",QAcheckslist)==TRUE))$QAcheckslist
-output$DAuichecks <- renderUI(lapply(justDAchecks,UI_check,types=types,names_df=names_df))
+output$DAuichecks <- renderUI(lapply(justDAchecks(),UI_check,types=types,names_df=names_df))
 outputOptions(output, "DAuichecks", suspendWhenHidden=FALSE)
 
 #---- Saving to SQL database----
@@ -68,7 +33,7 @@ paste_score_input <- function(checkname){
   eval(parse(text=paste0("input$score",checkname)))
 }
 #Applying above function to all checks
-scoreinput <- reactive({sapply(QAcheckslist,paste_score_input)})
+scoreinput <- reactive({sapply(logspecificchecks(),paste_score_input)})
 #Writing all checks as numbers 1-7
 writing_score <- reactive({sapply(scoreinput(), write_score)})
 
@@ -82,7 +47,7 @@ paste_other_input <- function(checkname){
   )
 }
 #Applying above function to all checks
-otherinput <- reactive({sapply(QAcheckslist,paste_other_input)})
+otherinput <- reactive({sapply(logspecificchecks(),paste_other_input)})
 otherinputdf <- reactive({data.frame(otherinput())})
 
 observeEvent(input$saveSQL, {
@@ -101,7 +66,7 @@ observeEvent(input$saveSQL, {
                 paste(input$leadanalyst),
                 paste(input$analyticalassurer),
                 paste(input$BCM),
-                paste(input$QAlogtype))
+                paste(types$log))
     
     newRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_log VALUES ();")
     
@@ -132,7 +97,7 @@ observeEvent(input$saveSQL, {
 
   #Saving scores
 
-  lapply(QAcheckslist,savingscore, dataframe=otherinputdf(),qacheckSave=qacheckSave,projectID=input$projectID,databasename=databasename,myConn=myConn)
+  lapply(logspecificchecks(),savingscore, dataframe=otherinputdf(),qacheckSave=qacheckSave,projectID=input$projectID,databasename=databasename,myConn=myConn)
 
 })
   
@@ -174,29 +139,29 @@ scorecolours<-function(percentage){
 }
 
 #Calculation for DG scores 
-output$DGscores <- renderValueBox({valueBox(paste(scoresfunc(justDGchecks)," %"),subtitle="Documentation and governance")})
+output$DGscores <- renderValueBox({valueBox(paste(scoresfunc(justDGchecks())," %"),subtitle="Documentation and governance")})
 
-output$DGscorescolours <- renderUI(scorecolour("DGscores",scorecolours(scoresfunc(justDGchecks))))
+output$DGscorescolours <- renderUI(scorecolour("DGscores",scorecolours(scoresfunc(justDGchecks()))))
 
 #Calculation for SC scores 
-output$SCscores <- renderValueBox({valueBox(paste(scoresfunc(justSCchecks)," %"),subtitle="Structure and clarity")})
+output$SCscores <- renderValueBox({valueBox(paste(scoresfunc(justSCchecks())," %"),subtitle="Structure and clarity")})
 
-output$SCscorescolours <- renderUI(scorecolour("SCscores",scorecolours(scoresfunc(justSCchecks))))
+output$SCscorescolours <- renderUI(scorecolour("SCscores",scorecolours(scoresfunc(justSCchecks()))))
 
 #Calculation for VE scores 
-output$VEscores <- renderValueBox({valueBox(paste(scoresfunc(justVEchecks)," %"),subtitle="Verification")})
+output$VEscores <- renderValueBox({valueBox(paste(scoresfunc(justVEchecks())," %"),subtitle="Verification")})
 
-output$VEscorescolours <- renderUI(scorecolour("VEscores",scorecolours(scoresfunc(justVEchecks))))
+output$VEscorescolours <- renderUI(scorecolour("VEscores",scorecolours(scoresfunc(justVEchecks()))))
 
 #Calculation for VA scores 
-output$VAscores <- renderValueBox({valueBox(paste(scoresfunc(justVAchecks)," %"),subtitle="Validation")})
+output$VAscores <- renderValueBox({valueBox(paste(scoresfunc(justVAchecks())," %"),subtitle="Validation")})
 
-output$VAscorescolours <- renderUI(scorecolour("VAscores",scorecolours(scoresfunc(justVAchecks))))
+output$VAscorescolours <- renderUI(scorecolour("VAscores",scorecolours(scoresfunc(justVAchecks()))))
 
 #Calculation for DA scores 
-output$DAscores <- renderValueBox({valueBox(paste(scoresfunc(justDAchecks)," %"),subtitle="Data and assumptions")})
+output$DAscores <- renderValueBox({valueBox(paste(scoresfunc(justDAchecks())," %"),subtitle="Data and assumptions")})
 
-output$DAscorescolours <- renderUI(scorecolour("DAscores",scorecolours(scoresfunc(justDAchecks))))
+output$DAscorescolours <- renderUI(scorecolour("DAscores",scorecolours(scoresfunc(justDAchecks()))))
 
 #---- Displaying more info on checks -----
 #The following code provides the extra info when you click on the checks.
@@ -294,7 +259,7 @@ observeEvent(input$backtohome,{
     updateSelectizeInput(session, inputId = "BCM", selected = "No")
     updateTextInput(session, inputId = "QAlogtype", value = "")
     #resetting documentation and governance checks
-    lapply(QAcheckslist,reset_checks,session1=session)
+    lapply(logspecificchecks(),reset_checks,session1=session)
     
     #reset home screen
     types$log <- "blank"
@@ -316,7 +281,7 @@ observeEvent(input$definitelygoback,{
   updateSelectizeInput(session, inputId = "BCM", selected = "No")
   updateTextInput(session, inputId = "QAlogtype", value = "")
   #resetting documentation and governance checks
-  lapply(QAcheckslist,reset_checks,session1=session)
+  lapply(logspecificchecks(),reset_checks,session1=session)
   
   #reset home screen
   types$log <- "blank"
@@ -357,7 +322,7 @@ individualChecks <- function(checkIDtext,checks){
   return(somebits)
 }
 #build a dataframe with all current SQL data
-sqlinfo <- reactive({sapply(QAcheckslist,individualChecks,checks=checks())})
+sqlinfo <- reactive({sapply(logspecificchecks(),individualChecks,checks=checks())})
 sqlinfodf <- reactive({data.frame(sqlinfo())})
 allsqlinfodf <- reactive({cbind(t(logrowfinal()),sqlinfodf())[-1,]})
 
@@ -366,7 +331,7 @@ output$writingtest<-renderDataTable(allsqlinfodf())
 #now create the same data frame, with info taken from the app
 appinfo <- reactive({c(input$projectname, input$version,
                        input$leadanalyst, input$analyticalassurer, input$BCM,
-                       input$QAlogtype)})
+                       types$log)})
 appinfodf <- reactive({data.frame(cbind(appinfo(),otherinput()))})
 
 output$writingtest2<-renderDataTable(appinfodf())
@@ -395,7 +360,7 @@ observeEvent(input$saveSQL, {
   #now run the query to get our output.
   checks <- reactive({sqlQuery(myConn, selectchecks())})
   #build a dataframe with all current SQL data
-  sqlinfo <- reactive({sapply(QAcheckslist,individualChecks,checks=checks())})
+  sqlinfo <- reactive({sapply(logspecificchecks(),individualChecks,checks=checks())})
   sqlinfodf <- reactive({data.frame(sqlinfo())})
   allsqlinfodf <- reactive({cbind(t(logrowfinal()),sqlinfodf())[-1,]})
   
@@ -408,3 +373,40 @@ observeEvent(input$saveSQL, {
     else {"You have unsaved changes!"}})
   output$savedialogue <- renderText(paste(savetext()))
 })
+#---- Creating HTML report----
+output$report <- downloadHandler(
+  # For pdf output, change this to "report.pdf"
+  filename = "report.html",
+  content = function(file) {
+    # Copy the report file to a temporary directory before processing it, in
+    # case we don't have write permissions to the current working dir (which
+    # can happen when deployed).
+    tempReport <- file.path(tempdir(), "report.Rmd")
+    file.copy(paste(pathway,"\\report.Rmd", sep=""), tempReport, overwrite = TRUE)
+    
+    # Set up parameters for Documentation and Governance to pass to Rmd document
+    params <- list(id = input$projectID,
+                   name = input$projectname,
+                   version = input$version,
+                   leadanalyst = input$leadanalyst,
+                   analyticalassurer = input$analyticalassurer,
+                   BCM = input$BCM,
+                   DGscore = percentage_DG(),
+                   DG1 = input$scoreDG1,
+                   DG2 = input$scoreDG2,
+                   DG3 = input$scoreDG3,
+                   DG4 = input$scoreDG4,
+                   DG5 = input$scoreDG5,
+                   DG6 = input$scoreDG6,
+                   DG7 = input$scoreDG7,
+                   DG8 = input$scoreDG8)
+    
+    # Knit the document, passing in the `params` list, and eval it in a
+    # child of the global environment (this isolates the code in the document
+    # from the code in this app).
+    rmarkdown::render(tempReport, output_file = file,
+                      params = params,
+                      envir = new.env(parent = globalenv())
+    )
+  }
+)

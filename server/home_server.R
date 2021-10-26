@@ -92,7 +92,7 @@ observeEvent(input$submitprojectID, {
     
     updateSelectizeInput(session, inputId = "BCM", selected = selectrow[1,6])
     
-    updateTextInput(session, inputId = "QAlogtype", value = paste(selectrow[1,7]))
+    updateTextInput(session, inputId = "QAlogtype", value = logname(paste(selectrow[1,7])))
     
     #selecting QA check scores from SQL
     qachecks <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", chosennumber, sep="")

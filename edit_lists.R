@@ -76,4 +76,4 @@ statistics_names <- c("Scope and Specification", "User guide", "Technical guide"
                      "Data", "Data transformation", "Assumptions", 0)
 
 names_df <- (data.frame(QAcheckslist, modelling_names, analysis_names, dashboard_names, 
-                       statistics_names))%>%mutate(blank_names=0,new_names=0)
+                       statistics_names))%>%mutate(blank_names=0,new_names=0,update_names=0)
