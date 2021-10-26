@@ -18,7 +18,7 @@ UI_check <- function(checkID,types,QAlogtype){
   checkname <- names_of_checks(checkID,types)
   conditiontext <- conditions(checkID,QAlogtype)
   uicheck <- if(conditiontext=="No condition"){fluidRow(
-    column(2, actionButton(paste(checkID,"info",types$log,sep=""), checkname)),
+    column(2, actionButton(paste(checkID,"info",sep=""), checkname)),
     column(2, rating_options(paste("score",checkID,sep=""))),
     column(2, textInput(paste("assess",checkID,sep=""),label=NULL, value="")),
     column(2, textInput(paste("summary",checkID,sep=""), label=NULL, value="")),
