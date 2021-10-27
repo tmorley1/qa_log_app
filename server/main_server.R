@@ -168,24 +168,6 @@ output$DAscorescolours <- renderUI(scorecolour("DAscores",scorecolours(scoresfun
 #Info is different for each type of log
 #The info is read in from comments_'log name'_log.R
 
-#Generating modal for more info on individual check
-
-#modal_check <- function(checkID){
-#  showModal(modalDialog(
-#    conditionalPanel(condition="input.QAlogtype == 'Modelling'",
-#                     uiOutput(paste(checkID,"modelling",sep=""))),
-#    
-#    conditionalPanel(condition="input.QAlogtype == 'Data Analysis'",
-#                     uiOutput(paste(checkID,"dataanalysis",sep=""))),
-#    
-#    conditionalPanel(condition="input.QAlogtype == 'Dashboard'",
-#                     uiOutput(paste(checkID,"dashboard",sep=""))),
-#    
-#    conditionalPanel(condition="input.QAlogtype == 'Official Statistics'",
-#                     uiOutput(paste(checkID,"statistics",sep="")))
-#  ))
-#}
-
 observe_info <- function(qacheck,types){
   observeEvent(input[[paste0(qacheck,"info")]],{
       showModal(modalDialog(
@@ -196,52 +178,19 @@ observe_info <- function(qacheck,types){
 
 lapply(QAcheckslist,observe_info,types=types)
 
-#modal_check <- function(checkID,log){
-#  showModal(modalDialog(
-#    conditionalPanel(condition=paste0("input.QAlogtype == '",logname(log), "'"),
-#                     uiOutput(paste(checkID,log,sep="")))
-#  ))
-#}
-
-#conditional_log <- function(log){
-#  if(log=="modelling"){"input.QAlogtype == 'Modelling'"}
-#  else if (log=="analysis"){"input.QAlogtype == 'Data Analysis'"}
-#  else if (log=="dashboard"){"input.QAlogtype == 'Dashboard'"}
-#  else if (log=="statistics"){"input.QAlogtype == 'Official Statistics'"}
-#}
-#
-#create_modal <- function(qacheck,log){
-#    showModal(modalDialog(uiOutput(paste(qacheck,log,sep=""))))
-#  }
-#
-#observe_info <- function(qacheck,log){
-#  observeEvent(input[[paste0(qacheck,"info",log)]],{
-#    create_modal(qacheck, log)
-#})}
-#
-#mapply(observe_info,qacheck=prepare_options$x,log=prepare_options$y)
-#
 #---- Tooltips-----
 #This displays extra tips on ratings when hovering over selection menu
 #Tips are different depending on type of log
 
-#prepare_options <- expand.grid(x = QAcheckslist,y=logslist)
-
-#This function decides which tips to display depending on type of log
-#tooltipfunc <- function(QAchecks,log){
-#  tooltiptext <- eval(parse(text=paste0(QAchecks,"tooltip",log)))
-#  return(tooltiptext)
-#}
-
 #This function creates the UI necessary to render the tooltips
-#tooltip_ui_render <- function(checkid,log){
-#    bsTooltip(id=paste0("score",checkid),
-#              title=tooltipfunc(checkid,log),
-#              trigger="hover",placement="right")
-#}
+tooltip_ui_render <- function(checkid,types){
+    bsTooltip(id=paste0("score",checkid),
+              title=eval(parse(text=paste0(checkid,"tooltip",types$log))),
+              trigger="hover",placement="right")
+}
 
 #This applies the above function to every QA check
-#output$tooltips <- renderUI(mapply(tooltip_ui_render,checkid=prepare_options$x,log=prepare_options$y))
+output$tooltips <- renderUI(lapply(QAcheckslist,tooltip_ui_render,types=types))
 
 #---- Back to home-----
 observeEvent(input$backtohome,{
