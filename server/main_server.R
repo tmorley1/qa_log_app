@@ -171,7 +171,7 @@ output$DAscorescolours <- renderUI(scorecolour("DAscores",scorecolours(scoresfun
 observe_info <- function(qacheck,types){
   observeEvent(input[[paste0(qacheck,"info")]],{
       showModal(modalDialog(
-      uiOutput(paste(qacheck,types$log,sep=""))
+      eval(parse(text=paste(qacheck,types$log,sep="")))
     ))
   })
 }

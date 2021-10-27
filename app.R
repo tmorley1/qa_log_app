@@ -41,21 +41,32 @@ ui <- fluidPage( #Removing navigation bar between tabs
                  source(paste(pathway,"\\ui\\main_ui.R", sep=""), local=TRUE)$value
                  ))
 
+#Creating file paths for comments files
+comments_paths <- function(log,pathway){
+  filepath <- paste0(pathway,"\\comments\\comments_",log,"_log.R")
+  sourcepath <- source(filepath)
+  return(sourcepath)
+}
+
+#Creating file paths for tooltips files
+tooltips_paths <- function(log,pathway){
+  filepath <- paste0(pathway,"\\tooltips\\tooltips_",log,"_log.R")
+  sourcepath <- source(filepath)
+  return(sourcepath)
+}
+
 server <- function(input, output, session) {
   #removing navigation bar between tabs
- # observe({
-#    hide(selector = "#inTabset li a[data-value=panel02]")
- #   hide(selector = "#inTabset")
-  #  })
+  observe({
+    hide(selector = "#inTabset li a[data-value=panel02]")
+    hide(selector = "#inTabset")
+    })
   #Reading in server files
   source(paste(pathway,"\\server\\functions.R", sep=""), local=TRUE)$value
   source(paste(pathway,"\\server\\home_server.R", sep=""), local=TRUE)$value
   source(paste(pathway,"\\server\\main_server.R", sep=""), local=TRUE)$value
-  source(paste(pathway,"\\server\\comments_modelling_log.R", sep=""), local=TRUE)$value
-  source(paste(pathway,"\\server\\comments_dataanalysis_log.R", sep=""), local=TRUE)$value
-  source(paste(pathway,"\\server\\comments_dashboard_log.R", sep=""), local=TRUE)$value
-  source(paste(pathway,"\\server\\comments_statistics_log.R", sep=""), local=TRUE)$value
-  source(paste(pathway,"\\server\\tooltips.R", sep=""), local=TRUE)$value
+  lapply(logslist,comments_paths,pathway=pathway)
+  lapply(logslist,tooltips_paths,pathway=pathway)
 }
 
 shinyApp(ui,server)

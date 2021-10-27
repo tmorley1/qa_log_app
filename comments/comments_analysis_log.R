@@ -1,7 +1,7 @@
 #----Documentation and governance
 
 #----DG1 Scope and specification----
-output$DG1dataanalysis <- renderUI({fluidRow(column(12,
+DG1dataanalysis <- renderUI({fluidRow(column(12,
       "Scope and specification",
       br(), br(),
       "Does a clear and comprehensive project scope and specification exist with 
@@ -14,7 +14,7 @@ output$DG1dataanalysis <- renderUI({fluidRow(column(12,
       "See QA Guidance chapter 3."))})
 
 #----DG2 User guide----
-output$DG2dataanalysis <- renderUI({fluidRow(column(12,
+DG2dataanalysis <- renderUI({fluidRow(column(12,
       "User guide",
       br(), br(),
       "Is the user documentation sufficiently clear to support independent use 
@@ -22,11 +22,11 @@ output$DG2dataanalysis <- renderUI({fluidRow(column(12,
       view outputs?"))})
 
 #----DG3 Technical guide----
-output$DG3dataanalysis <- renderUI({fluidRow(column(12,
+DG3dataanalysis <- renderUI({fluidRow(column(12,
       "This check is not required."))})
 
 #----DG4 KIM----
-output$DG4dataanalysis <- renderUI({fluidRow(column(12,
+DG4dataanalysis <- renderUI({fluidRow(column(12,
       "KIM",
       br(), br(),
       "Is the analysis and documentation stored according to DfE and local
@@ -40,7 +40,7 @@ output$DG4dataanalysis <- renderUI({fluidRow(column(12,
       "When will it be archived?"))})
 
 #----DG5 Version Control----
-output$DG5dataanalysis <- renderUI({fluidRow(column(12,
+DG5dataanalysis <- renderUI({fluidRow(column(12,
       "Version Control",
       br(), br(),
       "Does an up to date and informative version control log exist?",
@@ -49,7 +49,7 @@ output$DG5dataanalysis <- renderUI({fluidRow(column(12,
       code/spreadsheet."))})
 
 #----DG6 Responsibilities----
-output$DG6dataanalysis <- renderUI({fluidRow(column(12,
+DG6dataanalysis <- renderUI({fluidRow(column(12,
       "Responsibilities",
       br(), br(),
       "Have responsibilities and accountabilities laid out in the DfE guidance
@@ -64,7 +64,7 @@ output$DG6dataanalysis <- renderUI({fluidRow(column(12,
       "- an analytical assurer"))})
 
 #----DG7 QA Planning and Resourcing----
-output$DG7dataanalysis <- renderUI({fluidRow(column(12,
+DG7dataanalysis <- renderUI({fluidRow(column(12,
       "QA Planning and Resourcing",
       br(), br(),
       "Has an appropriate QA plan been agreed with adequate consideration of
@@ -80,7 +80,7 @@ output$DG7dataanalysis <- renderUI({fluidRow(column(12,
       sign-off?"))})
 
 #----DG8 Record of QA----
-output$DG8dataanalysis <- renderUI({fluidRow(column(12,
+DG8dataanalysis <- renderUI({fluidRow(column(12,
       "Record of QA",
       br(), br(),
       "Have all the checks and tests been recorded with evidence available to 
@@ -90,13 +90,13 @@ output$DG8dataanalysis <- renderUI({fluidRow(column(12,
       provide most of the evidence needed."))})
 
 #----DG9 Risk and issues log
-output$DG9dataanalysis <- renderUI({fluidRow(column(12,
+DG9dataanalysis <- renderUI({fluidRow(column(12,
       "This check is not required."))})
 
 #----Structure and Clarity-----
 
 #----SC1 Structure of model----
-output$SC1analysis <- renderUI({fluidRow(column(12,
+SC1analysis <- renderUI({fluidRow(column(12,
       "Structure of analysis",
       br(), br(),
       "Is the analysis set out in a clear way so that other analysts can follow 
@@ -117,11 +117,11 @@ output$SC1analysis <- renderUI({fluidRow(column(12,
       "Has coding/spreadsheet guidance been adhered to?"))})
 
 #----SC2 Calculation structure----
-output$SC2analysis <- renderUI({fluidRow(column(12,
+SC2analysis <- renderUI({fluidRow(column(12,
       "This check is not required"))})
 
 #----SC3 Variable names and units----
-output$SC3analysis <- renderUI({fluidRow(column(12,
+SC3analysis <- renderUI({fluidRow(column(12,
       "Variable names and units",
       br(), br(),
       "Are names, labels and units logical, appropriate and accurate?",
@@ -133,7 +133,7 @@ output$SC3analysis <- renderUI({fluidRow(column(12,
       "Is an index of names used avaliable?"))})
 
 #----SC4 Analysis comments----
-output$SC4analysis <- renderUI({fluidRow(column(12,
+SC4analysis <- renderUI({fluidRow(column(12,
       "Analysis comments",
       br(), br(),
       "Is the analysis sufficiently and appropriately commented to follow the
@@ -146,7 +146,7 @@ output$SC4analysis <- renderUI({fluidRow(column(12,
       "Are there short descriptions of the content and logic of every step?"))})
 
 #----SC5 Formula clarity and robustness----
-output$SC5analysis <- renderUI({fluidRow(column(12,
+SC5analysis <- renderUI({fluidRow(column(12,
       "Formula clarity and robustness",
       br(), br(),
       "Are the formulae easy to understand and designed to be easy to maintain
@@ -161,38 +161,38 @@ output$SC5analysis <- renderUI({fluidRow(column(12,
       "Do variable names and labels clearly identify data and assumptions?"))})
 
 #----SC6 Accessibility----
-output$SC6analysis <- renderUI({fluidRow(column(12,
+SC6analysis <- renderUI({fluidRow(column(12,
       "This check is not required"))})
 
 #----SC7 Caveats and footnotes----
-output$SC7analysis <- renderUI({fluidRow(column(12,
+SC7analysis <- renderUI({fluidRow(column(12,
       "This check is not required"))})
 
 #----SC8 Output formatting----
-output$SC8analysis <- renderUI({fluidRow(column(12,
+SC8analysis <- renderUI({fluidRow(column(12,
       "This check is not required"))})
 
 #----SC9 RAP----
-output$SC9analysis <- renderUI({fluidRow(column(12,
+SC9analysis <- renderUI({fluidRow(column(12,
       "This check is not required"))})
 
 #----Verification----
 
 #----VE1 Formula and code correctness----
-output$VE1analysis <- renderUI({fluidRow(column(12,
+VE1analysis <- renderUI({fluidRow(column(12,
       "Formula and code correctness",
       br(), br(),
       "Have you checked that all the formulae and code have been implemented
       correctly? Use spreadsheet/code QA tab for detailed checks"))})
 
 #----VE2 Usability testing----
-output$VE2analysis <- renderUI({fluidRow(column(12,
+VE2analysis <- renderUI({fluidRow(column(12,
       "Usability testing",
       br(), br(),
       "Can a new user easily re-run the analysis and view outputs?"))})
 
 #----VE3 Autochecks----
-output$VE3analysis <- renderUI({fluidRow(column(12,
+VE3analysis <- renderUI({fluidRow(column(12,
       "Autochecks",
       br(), br(),
       "Are autochecks used to highlight correct functionality (e.g. some lines
@@ -200,21 +200,21 @@ output$VE3analysis <- renderUI({fluidRow(column(12,
       correctly?"))})
 
 #----VE4 Regression testing----
-output$VE4analysis <- renderUI({fluidRow(column(12,
+VE4analysis <- renderUI({fluidRow(column(12,
       "This check is not required."))})
 
 #----VE5 Use of model outputs----
-output$VE5analysis <- renderUI({fluidRow(column(12,
+VE5analysis <- renderUI({fluidRow(column(12,
       "This check is not required."))})
 
 #----VE6 Visual correctness----
-output$VE6analysis <- renderUI({fluidRow(column(12,
+VE6analysis <- renderUI({fluidRow(column(12,
       "This check is not required."))})
 
 #----Validation----
 
 #----VA1 Methodology correctness----
-output$VA1analysis <- renderUI({fluidRow(column(12,
+VA1analysis <- renderUI({fluidRow(column(12,
       "Methodology correctness",
       br(), br(),
       "Is the methodology used sensible and fit for purpose?",
@@ -228,7 +228,7 @@ output$VA1analysis <- renderUI({fluidRow(column(12,
       stakeholders?"))})
 
 #----VA2 Comparison with historical data/backcasting----
-output$VA2analysis <- renderUI({fluidRow(column(12,
+VA2analysis <- renderUI({fluidRow(column(12,
       "Comparison with historical data/backcasting",
       br(), br(),
       "Do the outputs match historical results when using historical input data,
@@ -238,7 +238,7 @@ output$VA2analysis <- renderUI({fluidRow(column(12,
       N/A."))})
 
 #----VA3 Uncertainty testing----
-output$VA3analysis <- renderUI({fluidRow(column(12,
+VA3analysis <- renderUI({fluidRow(column(12,
       "Uncertainty testing",
       br(), br(),
       "Has enough been done to understand the uncertainty inherent in the data,
@@ -254,34 +254,34 @@ output$VA3analysis <- renderUI({fluidRow(column(12,
       uncertainty mark the task as N/A"))})
 
 #----VA4 Extreme values testing/model breaking----
-output$VA4analysis <- renderUI({fluidRow(column(12,
+VA4analysis <- renderUI({fluidRow(column(12,
       "This check is not required."))})
 
 #----VA5 Re-performance testing----
-output$VA5analysis <- renderUI({fluidRow(column(12,
+VA5analysis <- renderUI({fluidRow(column(12,
       "This check is not required."))})
 
 #----Data and assumptions----
 
 #----DA1 Data----
-output$DA1analysis <- renderUI({fluidRow(column(12,
+DA1analysis <- renderUI({fluidRow(column(12,
       "Data",
       br(), br(),
       "Does your data log contain details of all data used in the analysis?"))})
 
 #----DA2 Data transformation----
-output$DA2analysis <- renderUI({fluidRow(column(12,
+DA2analysis <- renderUI({fluidRow(column(12,
       "Data transformation",
       br(), br(),
       "Has input data been checked against primary reference for potential
       errors in copying / pasting / transforming?"))})
 
 #----DA3 Assumptions----
-output$DA3analysis <- renderUI({fluidRow(column(12,
+DA3analysis <- renderUI({fluidRow(column(12,
       "Assumptions",
       br(), br(),
       "Does your assumptions log contain details of all analytical assumptions?"))})
 
 #----DA4 Decisions----
-output$DA4analysis <- renderUI({fluidRow(column(12,
+DA4analysis <- renderUI({fluidRow(column(12,
       "This check is not required."))})

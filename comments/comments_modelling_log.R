@@ -1,7 +1,7 @@
 #----Documentation and governance----
 
 #----DG1 Scope and specification----
-output$DG1modelling <- renderUI({fluidRow(column(12,
+DG1modelling <- renderUI({fluidRow(column(12,
     "Scope and specification",
     br(), br(),
     "Does a clear and comprehensive project scope and specification exist with
@@ -22,7 +22,7 @@ output$DG1modelling <- renderUI({fluidRow(column(12,
     "See QA Guidance chapter 3."))})
 
 #----DG2 User guide----
-output$DG2modelling <- renderUI({fluidRow(column(12,
+DG2modelling <- renderUI({fluidRow(column(12,
     "User guide",
     br(), br(),
     "Is the user documentation sufficiently clear to support independent use of
@@ -33,7 +33,7 @@ output$DG2modelling <- renderUI({fluidRow(column(12,
     model."))})
 
 #----DG3 Technical guide----
-output$DG3modelling <- renderUI({fluidRow(column(12,
+DG3modelling <- renderUI({fluidRow(column(12,
     "Technical guide",
     br(), br(),
     "Is the technical documentation sufficiently clear to support independent
@@ -46,7 +46,7 @@ output$DG3modelling <- renderUI({fluidRow(column(12,
     model."))})
 
 #----DG4 KIM----
-output$DG4modelling <- renderUI({fluidRow(column(12,
+DG4modelling <- renderUI({fluidRow(column(12,
     "KIM",
     br(), br(),
     "Is the model and documentation stored according to DfE and local
@@ -61,7 +61,7 @@ output$DG4modelling <- renderUI({fluidRow(column(12,
     "If BCM, has entry on register been updated?"))})
 
 #----DG5 Version Control----
-output$DG5modelling <- renderUI({fluidRow(column(12,
+DG5modelling <- renderUI({fluidRow(column(12,
     "Version Control",
     br(), br(),
     "Does an up to date and information version control log exist?",
@@ -79,7 +79,7 @@ output$DG5modelling <- renderUI({fluidRow(column(12,
     model."))})
 
 #----DG6 Responsibilities----
-output$DG6modelling <- renderUI({fluidRow(column(12,
+DG6modelling <- renderUI({fluidRow(column(12,
     "Responsibilities",
     br(), br(),
     "Have responsibilities and accountabilities laid out in the DfE guidance 
@@ -98,7 +98,7 @@ output$DG6modelling <- renderUI({fluidRow(column(12,
     "- Finance Business Partner"))})
 
 #----DG7 QA Planning and Resourcing----
-output$DG7modelling <- renderUI({fluidRow(column(12,
+DG7modelling <- renderUI({fluidRow(column(12,
     "QA Planning and Resourcing",
     br(), br(),
     "Has an appropriate QA plan been agreed with adequate consideration of
@@ -117,7 +117,7 @@ output$DG7modelling <- renderUI({fluidRow(column(12,
     sign-off?"))})
 
 #----DG8 Record of QA----
-output$DG8modelling <- renderUI({fluidRow(column(12,
+DG8modelling <- renderUI({fluidRow(column(12,
     "Record of QA",
     br(), br(),
     "Have all the checks and tests been recorded with evidence available to
@@ -131,13 +131,13 @@ output$DG8modelling <- renderUI({fluidRow(column(12,
     logs)?"))})
 
 #----DG9 Risk and issues log-----
-output$DG9modelling <- renderUI({fluidRow(column(12,
+DG9modelling <- renderUI({fluidRow(column(12,
     "This check is not required."))})
 
 #----Structure and clarity----
 
 #----SC1 Structure of model----
-output$SC1modelling <- renderUI({fluidRow(column(12,
+SC1modelling <- renderUI({fluidRow(column(12,
     "Structure of model",
     br(), br(),
     "Is the model set out in a clear way so that other analysts can follow it
@@ -173,7 +173,7 @@ output$SC1modelling <- renderUI({fluidRow(column(12,
     "Does the model adhere to relevant guidance?"))})
 
 #----SC2 Calculation structure----
-output$SC2modelling <- renderUI({fluidRow(column(12,
+SC2modelling <- renderUI({fluidRow(column(12,
     "Calculation structure",
     br(), br(),
     "Are the calculations flows in the model set out logically and easy to
@@ -204,7 +204,7 @@ output$SC2modelling <- renderUI({fluidRow(column(12,
     "- is appropriate error handling built in?",))})
 
 #----SC3 Variable names and units----
-output$SC3modelling <- renderUI({fluidRow(column(12,
+SC3modelling <- renderUI({fluidRow(column(12,
     "Variable names and units",
     br(), br(),
     "Are names, labels and units logical, appropriate and accurate?",
@@ -220,7 +220,7 @@ output$SC3modelling <- renderUI({fluidRow(column(12,
     "Is an index of names used avaliable?"))})
 
 #----SC4 Model comments----
-output$SC4modelling <- renderUI({fluidRow(column(12,
+SC4modelling <- renderUI({fluidRow(column(12,
     "Model comments",
     br(), br(),
     "Is the model sufficiently and appropriately commented to follow the 
@@ -237,7 +237,7 @@ output$SC4modelling <- renderUI({fluidRow(column(12,
     error."))})
 
 #----SC5 Formula clarity and robustness----
-output$SC5modelling <- renderUI({fluidRow(column(12,
+SC5modelling <- renderUI({fluidRow(column(12,
     "Formula clarity and robustness",
     br(), br(),
     "Are the formulae easy to understand and designed to be easy to maintain
@@ -252,24 +252,24 @@ output$SC5modelling <- renderUI({fluidRow(column(12,
     "Do variable names and labels clearly identify data and assumptions?"))})
 
 #----SC6 Accessibility----
-output$SC6modelling <- renderUI({fluidRow(column(12,
+SC6modelling <- renderUI({fluidRow(column(12,
     "This check is not required."))})
 
 #----SC7 Caveats and footnotes----
-output$SC7modelling <- renderUI({fluidRow(column(12,
+SC7modelling <- renderUI({fluidRow(column(12,
     "This check is not required."))})
 
 #----SC8 Output formatting----
-output$SC8modelling <- renderUI({fluidRow(column(12,
+SC8modelling <- renderUI({fluidRow(column(12,
     "This check is not required."))})
 
 #----SC9 RAP----
-output$SC9modelling <- renderUI({fluidRow(column(12,
+SC9modelling <- renderUI({fluidRow(column(12,
     "This check is not required."))})
 #----Verification----
 
 #----VE1 Formula and code correctness----
-output$VE1modelling <- renderUI({fluidRow(column(12,
+VE1modelling <- renderUI({fluidRow(column(12,
     "Formula and code correctness",
     br(),br(),
     "Have you checked that all the formulae and code have been implemented correctly?",
@@ -292,7 +292,7 @@ output$VE1modelling <- renderUI({fluidRow(column(12,
     "Consider use of Adam Slim tool for spreadsheets."))})
 
 #----VE2 Usability testing----
-output$VE2modelling <- renderUI({fluidRow(column(12,
+VE2modelling <- renderUI({fluidRow(column(12,
     "Usability testing",
     br(),br(),
     "Can a new user easily operate the model and view outputs?",
@@ -316,7 +316,7 @@ output$VE2modelling <- renderUI({fluidRow(column(12,
     impact of faults and challenges to normal operations?"))})
 
 #----VE3 Autochecks----
-output$VE3modelling <- renderUI({fluidRow(column(12,
+VE3modelling <- renderUI({fluidRow(column(12,
     "Autochecks",
     br(), br(),
     "Are autochecks used to highlight correct functionality (e.g. some lines of
@@ -324,7 +324,7 @@ output$VE3modelling <- renderUI({fluidRow(column(12,
     correctly?"))})
 
 #----VE4 Regression testing----
-output$VE4modelling <- renderUI({fluidRow(column(12,
+VE4modelling <- renderUI({fluidRow(column(12,
     "Regression testing",
     br(), br(),
     "Does the model make use of a reference set of input data / output data to
@@ -336,7 +336,7 @@ output$VE4modelling <- renderUI({fluidRow(column(12,
     model?"))})
 
 #----VE5 Use of model outputs----
-output$VE5modelling <- renderUI({fluidRow(column(12,
+VE5modelling <- renderUI({fluidRow(column(12,
     "Use of model outputs",
     br(), br(),
     "Are model outputs being correctly fed into dependent documents?",
@@ -346,13 +346,13 @@ output$VE5modelling <- renderUI({fluidRow(column(12,
     documents."))})
 
 #----VE6 Visual correctness----
-output$VE6modelling <- renderUI({fluidRow(column(12,
+VE6modelling <- renderUI({fluidRow(column(12,
     "This check is not required."))})
 
 #----Validation----
 
 #----VA1 Methodology correctness----
-output$VA1modelling <- renderUI({fluidRow(column(12,
+VA1modelling <- renderUI({fluidRow(column(12,
       "Methodology correctness",
       br(), br(),
       "Is the methodology used sensible and fit for purpose? (with \"purpose\"
@@ -378,7 +378,7 @@ output$VA1modelling <- renderUI({fluidRow(column(12,
       "Have appropraiate model walk-throughs been carried out?"))})
 
 #----VA2 Comparison with historical data/backcasting/alternative models----
-output$VA2modelling <- renderUI({fluidRow(column(12,
+VA2modelling <- renderUI({fluidRow(column(12,
       "Comparison with historical data/backcasting/alternative models",
       br(), br(),
       "Does the model match historical results when using historical input data, 
@@ -388,7 +388,7 @@ output$VA2modelling <- renderUI({fluidRow(column(12,
       N/A."))})
 
 #----VA3 Uncertainty testing----
-output$VA3modelling <- renderUI({fluidRow(column(12,
+VA3modelling <- renderUI({fluidRow(column(12,
       "Uncertainty testing",
       br(), br(),
       "Has enough been done to understand the uncertainty inherent in the data, 
@@ -416,7 +416,7 @@ output$VA3modelling <- renderUI({fluidRow(column(12,
       uncertainty mark the task as N/A."))})
 
 #----VA4 Extreme values testing/model breaking----
-output$VA4modelling <- renderUI({fluidRow(column(12,
+VA4modelling <- renderUI({fluidRow(column(12,
       "Extreme values testing/model breaking",
       br(), br(),
       "Does the model respond as expected to extreme values, zeroes, negative
@@ -431,7 +431,7 @@ output$VA4modelling <- renderUI({fluidRow(column(12,
       "Test direction and magnitude for outputs in response to input change."))})
 
 #----VA5 Re-performance testing----
-output$VA5modelling <- renderUI({fluidRow(column(12,
+VA5modelling <- renderUI({fluidRow(column(12,
       "Re-performance testing",
       br(), br(),
       "Can you replicate model output by independently (e.g. offline)
@@ -440,7 +440,7 @@ output$VA5modelling <- renderUI({fluidRow(column(12,
 #----Data and assumptions----
 
 #----DA1 Data----
-output$DA1modelling <- renderUI({fluidRow(column(12,
+DA1modelling <- renderUI({fluidRow(column(12,
       "Data",
       br(), br(),
       "Does your data log contain details of all model data?",
@@ -460,7 +460,7 @@ output$DA1modelling <- renderUI({fluidRow(column(12,
       "Have relevant decisions taken about the data been recorded?"))})
 
 #----DA2 Data transformation----
-output$DA2modelling <- renderUI({fluidRow(column(12,
+DA2modelling <- renderUI({fluidRow(column(12,
       "Data transformation",
       br(), br(),
       "Has input data been checked against primary reference for potential
@@ -472,7 +472,7 @@ output$DA2modelling <- renderUI({fluidRow(column(12,
       "Have sources of data been documented in the Assumptions Log?"))})
 
 #----DA3 Assumptions----
-output$DA3modelling <- renderUI({fluidRow(column(12,
+DA3modelling <- renderUI({fluidRow(column(12,
       "Assumptions",
       br(), br(),
       "Does your assumptions log contain details of all model assumptions?",
@@ -491,7 +491,7 @@ output$DA3modelling <- renderUI({fluidRow(column(12,
       "Have relevant decisions taken about the assumptions been recorded?"))})
 
 #----DA4 Decisions----
-output$DA4modelling <- renderUI({fluidRow(column(12,
+DA4modelling <- renderUI({fluidRow(column(12,
       "Decisions",
       br(), br(),
       "Does the specification and your implementation reflect the latest
