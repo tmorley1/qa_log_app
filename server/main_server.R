@@ -180,7 +180,7 @@ observeEvent(input$weighting,{
           numericInput("DAweight",label="Data and Assumptions",value=as.numeric(weightings$DA), min=0, max=1, step=0.1),
           actionButton("submitWeighting","Submit")
       ),
-     column(4,
+     column(6,
           uiOutput("weights")
       ))
     })
