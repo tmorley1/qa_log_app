@@ -26,6 +26,8 @@ observe_logtype <- function(log,session,types,nexttab){
 
 lapply(logslist,observe_logtype,session=session,types=types,nexttab=nexttab)
 
+weightings <- reactiveValues(DG = "0.2", SC = "0.2", VA = "0.2", VE = "0.2", DA = "0.2")
+
 #----Generating UI when "Create New Log" selected----
 create_actionbutton<-function(log){
   actionButton(log,label=logname(log))
@@ -96,6 +98,14 @@ observeEvent(input$submitprojectID, {
     
     updateTextInput(session, inputId = "QAlogtype", value = logname(paste(selectrow[1,7])))
     
+    weightings_sql <- strsplit(selectrow$weighting,split=" ")
+    
+    weightings$DG <- paste(weightings_sql[[1]][1])
+    weightings$SC <- paste(weightings_sql[[1]][2])
+    weightings$VE <- paste(weightings_sql[[1]][3])
+    weightings$VA <- paste(weightings_sql[[1]][4])
+    weightings$DA <- paste(weightings_sql[[1]][5])
+    
     #selecting QA check scores from SQL
     qachecks <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", chosennumber, sep="")
     #now run the query to get our output.
@@ -116,7 +126,7 @@ observeEvent(input$updatelog, {
 output$updatePanel <- renderUI({
   if(types$log=="update" || types$log %in% logslist){
     fluidRow(br(),
-             column(12, textInput("projectID", "Project ID", value="Enter here"), align="center"),
+             column(12, textInput("projectID", "Project ID", value=""), align="center"),
              br(),
              column(12, actionButton("submitprojectID", "Submit"), align="center"),
              #Error message if project ID does not exist

@@ -50,6 +50,9 @@ paste_other_input <- function(checkname){
 otherinput <- reactive({sapply(logspecificchecks(),paste_other_input)})
 otherinputdf <- reactive({data.frame(otherinput())})
 
+#Reading in weightings as one entry
+weightings_save <- reactive({paste(weightings$DG,weightings$SC,weightings$VE,weightings$VA,weightings$DA)})
+
 observeEvent(input$saveSQL, {
   chosennumber <- input$projectID
   
@@ -66,7 +69,8 @@ observeEvent(input$saveSQL, {
                 paste(input$leadanalyst),
                 paste(input$analyticalassurer),
                 paste(input$BCM),
-                paste(types$log))
+                paste(types$log),
+                paste(weightings_save()))
     
     newRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_log VALUES ();")
     
@@ -84,6 +88,7 @@ observeEvent(input$saveSQL, {
                           "', leadanalyst = '", input$leadanalyst,
                           "', AnalyticalAssurer = '", input$analyticalassurer,
                           "', BusinessCritical = '", input$BCM,
+                          "', weighting = '", weightings_save(),
                           "' WHERE projectID = ", input$projectID, ";", sep="")
     
     rowEditSet <- sqlQuery(myConn,rowEditQuery)
@@ -164,22 +169,23 @@ output$DAscores <- renderValueBox({valueBox(paste(scoresfunc(justDAchecks())," %
 output$DAscorescolours <- renderUI(scorecolour("DAscores",scorecolours(scoresfunc(justDAchecks()))))
 
 #---- Pillar weighting----
-observeEvent(input$weighting,
+observeEvent(input$weighting,{
   showModal(modalDialog(
     renderUI({
       fluidRow(column(2,
-          numericInput("DGweight",label="Documentation and Governance",value="0.2", min=0, max=1, step=0.1),
-          numericInput("SCweight",label="Structure and Clarity",value="0.2", min=0, max=1, step=0.1),
-          numericInput("VEweight",label="Verification",value="0.2", min=0, max=1, step=0.1),
-          numericInput("VAweight",label="Validation",value="0.2", min=0, max=1, step=0.1),
-          numericInput("DAweight",label="Data and Assumptions",value="0.2", min=0, max=1, step=0.1),
+          numericInput("DGweight",label="Documentation and Governance",value=as.numeric(weightings$DG), min=0, max=1, step=0.1),
+          numericInput("SCweight",label="Structure and Clarity",value=as.numeric(weightings$SC), min=0, max=1, step=0.1),
+          numericInput("VEweight",label="Verification",value=as.numeric(weightings$VE), min=0, max=1, step=0.1),
+          numericInput("VAweight",label="Validation",value=as.numeric(weightings$VA), min=0, max=1, step=0.1),
+          numericInput("DAweight",label="Data and Assumptions",value=as.numeric(weightings$DA), min=0, max=1, step=0.1),
+          actionButton("submitWeighting","Submit")
       ),
      column(4,
           uiOutput("weights")
       ))
     })
   ))
-)
+})
 
 weighttotal <- reactive({as.numeric(input$DGweight) + as.numeric(input$SCweight) + as.numeric(input$VEweight)  + as.numeric(input$VAweight) + as.numeric(input$DAweight)
 })
@@ -188,8 +194,16 @@ weightingerror <- reactive({if (length(weighttotal())==0){""}
   else if(weighttotal()== 1){""}
    else {"Pillar weighting must add up to 1"}})
 
-
 output$weights <- renderValueBox({valueBox(paste(weightingerror()),subtitle="")})
+
+observeEvent(input$submitWeighting,{
+             weightings$DG <- input$DGweight
+             weightings$SC <- input$SCweight
+             weightings$VE <- input$VEweight
+             weightings$VA <- input$VAweight
+             weightings$DA <- input$DAweight
+             removeModal()}
+             )
 
 #---- Displaying more info on checks -----
 #The following code provides the extra info when you click on the checks.
@@ -283,8 +297,10 @@ selectlogrow <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[QA_log]
 logrow <- reactive({sqlQuery(myConn, selectlogrow())})
 #if projectID doesn't exist in SQL, create dummy row of data
 logrowfinal <- reactive({if(nrow(logrow())==0){
-  t(c(input$projectID,"NA","NA","NA","NA","NA","NA")) #BATMAN!
-} else{logrow()}})
+  data.frame(column1=c("NA","NA","NA","NA","NA","NA","NA"),
+               column2=c("NA","NA","NA","NA","NA","NA","NA"))
+} else{data.frame(column1=c("NA",logrow()[1,2],"NA","NA","NA","NA","NA"),
+                  column2=t(logrow()[- 1]))}})
 
 #select correct rows from QA_checks SQL
 selectchecks <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", currentid(), sep="")})
@@ -303,14 +319,15 @@ individualChecks <- function(checkIDtext,checks){
 #build a dataframe with all current SQL data
 sqlinfo <- reactive({sapply(logspecificchecks(),individualChecks,checks=checks())})
 sqlinfodf <- reactive({data.frame(sqlinfo())})
-allsqlinfodf <- reactive({cbind(t(logrowfinal()),sqlinfodf())[-1,]})
+allsqlinfodf <- reactive({cbind(logrowfinal(),sqlinfodf())[-1,]})
 
 output$writingtest<-renderDataTable(allsqlinfodf())
 
 #now create the same data frame, with info taken from the app
-appinfo <- reactive({c(input$projectname, input$version,
+appinfo <- reactive({data.frame(column1=c(input$projectname,"NA","NA","NA","NA","NA"),
+                                column2=c(input$version,
                        input$leadanalyst, input$analyticalassurer, input$BCM,
-                       types$log)})
+                       types$log, weightings_save()))})
 appinfodf <- reactive({data.frame(cbind(appinfo(),otherinput()))})
 
 output$writingtest2<-renderDataTable(appinfodf())
@@ -332,8 +349,11 @@ observeEvent(input$saveSQL, {
   currentid <- reactive({input$projectID})
   #select correct row from QA_log SQL
   selectlogrow <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[QA_log] WHERE ProjectID = ", currentid(), sep="")})
-  #now run the query to get our output.
-  logrowfinal <- reactive({sqlQuery(myConn, selectlogrow())})
+  #now run the query to get our output
+  logrow <- reactive({sqlQuery(myConn, selectlogrow())})
+  #No need for if statement because Project ID will now definitely exist
+  logrowfinal <- reactive({data.frame(column1=c("NA",logrow()[1,2],"NA","NA","NA","NA","NA"),
+                    column2=t(logrow()[- 1]))})
   #select correct rows from QA_checks SQL
   selectchecks <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", currentid(), sep="")})
   #now run the query to get our output.
@@ -341,7 +361,7 @@ observeEvent(input$saveSQL, {
   #build a dataframe with all current SQL data
   sqlinfo <- reactive({sapply(logspecificchecks(),individualChecks,checks=checks())})
   sqlinfodf <- reactive({data.frame(sqlinfo())})
-  allsqlinfodf <- reactive({cbind(t(logrowfinal()),sqlinfodf())[-1,]})
+  allsqlinfodf <- reactive({cbind(logrowfinal(),sqlinfodf())[-1,]})
   
   output$writingtest<-renderDataTable(allsqlinfodf())
   
