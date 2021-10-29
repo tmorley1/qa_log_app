@@ -49,7 +49,7 @@ SC5tooltipanalysis <- "1) Formulae are, as far as possible, easily understandabl
 SC6tooltipanalysis <- "Not required."
 
 #----SC7----
-C7tooltipanalysis <- "Not required."
+SC7tooltipanalysis <- "Not required."
 
 #----SC8----
 SC8tooltipanalysis <- "Not required."

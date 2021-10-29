@@ -56,7 +56,8 @@ fluidRow(column(2, textInput("projectname", "Project name", value="")),
          column(2, textInput("analyticalassurer", "Analytical Assurer", value="")),
          column(2, selectizeInput("BCM", choices=c("Yes", "No"), selected="No", label="Business Critical"))),
 #Edit pillar weighting, display overall score, display error messages
-fluidRow(column(2, actionButton("weighting","Edit pillar weighting"))),
+fluidRow(column(2, uiOutput("totalscorescolours")),
+         column(2, br(), br(), actionButton("weighting","Edit pillar weighting"))),
 #Scores
 fluidRow(column(2,uiOutput("DGscorescolours")),
          column(2,uiOutput("SCscorescolours")),

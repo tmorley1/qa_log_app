@@ -204,6 +204,13 @@ observeEvent(input$submitWeighting,{
              weightings$DA <- input$DAweight
              removeModal()}
              )
+#---- Calculating total log score----
+#Calculate total percentage, taking weightings into account
+totalscore <- reactive({(as.numeric(scoresfunc(justDGchecks()))*as.numeric(weightings$DG))+(as.numeric(scoresfunc(justSCchecks()))*as.numeric(weightings$SC))+(as.numeric(scoresfunc(justVEchecks()))*as.numeric(weightings$VE))+(as.numeric(scoresfunc(justVAchecks()))*as.numeric(weightings$VA))+(as.numeric(scoresfunc(justDAchecks()))*as.numeric(weightings$DA))})
+#Display total score in value Box
+output$totalscores <- renderValueBox({valueBox(paste(totalscore()," %"),subtitle="Overall QA score")})
+#Colour value box depending on score
+output$totalscorescolours <- renderUI(scorecolour("totalscores",scorecolours(totalscore())))
 
 #---- Displaying more info on checks -----
 #The following code provides the extra info when you click on the checks.

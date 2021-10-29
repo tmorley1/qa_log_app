@@ -75,5 +75,32 @@ statistics_names <- c("Scope and Specification", "User guide", "Technical guide"
                      "Extreme values testing", "Re-performance testing",
                      "Data", "Data transformation", "Assumptions", 0)
 
+#Are checks mandatory? If check is mandatory = "M", if not mandatory = ""
+modelling_mandatory <- c(1,0,0,0,1,1,0,1,0, #DG checks
+                         1,0,0,0,0,0,0,0,0, #SC checks
+                         1,0,0,0,0,0, #VE checks
+                         1,0,0,0,0, #VA checks
+                         1,0,0,0) #DA checks
+
+analysis_mandatory <-  c(1,0,0,0,1,1,0,1,0, #DG checks
+                         1,0,0,0,0,0,0,0,0, #SC checks
+                         1,0,0,0,0,0, #VE checks
+                         0,0,0,0,0, #VA checks
+                         1,0,0,0) #DA checks
+
+dashboard_mandatory <- c(1,1,1,1,1,1,1,1,0, #DG checks
+                         1,1,0,0,0,1,0,0,0, #SC checks
+                         0,1,0,0,0,1, #VE checks
+                         1,0,0,0,0, #VA checks
+                         1,0,0,0) #DA checks
+
+statistics_mandatory <-c(0,0,0,0,0,0,0,0,0, #DG checks
+                         0,0,0,0,0,0,0,0,0, #SC checks
+                         0,0,0,0,0,0, #VE checks
+                         0,0,0,0,0, #VA checks
+                         0,0,0,0) #DA checks
+
 names_df <- (data.frame(QAcheckslist, modelling_names, analysis_names, dashboard_names, 
-                       statistics_names))%>%mutate(blank_names=0,new_names=0,update_names=0)
+                        statistics_names, modelling_mandatory, analysis_mandatory,
+                        dashboard_mandatory, statistics_mandatory))%>%mutate(blank_names=0,
+                        new_names=0,update_names=0, blank_mandatory=0, new_mandatory=0,update_mandatory=0)
