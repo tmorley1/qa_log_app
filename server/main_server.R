@@ -163,6 +163,34 @@ output$DAscores <- renderValueBox({valueBox(paste(scoresfunc(justDAchecks())," %
 
 output$DAscorescolours <- renderUI(scorecolour("DAscores",scorecolours(scoresfunc(justDAchecks()))))
 
+#---- Pillar weighting----
+observeEvent(input$weighting,
+  showModal(modalDialog(
+    renderUI({
+      fluidRow(column(2,
+          numericInput("DGweight",label="Documentation and Governance",value="0.2", min=0, max=1, step=0.1),
+          numericInput("SCweight",label="Structure and Clarity",value="0.2", min=0, max=1, step=0.1),
+          numericInput("VEweight",label="Verification",value="0.2", min=0, max=1, step=0.1),
+          numericInput("VAweight",label="Validation",value="0.2", min=0, max=1, step=0.1),
+          numericInput("DAweight",label="Data and Assumptions",value="0.2", min=0, max=1, step=0.1),
+      ),
+     column(4,
+          uiOutput("weights")
+      ))
+    })
+  ))
+)
+
+weighttotal <- reactive({as.numeric(input$DGweight) + as.numeric(input$SCweight) + as.numeric(input$VEweight)  + as.numeric(input$VAweight) + as.numeric(input$DAweight)
+})
+
+weightingerror <- reactive({if (length(weighttotal())==0){""}
+  else if(weighttotal()== 1){""}
+   else {"Pillar weighting must add up to 1"}})
+
+
+output$weights <- renderValueBox({valueBox(paste(weightingerror()),subtitle="")})
+
 #---- Displaying more info on checks -----
 #The following code provides the extra info when you click on the checks.
 #Info is different for each type of log

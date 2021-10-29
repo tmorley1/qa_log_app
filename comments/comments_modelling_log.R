@@ -491,7 +491,7 @@ DA3modelling <- renderUI({fluidRow(column(12,
       "Have relevant decisions taken about the assumptions been recorded?"))})
 
 #----DA4 Decisions----
-DA4modelling <- renderUI({fluidRow(column(12,
+ DA4modelling <- renderUI({fluidRow(column(12,
       "Decisions",
       br(), br(),
       "Does the specification and your implementation reflect the latest
