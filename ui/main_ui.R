@@ -35,7 +35,7 @@ tabPanel(title = "QA Log", value = "panel2", #button in navigation panel
 #----UI----         
          h1(strong("QA Log"), align="center"),
 #----Displaying project name, version, lead analyst, analytical assurer, BCM----
-fluidRow(column(2, uiOutput("projectIDtext")),
+fixedRow(column(2, uiOutput("projectIDtext")),
          column(2, uiOutput("QAlogtypetext")),
          column(4, uiOutput("savedialogue"), align="right"),
          #making save warning appear in red!
@@ -50,28 +50,28 @@ fluidRow(column(2, uiOutput("projectIDtext")),
 #         column(4, dataTableOutput("writingtest")),
 #         column(4, dataTableOutput("writingtest2")),
          column(2, actionButton("backtohome","Back"), align="right")),
-fluidRow(column(2, textInput("projectname", "Project name", value="")),
+fixedRow(column(2, textInput("projectname", "Project name", value="")),
          column(2, textInput("version", "Version", value="")),
          column(2, textInput("leadanalyst", "Lead Analyst", value="")),
          column(2, textInput("analyticalassurer", "Analytical Assurer", value="")),
          column(2, selectizeInput("BCM", choices=c("Yes", "No"), selected="No", label="Business Critical"))),
 #Edit pillar weighting, display overall score, display error messages
-fluidRow(column(2, uiOutput("totalscorescolours")),
+fixedRow(column(2, uiOutput("totalscorescolours")),
          column(2, br(), br(), actionButton("weighting","Edit pillar weighting"))),
 #Scores
-fluidRow(column(2,uiOutput("DGscorescolours")),
+fixedRow(column(2,uiOutput("DGscorescolours")),
          column(2,uiOutput("SCscorescolours")),
          column(2,uiOutput("VEscorescolours")),
          column(2,uiOutput("VAscorescolours")),
          column(2,uiOutput("DAscorescolours"))),
 
 #----DG checks----
-         fluidRow(
+         fixedRow(
            column(12,
                   h2("Documentation and Governance")
            )
          ),
-         fluidRow(
+         fixedRow(
            column(2, h5("QA area")),
            column(2, h5("Rating")),
            column(2, h5("Assessed by")),
@@ -81,12 +81,12 @@ fluidRow(column(2,uiOutput("DGscorescolours")),
          ),
         uiOutput("DGuichecks"),
 #----SC checks-----
-        fluidRow(
+        fixedRow(
           column(12,
                  h2("Structure and Clarity")
           )
         ),
-        fluidRow(
+        fixedRow(
           column(2, h5("QA area")),
           column(2, h5("Rating")),
           column(2, h5("Assessed by")),
@@ -96,12 +96,12 @@ fluidRow(column(2,uiOutput("DGscorescolours")),
         ),
         uiOutput("SCuichecks"),
 #----VE Checks----
-        fluidRow(
+        fixedRow(
           column(12,
                  h2("Verification")
           )
         ),
-        fluidRow(
+        fixedRow(
           column(2, h5("QA area")),
           column(2, h5("Rating")),
           column(2, h5("Assessed by")),
@@ -112,12 +112,12 @@ fluidRow(column(2,uiOutput("DGscorescolours")),
         uiOutput("VEuichecks"),
 
 #----VA checks-----
-        fluidRow(
+        fixedRow(
           column(12,
                  h2("Validation")
           )
         ),
-        fluidRow(
+        fixedRow(
           column(2, h5("QA area")),
           column(2, h5("Rating")),
           column(2, h5("Assessed by")),
@@ -129,12 +129,12 @@ fluidRow(column(2,uiOutput("DGscorescolours")),
 
 #----DA checks----
 
-        fluidRow(
+        fixedRow(
           column(12,
                  h2("Data and assumptions")
           )
         ),
-        fluidRow(
+        fixedRow(
           column(2, h5("QA area")),
           column(2, h5("Rating")),
           column(2, h5("Assessed by")),
@@ -149,7 +149,7 @@ uiOutput("tooltips"),
 tags$style(HTML(".tooltip {width: 1000px;}")),
 HTML("<br><br><br>"),
 #----Generate HTML and saving to SQL----
-         fluidRow(
+         fixedRow(
            column(2, downloadButton("report", "Generate QA Log")),
            column(2, actionButton("saveSQL", "Save"))
          )

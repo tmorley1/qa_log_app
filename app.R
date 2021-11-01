@@ -29,7 +29,7 @@ source(paste(pathway, "\\edit_lists.R", sep=""))
 source(paste(pathway, "\\server\\functions_for_ui.R", sep=""))
 
 #---App--------------------------------------------------------
-ui <- fluidPage( #Removing navigation bar between tabs
+ui <- fixedPage( #Removing navigation bar between tabs
                  useShinyjs(),
                  tags$style(type='text/css', "nav.navbar.navbar-default.navbar-static-top{border-color: #f5f5f5;background-color: #f5f5f5;}"),
                  tags$style(type='text/css', ".navbar{min-height: 0px; margin-bottom: 0px;}"),

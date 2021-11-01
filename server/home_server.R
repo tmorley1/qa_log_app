@@ -5,7 +5,7 @@ nexttab <- reactiveValues(log= "blank")
 
 output$startPanel <- renderUI({
   if (types$log == "blank"){
-    fluidRow(column(12,"Welcome to the Department for Education QA log.
+    fixedRow(column(12,"Welcome to the Department for Education QA log.
          Would you like to create a new QA log, or update an existing one?",
          align="center"),
          br(),
@@ -35,7 +35,7 @@ create_actionbutton<-function(log){
 
 output$newPanel <- renderUI({
   if (types$log=="new"){
-    fluidRow(br(),
+    fixedRow(br(),
              column(12,"What type of QA log would you like to create?",align="center"),
              br(),
              column(12,lapply(logslist,create_actionbutton), align="center"),
@@ -59,7 +59,7 @@ observeEvent(input$back, {
 #Pressing unsure offers more information about each log
 output$unsurePanel <- renderUI({
   if (unsure$log == "unsure"){
-    fluidRow(br(),
+    fixedRow(br(),
              column(12,"Here is some information on the different logs to help you decide.", align="center"))
   }
 })
@@ -125,7 +125,7 @@ observeEvent(input$updatelog, {
 
 output$updatePanel <- renderUI({
   if(types$log=="update" || types$log %in% logslist){
-    fluidRow(br(),
+    fixedRow(br(),
              column(12, textInput("projectID", "Project ID", value=""), align="center"),
              br(),
              column(12, actionButton("submitprojectID", "Submit"), align="center"),
@@ -150,6 +150,6 @@ observeEvent(input$backupdate, {
 #So this panel is only visible once we have moved to next tab
 output$logtypepanel <- renderUI({
   if(nexttab$log=="next"){
-    fluidRow(column(12, textInput("QAlogtype", "QA Log Type", value=""), align="center"))
+    fixedRow(column(12, textInput("QAlogtype", "QA Log Type", value=""), align="center"))
   }
 })

@@ -172,7 +172,7 @@ output$DAscorescolours <- renderUI(scorecolour("DAscores",scorecolours(scoresfun
 observeEvent(input$weighting,{
   showModal(modalDialog(
     renderUI({
-      fluidRow(column(2,
+      fixedRow(column(2,
           numericInput("DGweight",label="Documentation and Governance",value=as.numeric(weightings$DG), min=0, max=1, step=0.1),
           numericInput("SCweight",label="Structure and Clarity",value=as.numeric(weightings$SC), min=0, max=1, step=0.1),
           numericInput("VEweight",label="Verification",value=as.numeric(weightings$VE), min=0, max=1, step=0.1),
