@@ -2,6 +2,8 @@
 
 #----DG1 Scope and specification----
 DG1dataanalysis <- renderUI({fixedRow(column(12,
+      span("Mandatory check", style="color:red"),
+      br(),
       "Scope and specification",
       br(), br(),
       "Does a clear and comprehensive project scope and specification exist with 
@@ -41,6 +43,8 @@ DG4dataanalysis <- renderUI({fixedRow(column(12,
 
 #----DG5 Version Control----
 DG5dataanalysis <- renderUI({fixedRow(column(12,
+      span("Mandatory check", style="color:red"),
+      br(),
       "Version Control",
       br(), br(),
       "Does an up to date and informative version control log exist?",
@@ -50,6 +54,8 @@ DG5dataanalysis <- renderUI({fixedRow(column(12,
 
 #----DG6 Responsibilities----
 DG6dataanalysis <- renderUI({fixedRow(column(12,
+      span("Mandatory check", style="color:red"),
+      br(),
       "Responsibilities",
       br(), br(),
       "Have responsibilities and accountabilities laid out in the DfE guidance
@@ -81,6 +87,8 @@ DG7dataanalysis <- renderUI({fixedRow(column(12,
 
 #----DG8 Record of QA----
 DG8dataanalysis <- renderUI({fixedRow(column(12,
+      span("Mandatory check", style="color:red"),
+      br(),
       "Record of QA",
       br(), br(),
       "Have all the checks and tests been recorded with evidence available to 
@@ -97,6 +105,8 @@ DG9dataanalysis <- renderUI({fixedRow(column(12,
 
 #----SC1 Structure of model----
 SC1analysis <- renderUI({fixedRow(column(12,
+      span("Mandatory check", style="color:red"),
+      br(),
       "Structure of analysis",
       br(), br(),
       "Is the analysis set out in a clear way so that other analysts can follow 
@@ -180,6 +190,8 @@ SC9analysis <- renderUI({fixedRow(column(12,
 
 #----VE1 Formula and code correctness----
 VE1analysis <- renderUI({fixedRow(column(12,
+      span("Mandatory check", style="color:red"),
+      br(),
       "Formula and code correctness",
       br(), br(),
       "Have you checked that all the formulae and code have been implemented
@@ -265,6 +277,8 @@ VA5analysis <- renderUI({fixedRow(column(12,
 
 #----DA1 Data----
 DA1analysis <- renderUI({fixedRow(column(12,
+      span("Mandatory check", style="color:red"),
+      br(),
       "Data",
       br(), br(),
       "Does your data log contain details of all data used in the analysis?"))})

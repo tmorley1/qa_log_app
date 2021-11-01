@@ -2,6 +2,8 @@
 
 #----DG1 Scope and specification----
 DG1dashboard <- renderUI({fixedRow(column(12,
+    span("Mandatory check", style="color:red"),
+    br(),
     "Scope and specification",
     br(), br(),
     "Does a clear and comprehensive project scope and specification (including
@@ -20,6 +22,8 @@ DG1dashboard <- renderUI({fixedRow(column(12,
 
 #----DG2 User guide----
 DG2dashboard <- renderUI({fixedRow(column(12,
+    span("Mandatory check", style="color:red"),
+    br(),
     "User guide",
     br(), br(),
     "Is the user documentation sufficiently clear to support independent use of
@@ -41,6 +45,8 @@ DG3dashboard <- renderUI({fixedRow(column(12,
 
 #----DG4 KIM----
 DG4dashboard <- renderUI({fixedRow(column(12,
+    span("Mandatory check", style="color:red"),
+    br(),
     "KIM",
     br(), br(),
     "Has the dashboard been stored and/or published in the right area and do
@@ -59,6 +65,8 @@ DG4dashboard <- renderUI({fixedRow(column(12,
 
 #----DG5 Version Control----
 DG5dashboard <- renderUI({fixedRow(column(12,
+    span("Mandatory check", style="color:red"),
+    br(),
     "Version Control",
     br(), br(),
     "Does an up to date and informative version control log exist?",
@@ -77,6 +85,8 @@ DG5dashboard <- renderUI({fixedRow(column(12,
 
 #----DG6 Responsibilities----
 DG6dashboard <- renderUI({fixedRow(column(12,
+    span("Mandatory check", style="color:red"),
+    br(),
     "Responsibilities",
     br(), br(),
     "Have responsibilities and accountabilities laid out in the DfE guidance
@@ -99,6 +109,8 @@ DG6dashboard <- renderUI({fixedRow(column(12,
 
 #----DG7 QA Planning and Resourcing----
 DG7dashboard <- renderUI({fixedRow(column(12,
+    span("Mandatory check", style="color:red"),
+    br(),
     "QA Planning and Resourcing",
     br(), br(),
     "Has an appropriate QA plan been agreed with adequate consideration of
@@ -118,6 +130,8 @@ DG7dashboard <- renderUI({fixedRow(column(12,
 
 #----DG8 Record of QA----
 DG8dashboard <- renderUI({fixedRow(column(12,
+    span("Mandatory check", style="color:red"),
+    br(),
     "Record of QA",
     br(), br(),
     "Have all the checks and tests been recorded with evidence available to
@@ -134,6 +148,8 @@ DG9dashboard <- renderUI({fixedRow(column(12,
 
 #----SC1 Structure of data model----
 SC1dashboard <- renderUI({fixedRow(column(12,
+    span("Mandatory check", style="color:red"),
+    br(),
     "Structure of data model",
     br(), br(),
     "Is the data model underpinning the dashboard set out in a clear way so 
@@ -162,6 +178,8 @@ SC1dashboard <- renderUI({fixedRow(column(12,
 
 #----SC2 Dashboard structure----
 SC2dashboard <- renderUI({fixedRow(column(12,
+    span("Mandatory check", style="color:red"),
+    br(),
     "Dashboard structure",
     br(), br(),
     "Is the dashboard structured in a clear to understand manner? Are the number
@@ -238,6 +256,8 @@ SC5dashboard <- renderUI({fixedRow(column(12,
 
 #----SC6 Accessibility----
 SC6dashboard <- renderUI({fixedRow(column(12,
+     span("Mandatory check", style="color:red"),
+     br(),
      "Accessibility",
      br(), br(),
      "Does the dashboard follow the department's accessibility guidelines?",
@@ -304,6 +324,8 @@ VE1dashboard <- renderUI({fixedRow(column(12,
 
 #----VE2 Usability testing----
 VE2dashboard <- renderUI({fixedRow(column(12,
+      span("Mandatory check", style="color:red"),
+      br(),
       "Usability testing",
       br(), br(),
       "Can new users easily use the dashboard as intended?",
@@ -338,6 +360,8 @@ VE5dashboard <- renderUI({fixedRow(column(12,
 
 #----VE6 Visual correctness----
 VE6dashboard <- renderUI({fixedRow(column(12,
+      span("Mandatory check", style="color:red"),
+      br(),                                    
       "Visual correctness",
       br(),br(),
       "Have you checked that all the visuals are linked to the right fields?
@@ -351,6 +375,8 @@ VE6dashboard <- renderUI({fixedRow(column(12,
 
 #----VA1 Methodology correctness----
 VA1dashboard <- renderUI({fixedRow(column(12,
+      span("Mandatory check", style="color:red"),
+      br(),
       "Methodology correctness",
       br(), br(),
       "Are the visuals selected the correct visual and fit for purpose?",
@@ -430,6 +456,8 @@ VA5dashboard <- renderUI({fixedRow(column(12,
 
 #----DA1 Data----
 DA1dashboard <- renderUI({fixedRow(column(12,
+      span("Mandatory check", style="color:red"),
+      br(),
       "Data",
       br(), br(),
       "Does your assumptions log contain details of all data used in the

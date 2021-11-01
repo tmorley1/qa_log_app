@@ -2,6 +2,8 @@
 
 #----DG1 Scope and specification----
 DG1modelling <- renderUI({fixedRow(column(12,
+    span("Mandatory check", style="color:red"),
+    br(),
     "Scope and specification",
     br(), br(),
     "Does a clear and comprehensive project scope and specification exist with
@@ -62,6 +64,8 @@ DG4modelling <- renderUI({fixedRow(column(12,
 
 #----DG5 Version Control----
 DG5modelling <- renderUI({fixedRow(column(12,
+    span("Mandatory check", style="color:red"),
+    br(),
     "Version Control",
     br(), br(),
     "Does an up to date and information version control log exist?",
@@ -80,6 +84,8 @@ DG5modelling <- renderUI({fixedRow(column(12,
 
 #----DG6 Responsibilities----
 DG6modelling <- renderUI({fixedRow(column(12,
+    span("Mandatory check", style="color:red"),
+    br(),
     "Responsibilities",
     br(), br(),
     "Have responsibilities and accountabilities laid out in the DfE guidance 
@@ -118,6 +124,8 @@ DG7modelling <- renderUI({fixedRow(column(12,
 
 #----DG8 Record of QA----
 DG8modelling <- renderUI({fixedRow(column(12,
+    span("Mandatory check", style="color:red"),
+    br(),
     "Record of QA",
     br(), br(),
     "Have all the checks and tests been recorded with evidence available to
@@ -138,6 +146,8 @@ DG9modelling <- renderUI({fixedRow(column(12,
 
 #----SC1 Structure of model----
 SC1modelling <- renderUI({fixedRow(column(12,
+    span("Mandatory check", style="color:red"),
+    br(),
     "Structure of model",
     br(), br(),
     "Is the model set out in a clear way so that other analysts can follow it
@@ -270,6 +280,8 @@ SC9modelling <- renderUI({fixedRow(column(12,
 
 #----VE1 Formula and code correctness----
 VE1modelling <- renderUI({fixedRow(column(12,
+    span("Mandatory check", style="color:red"),
+    br(),
     "Formula and code correctness",
     br(),br(),
     "Have you checked that all the formulae and code have been implemented correctly?",
@@ -353,6 +365,8 @@ VE6modelling <- renderUI({fixedRow(column(12,
 
 #----VA1 Methodology correctness----
 VA1modelling <- renderUI({fixedRow(column(12,
+      span("Mandatory check", style="color:red"),
+      br(),
       "Methodology correctness",
       br(), br(),
       "Is the methodology used sensible and fit for purpose? (with \"purpose\"
@@ -441,6 +455,8 @@ VA5modelling <- renderUI({fixedRow(column(12,
 
 #----DA1 Data----
 DA1modelling <- renderUI({fixedRow(column(12,
+      span("Mandatory check", style="color:red"),
+      br(),
       "Data",
       br(), br(),
       "Does your data log contain details of all model data?",
