@@ -21,7 +21,7 @@ UI_check <- function(checkID,types,names_df){
   mandatory <- (check_row%>%select(paste0(types$log,"_mandatory")))[1,1]
   style_mandatory <- if(mandatory == 1){"color: #fff; background-color: #ce2029; border-color: #a9203e"} else {""}
   uicheck <- fixedRow(
-      column(2, actionButton(paste(checkID,"infoman",sep=""), checkname, style=style_mandatory)),
+      column(2, actionButton(paste(checkID,"info",sep=""), checkname, style=style_mandatory)),
       column(2, rating_options(paste("score",checkID,sep=""))),
       column(2, textInput(paste("assess",checkID,sep=""),label=NULL, value="")),
       column(2, textInput(paste("summary",checkID,sep=""), label=NULL, value="")),
