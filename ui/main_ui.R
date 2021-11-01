@@ -57,7 +57,8 @@ fixedRow(column(2, textInput("projectname", "Project name", value="")),
          column(2, selectizeInput("BCM", choices=c("Yes", "No"), selected="No", label="Business Critical"))),
 #Edit pillar weighting, display overall score, display error messages
 fixedRow(column(2, uiOutput("totalscorescolours")),
-         column(2, br(), br(), actionButton("weighting","Edit pillar weighting"))),
+         column(2, br(), br(), actionButton("weighting","Edit pillar weighting")),
+         column(2, uiOutput("mandatory_dialogue"))),
 #Scores
 fixedRow(column(2,uiOutput("DGscorescolours")),
          column(2,uiOutput("SCscorescolours")),

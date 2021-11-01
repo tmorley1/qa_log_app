@@ -241,6 +241,30 @@ tooltip_ui_render <- function(checkid,types){
 #This applies the above function to every QA check
 output$tooltips <- renderUI(lapply(QAcheckslist,tooltip_ui_render,types=types))
 
+#---- Error messages----
+#Display error message if mandatory checks haven't been completed
+
+check_mandatory <- function(checkID,types,names_df){
+  score<-calculate_score(checkID)
+  check_row <- names_df%>%filter(QAcheckslist==checkID)
+  mandatory <- (check_row%>%select(paste0(types$log,"_mandatory")))[1,1]
+  to_return <- if(mandatory==1 && score==0){1}
+               else {0}
+  return(to_return)
+}
+
+listofmandatory <- reactive({sapply(logspecificchecks(),check_mandatory,types=types,names_df=names_df)})
+
+numberchecks <- reactive({sum(listofmandatory())})
+
+mandatory_error <- reactive({
+  #if both lists are the same, no error message
+  if (numberchecks()==0){""}
+  #otherwise, print error message
+  else {paste0("There are ",numberchecks()," mandatory checks to be completed.")}})
+
+output$mandatory_dialogue <- renderText(paste(mandatory_error()))
+
 #---- Back to home-----
 observeEvent(input$backtohome,{
   if(savetext()=="You have unsaved changes!"){
@@ -250,6 +274,8 @@ observeEvent(input$backtohome,{
     actionButton("definitelygoback","I'm sure")))
   }
   else {
+    #switch tabs
+    updateTabsetPanel(session, "inTabset", selected="panel1")
     #reset all checks
     #resetting data at top of log
     updateTextInput(session, inputId = "projectname", value = "")
@@ -265,13 +291,14 @@ observeEvent(input$backtohome,{
     types$log <- "blank"
     unsure$log <- "blank"
     nexttab$log <- "blank"
-    
-    #switch tabs
-    updateTabsetPanel(session, "inTabset", selected="panel1")
   }
 })
 
 observeEvent(input$definitelygoback,{
+  #switch tabs
+  updateTabsetPanel(session, "inTabset", selected="panel1")
+  removeModal()
+  
   #reset all checks
   #resetting data at top of log
   updateTextInput(session, inputId = "projectname", value = "")
@@ -288,9 +315,6 @@ observeEvent(input$definitelygoback,{
   unsure$log <- "blank"
   nexttab$log <- "blank"
   
-  #switch tabs
-  updateTabsetPanel(session, "inTabset", selected="panel1")
-  removeModal()
 })
 #---- Checking for save----
 #To check whether new changes have been saved or not, we generate a dataframe
