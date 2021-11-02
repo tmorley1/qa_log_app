@@ -104,26 +104,39 @@ savingscore <- function(scoreID, dataframe,qacheckSave,projectID,databasename,my
   evidence <- correct_column[4,1]
   obs <- correct_column[5,1]
   out <- correct_column[6,1]
-  #We don't want to create empty rows where checks haven't been filled in
-  if(checkscore=='7' && assessor=="" && evidence=="" && obs=="" && out==""){
-  #do nothing  
+  #Write correct column as row that matches SQL output
+  correct_row <- c(projectID,scoreID,checkscore,assessor,evidence,obs,out)
+  
+  #selects specific row with matching projectID and checkID from SQL
+  specificrow <- qacheckSave[qacheckSave$checkID %in% c(scoreID),]
+  
+  #Does row for corresponding SQL data exist?
+  if(nrow(specificrow)==0) {#If no, is app data blank?
+    if(checkscore=='7' && assessor=="" && evidence=="" && obs=="" && out==""){
+    #If yes, then data hasn't been added for this check. Do nothing  
   }
-  else {
-    specificrow <- qacheckSave[qacheckSave$checkID %in% c(scoreID),]
-    
-    #if there is no current row with check saved, add new
-    if(nrow(specificrow)==0) {
-      newRowcheck <- c(projectID,scoreID,checkscore,assessor,evidence,obs,out)
-      
+    else {#If no, then this is new data, so add a new row to dbo.QA_checks
       newRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_checks VALUES ();")
       
-      newRowSQL <- InsertListInQuery(newRowQuery, newRowcheck)
+      newRowSQL <- InsertListInQuery(newRowQuery, correct_row)
       
       newRowSet <- sqlQuery(myConn,newRowSQL)
-    }
-    #if there exists a row, then we edit
-    else{
-      rowEditQuerysave <- paste("UPDATE ", databasename,".dbo.QA_checks 
+    }}
+  
+  else{#If row for corresponding SQL data does exist, is app data equal to SQL data?
+    comparerows <- specificrow == correct_row
+    if(FALSE %in% comparerows){#Rows are not the same
+       #Copy row from dbo.QA_checks into dbo.QA_checks_SCD, with date and time appended
+       new_row_SCD <- c(correct_row,paste(Sys.time()))
+        
+       newRowQuerySCD <- paste("INSERT INTO", databasename, ".dbo.QA_checks_SCD VALUES ();")
+        
+       newRowSQLSCD <- InsertListInQuery(newRowQuerySCD,new_row_SCD)
+        
+       newRowSetSCD <- sqlQuery(myConn,newRowSQLSCD)
+        
+       #Overwrite row in dbo.QA_checks
+       rowEditQuerysave <- paste("UPDATE ", databasename,".dbo.QA_checks 
                           SET checkscore = '", checkscore,
                                 "', Assessor = '", assessor,
                                 "', Evidence = '", evidence,
@@ -131,10 +144,13 @@ savingscore <- function(scoreID, dataframe,qacheckSave,projectID,databasename,my
                                 "', Outstanding = '", out,
                                 "' WHERE projectID = ", projectID, " AND checkID = '", scoreID, "';", sep="")
       
-      rowEditSetsave <- sqlQuery(myConn,rowEditQuerysave)
+        rowEditSetsave <- sqlQuery(myConn,rowEditQuerysave)
     }
-  }}
-
+  else{#Both rows are the same, so check hasn't been updated since last save
+    #Do nothing
+    }
+  }
+}
 #--- Functions for calculating scores -----
 
 #calculate_score gives a base score (in probability) for each QA activity

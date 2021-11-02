@@ -29,13 +29,13 @@ outputOptions(output, "DAuichecks", suspendWhenHidden=FALSE)
 #---- Saving to SQL database----
 
 #This creates a list of current score inputs
-paste_score_input <- function(checkname){
-  eval(parse(text=paste0("input$score",checkname)))
-}
+#paste_score_input <- function(checkname){
+#  eval(parse(text=paste0("input$score",checkname)))
+#}
 #Applying above function to all checks
-scoreinput <- reactive({sapply(logspecificchecks(),paste_score_input)})
+#scoreinput <- reactive({sapply(logspecificchecks(),paste_score_input)})
 #Writing all checks as numbers 1-7
-writing_score <- reactive({sapply(scoreinput(), write_score)})
+#writing_score <- reactive({sapply(scoreinput(), write_score)})
 
 paste_other_input <- function(checkname){
   c(checkname,
@@ -242,13 +242,14 @@ tooltip_ui_render <- function(checkid,types){
 output$tooltips <- renderUI(lapply(QAcheckslist,tooltip_ui_render,types=types))
 
 #---- Error messages----
-#Display error message if mandatory checks haven't been completed
+
+#Display error message if mandatory checks are marked TO BE CHECKED
 
 check_mandatory <- function(checkID,types,names_df){
-  score<-calculate_score(checkID)
+  score <-input[[paste0("score",checkID)]]
   check_row <- names_df%>%filter(QAcheckslist==checkID)
   mandatory <- (check_row%>%select(paste0(types$log,"_mandatory")))[1,1]
-  to_return <- if(mandatory==1 && score==0){1}
+  to_return <- if(mandatory==1 && score=="TO BE CHECKED"){1}
                else {0}
   return(to_return)
 }
@@ -261,9 +262,53 @@ mandatory_error <- reactive({
   #if both lists are the same, no error message
   if (numberchecks()==0){""}
   #otherwise, print error message
-  else {paste0("There are ",numberchecks()," mandatory checks to be completed.")}})
+  else {paste0("There are ",numberchecks()," mandatory checks marked 'TO BE CHECKED'.")}})
 
-output$mandatory_dialogue <- renderText(paste(mandatory_error()))
+output$mandatory_dialogue <- renderValueBox({valueBox(value=tags$p(mandatory_error(),style="font-size: 75%"),subtitle="")})
+
+#Display error message if mandatory checks are marked NA
+
+check_NA_mandatory <- function(checkID,types,names_df){
+  score <-input[[paste0("score",checkID)]]
+  check_row <- names_df%>%filter(QAcheckslist==checkID)
+  mandatory <- (check_row%>%select(paste0(types$log,"_mandatory")))[1,1]
+  to_return <- if(mandatory==1 && score=="N/A"){1}
+  else {0}
+  return(to_return)
+}
+
+listofmandatoryNA <- reactive({sapply(logspecificchecks(),check_NA_mandatory,types=types,names_df=names_df)})
+
+numberchecksNA <- reactive({sum(listofmandatoryNA())})
+
+mandatory_error_NA <- reactive({
+  #if both lists are the same, no error message
+  if (numberchecksNA()==0){""}
+  #otherwise, print error message
+  else {paste0("There are ",numberchecksNA()," mandatory checks marked 'N/A'.")}})
+
+output$mandatory_dialogueNA <- renderValueBox({valueBox(value=tags$p(mandatory_error_NA(),style="font-size: 75%"),subtitle="")})
+
+#Display error message if checks are marked "5) Significant issues"
+
+check_significant <- function(checkID,types,names_df){
+  score <-input[[paste0("score",checkID)]]
+  to_return <- if(score=="5) Significant issues"){1}
+  else {0}
+  return(to_return)
+}
+
+listofsignificant <- reactive({sapply(logspecificchecks(),check_significant,types=types,names_df=names_df)})
+
+numbercheckssignificant <- reactive({sum(listofsignificant())})
+
+significant_error <- reactive({
+  #if both lists are the same, no error message
+  if (numbercheckssignificant()==0){""}
+  #otherwise, print error message
+  else {paste0("There are ",numbercheckssignificant()," checks marked 'Significant issues'.")}})
+
+output$significant_dialogue <- renderValueBox({valueBox(value=tags$p(significant_error(),style="font-size: 75%"), subtitle="")})
 
 #---- Back to home-----
 observeEvent(input$backtohome,{

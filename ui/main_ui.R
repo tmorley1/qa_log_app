@@ -58,7 +58,21 @@ fixedRow(column(2, textInput("projectname", "Project name", value="")),
 #Edit pillar weighting, display overall score, display error messages
 fixedRow(column(2, uiOutput("totalscorescolours")),
          column(2, br(), br(), actionButton("weighting","Edit pillar weighting")),
-         column(2, uiOutput("mandatory_dialogue"))),
+         column(8, uiOutput("mandatory_dialogue"),
+                tags$head(tags$style("#mandatory_dialogue{
+                                 font-style: italic;
+                                 background-color: #00bfff
+                                 }")),
+                uiOutput("mandatory_dialogueNA"),
+                tags$head(tags$style("#mandatory_dialogueNA{
+                                 font-style: italic;
+                                 background-color: #d3d3d3
+                                 }")),
+                uiOutput("significant_dialogue"),
+                tags$head(tags$style("#significant_dialogue{
+                                 font-style: italic;
+                                 background-color: #ff0000
+                                 }")))),
 #Scores
 fixedRow(column(2,uiOutput("DGscorescolours")),
          column(2,uiOutput("SCscorescolours")),
