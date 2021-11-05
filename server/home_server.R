@@ -72,7 +72,7 @@ observeEvent(input$submitprojectID, {
   selectrow <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_log] WHERE ProjectID = ", chosennumber, sep="")
   
   #now run the query to get our output.
-  selectrow <- sqlQuery(myConn, selectrow)
+  selectrow <- sqlQuery(myConn, selectrow)%>%replace(.,is.na(.),"")
   
   #Error if project ID does not exist
   if(nrow(selectrow)==0) {
@@ -109,7 +109,7 @@ observeEvent(input$submitprojectID, {
     #selecting QA check scores from SQL
     qachecks <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", chosennumber, sep="")
     #now run the query to get our output.
-    qachecks <- sqlQuery(myConn, qachecks)
+    qachecks <- sqlQuery(myConn, qachecks)%>%replace(.,is.na(.),"")
     
     #UPDATE ALL CHECKS
     lapply(logspecificchecks(),update_checks,session1 = session,qachecks = qachecks)

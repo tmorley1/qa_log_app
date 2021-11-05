@@ -1,15 +1,57 @@
 ## Load the library
+library(shiny)
+library(tidyverse)
+library(shinythemes) #theme -> css
+library(shinydashboard)
+library(shinyWidgets)
 library(RODBC)
+library(stringr)
+library(shinyjs)
+library(shinyBS)
 
 #defining server and database
 servername<-"T1PRMDRSQL\\SQLPROD,55842"
 databasename <- "MDR_Modelling_DSAGT1"
 
+currentnumber <- 8510
 #Create connection to the SQL server
 myConn <- odbcDriverConnect(connection=paste("Driver={SQL Server}; Server=", servername, "; Database=", databasename, "; Trusted_Connection=yes", sep=""))
 
 #----Reading in table ----
 
+selectdatelog <- paste("SELECT EndDate FROM ", databasename, ".[dbo].[QA_log_SCD] WHERE ProjectID = ", currentnumber, sep="")
+#selecting date from QA_checks_SCD
+selectdatechecks <- paste("SELECT EndDate FROM ", databasename, ".[dbo].[QA_checks_SCD] WHERE ProjectID = ", currentnumber, sep="")
+selectdatelog <- sqlQuery(myConn, selectdatelog)
+selectdatechecks <- sqlQuery(myConn, selectdatechecks)
+
+EndDate <- strptime(unique(c(selectdatechecks$EndDate, selectdatelog$EndDate)),"%Y-%m-%d %H:%M:%S") 
+alldatesdf <- as.data.frame(EndDate)%>%arrange(desc(EndDate))
+
+forversions <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_log_SCD] WHERE ProjectID = ", currentnumber, sep="")
+forversions <- sqlQuery(myConn, forversions)
+
+forversionsdf <- as.data.frame(forversions)%>%select(vers,EndDate)%>%mutate(EndDate = strptime(EndDate,"%Y-%m-%d %H:%M:%S"))
+
+datesdf <- (full_join(alldatesdf,forversionsdf)%>%mutate(vers=lag(vers)))[-1,]
+
+datesdf %>% mutate()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#-----Old Bits----
 #Create the query to pull in data - make sure you run this whole block at once,
 # as running it line by line won't work.
 myTable <- paste("

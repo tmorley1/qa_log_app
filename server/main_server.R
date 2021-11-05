@@ -54,13 +54,14 @@ otherinputdf <- reactive({data.frame(otherinput())})
 weightings_save <- reactive({paste(weightings$DG,weightings$SC,weightings$VE,weightings$VA,weightings$DA)})
 
 observeEvent(input$saveSQL, {
+  time <- paste(Sys.time())
   chosennumber <- input$projectID
   
   #read in current sql data
   selectrow <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_log] WHERE ProjectID = ", chosennumber, sep="")
   
   #now run the query to get our output.
-  selectrow <- sqlQuery(myConn, selectrow)
+  selectrow <- sqlQuery(myConn, selectrow)%>%replace(.,is.na(.),"")
   
   #create new row with app data
   newRow <- c(input$projectID,paste(input$projectname),
@@ -79,7 +80,7 @@ observeEvent(input$saveSQL, {
     newRowSet <- sqlQuery(myConn,newRowSQL)
     
     #Add an empty row to SCD database to log when this was created
-    emptyRow <- c(input$projectID,"","","","","","","",paste(Sys.time()))
+    emptyRow <- c(input$projectID,"","","","","","","",time)
     
     newRowQuerySCD <- paste("INSERT INTO", databasename,".dbo.QA_log_SCD VALUES ();")
     
@@ -87,16 +88,14 @@ observeEvent(input$saveSQL, {
     
     newRowSetSCD <- sqlQuery(myConn,newRowSQLSCD)
 
-  }
-  
-  #if project ID does exist, then check if app row is equal to sql row
+  }#if project ID does exist, then check if app row is equal to sql row
   else{
     comparerows <- selectrow == newRow
     if(FALSE %in% comparerows){#rows are not the same
     #we need to add a new row to SCD and then update current SQL
     
     #adding row to SCD
-    lognew_row_SCD <- c(selectrow,paste(Sys.time()))
+    lognew_row_SCD <- c(selectrow,paste(time))
     
     lognewRowQuerySCD <- paste("INSERT INTO", databasename, ".dbo.QA_log_SCD VALUES ();")
     
@@ -128,7 +127,7 @@ observeEvent(input$saveSQL, {
 
   #Saving scores
 
-  lapply(logspecificchecks(),savingscore, dataframe=otherinputdf(),qacheckSave=qacheckSave,projectID=input$projectID,databasename=databasename,myConn=myConn)
+  lapply(logspecificchecks(),savingscore, dataframe=otherinputdf(),qacheckSave=qacheckSave,projectID=input$projectID,databasename=databasename,myConn=myConn,time=time)
 
 })
   
@@ -481,40 +480,44 @@ observeEvent(input$saveSQL, {
     else {"You have unsaved changes!"}})
   output$savedialogue <- renderText(paste(savetext()))
 })
-#---- Creating HTML report----
-output$report <- downloadHandler(
-  # For pdf output, change this to "report.pdf"
-  filename = "report.html",
-  content = function(file) {
-    # Copy the report file to a temporary directory before processing it, in
-    # case we don't have write permissions to the current working dir (which
-    # can happen when deployed).
-    tempReport <- file.path(tempdir(), "report.Rmd")
-    file.copy(paste(pathway,"\\report.Rmd", sep=""), tempReport, overwrite = TRUE)
-    
-    # Set up parameters for Documentation and Governance to pass to Rmd document
-    params <- list(id = input$projectID,
-                   name = input$projectname,
-                   version = input$version,
-                   leadanalyst = input$leadanalyst,
-                   analyticalassurer = input$analyticalassurer,
-                   BCM = input$BCM,
-                   DGscore = percentage_DG(),
-                   DG1 = input$scoreDG1,
-                   DG2 = input$scoreDG2,
-                   DG3 = input$scoreDG3,
-                   DG4 = input$scoreDG4,
-                   DG5 = input$scoreDG5,
-                   DG6 = input$scoreDG6,
-                   DG7 = input$scoreDG7,
-                   DG8 = input$scoreDG8)
-    
-    # Knit the document, passing in the `params` list, and eval it in a
-    # child of the global environment (this isolates the code in the document
-    # from the code in this app).
-    rmarkdown::render(tempReport, output_file = file,
-                      params = params,
-                      envir = new.env(parent = globalenv())
-    )
-  }
+#---- Reading in old versions ----
+
+observeEvent(input$previous, {
+  #Read in all relevant dates from both SCD databases
+  chosennumber <- input$projectID
+  
+  #selecting date from QA_log_SCD
+  selectdatelog <- paste("SELECT EndDate FROM ", databasename, ".[dbo].[QA_log_SCD] WHERE ProjectID = ", chosennumber, sep="")
+  #selecting date from QA_checks_SCD
+  selectdatechecks <- paste("SELECT EndDate FROM ", databasename, ".[dbo].[QA_checks_SCD] WHERE ProjectID = ", chosennumber, sep="")
+  #now run the query to get our output.
+  selectdatelog <- sqlQuery(myConn, selectdatelog)
+  selectdatechecks <- sqlQuery(myConn, selectdatechecks)
+  
+  #Only look at unique dates, and read is as date-time
+  EndDate <- strptime(unique(c(selectdatechecks$EndDate, selectdatelog$EndDate)),"%Y-%m-%d %H:%M:%S") 
+  
+  #arrange in order, with most recent at top
+  alldatesdf <- as.data.frame(EndDate)%>%arrange(desc(EndDate))
+  
+  #reading in version numbers
+  forversions <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_log_SCD] WHERE ProjectID = ", chosennumber, sep="")
+  forversions <- sqlQuery(myConn, forversions)
+  #create dataframe of version number and dates
+  forversionsdf <- as.data.frame(forversions)%>%select(vers,EndDate)%>%mutate(EndDate = strptime(EndDate,"%Y-%m-%d %H:%M:%S"))
+  #join dataframes together
+  datesdf <- full_join(alldatesdf,forversionsdf)
+  #Push version numbers in line with date they were created (rather than date discarded)
+  datesdf <- datesdf%>%mutate(vers=lag(vers))
+  #remove first row (as this is current version)
+  datesdf <- datesdf[-1,]
+  output$datesdfoutput <- renderDataTable(datesdf)
+  
+    showModal(modalDialog(
+    renderUI({
+      fixedRow(column(12,
+       dataTableOutput('datesdfoutput')))
+    })
+  ))
+}
 )

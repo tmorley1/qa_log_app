@@ -95,7 +95,7 @@ write_score <- function(inputscore){
 }
 
 #Function for saving to QA_checks SQL DB
-savingscore <- function(scoreID, dataframe,qacheckSave,projectID,databasename,myConn){
+savingscore <- function(scoreID, dataframe,qacheckSave,projectID,databasename,myConn,time){
   #select correct column of dataframe
   correct_column <- dataframe %>% select(scoreID)
   #Assign checkscore, assessor, evidence, obs, out
@@ -125,7 +125,7 @@ savingscore <- function(scoreID, dataframe,qacheckSave,projectID,databasename,my
       #also add row to dbo.QA_checks_SCD
       #This tells us when data was first changed
       
-      empty_row <- c(projectID,scoreID,7,"","","","",paste(Sys.time()))
+      empty_row <- c(projectID,scoreID,7,"","","","",time)
       
       newRowQuerySCD <- paste("INSERT INTO", databasename,".dbo.QA_checks_SCD VALUES ();")
       
@@ -139,7 +139,7 @@ savingscore <- function(scoreID, dataframe,qacheckSave,projectID,databasename,my
     comparerows <- specificrow == correct_row
     if(FALSE %in% comparerows){#Rows are not the same
        #Copy row from dbo.QA_checks into dbo.QA_checks_SCD, with date and time appended
-       new_row_SCD <- c(correct_row,paste(Sys.time()))
+       new_row_SCD <- c(correct_row,time)
         
        newRowQuerySCD <- paste("INSERT INTO", databasename, ".dbo.QA_checks_SCD VALUES ();")
         

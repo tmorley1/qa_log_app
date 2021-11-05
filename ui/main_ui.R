@@ -78,7 +78,8 @@ fixedRow(column(2,uiOutput("DGscorescolours")),
          column(2,uiOutput("SCscorescolours")),
          column(2,uiOutput("VEscorescolours")),
          column(2,uiOutput("VAscorescolours")),
-         column(2,uiOutput("DAscorescolours"))),
+         column(2,uiOutput("DAscorescolours")),
+         column(2, actionButton("previous","Previous versions"))),
 
 #----DG checks----
          fixedRow(

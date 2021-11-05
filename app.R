@@ -65,6 +65,7 @@ server <- function(input, output, session) {
   source(paste(pathway,"\\functions\\functions.R", sep=""), local=TRUE)$value
   source(paste(pathway,"\\server\\home_server.R", sep=""), local=TRUE)$value
   source(paste(pathway,"\\server\\main_server.R", sep=""), local=TRUE)$value
+  source(paste(pathway,"\\server\\html_report.R", sep=""), local=TRUE)$value
   lapply(logslist,comments_paths,pathway=pathway)
   lapply(logslist,tooltips_paths,pathway=pathway)
 }
