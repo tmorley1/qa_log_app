@@ -422,6 +422,7 @@ individualChecks <- function(checkIDtext,checks){
 sqlinfo <- reactive({sapply(logspecificchecks(),individualChecks,checks=checks())})
 sqlinfodf <- reactive({data.frame(sqlinfo())})
 allsqlinfodf <- reactive({cbind(logrowfinal(),sqlinfodf())[-1,]})
+allsqlinfodf2 <- reactive(allsqlinfodf()%>%replace(.,is.na(.),""))
 
 output$writingtest<-renderDataTable(allsqlinfodf())
 
@@ -435,7 +436,8 @@ appinfodf <- reactive({data.frame(cbind(appinfo(),otherinput()))})
 output$writingtest2<-renderDataTable(appinfodf())
 
 #we now compare the lists
-comparison <- reactive({appinfodf()==allsqlinfodf()})
+comparison <- reactive({appinfodf()==allsqlinfodf2()})
+output$comparisontest<-renderText(paste(comparison()))
 #display warning message if there are unsaved changes
 savetext <- reactive({
     #if both lists are the same, no error message
@@ -464,11 +466,13 @@ observeEvent(input$saveSQL, {
   sqlinfo <- reactive({sapply(logspecificchecks(),individualChecks,checks=checks())})
   sqlinfodf <- reactive({data.frame(sqlinfo())})
   allsqlinfodf <- reactive({cbind(logrowfinal(),sqlinfodf())[-1,]})
+  allsqlinfodf2 <- reactive(allsqlinfodf()%>%replace(.,is.na(.),""))
   
   output$writingtest<-renderDataTable(allsqlinfodf())
   
   #re-compare the lists
-  comparison <- reactive({appinfodf()==allsqlinfodf()})
+  comparison <- reactive({appinfodf()==allsqlinfodf2()})
+  output$comparisontest<-renderText(paste(comparison()))
   #display warning message if there are unsaved changes
   savetext <- reactive({if ("FALSE" %in% comparison() == "FALSE"){""}
     else {"You have unsaved changes!"}})
