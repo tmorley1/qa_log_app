@@ -121,6 +121,18 @@ savingscore <- function(scoreID, dataframe,qacheckSave,projectID,databasename,my
       newRowSQL <- InsertListInQuery(newRowQuery, correct_row)
       
       newRowSet <- sqlQuery(myConn,newRowSQL)
+      
+      #also add row to dbo.QA_checks_SCD
+      #This tells us when data was first changed
+      
+      empty_row <- c(projectID,scoreID,7,"","","","",paste(Sys.time()))
+      
+      newRowQuerySCD <- paste("INSERT INTO", databasename,".dbo.QA_checks_SCD VALUES ();")
+      
+      newRowSQLSCD <- InsertListInQuery(newRowQuerySCD, empty_row)
+      
+      newRowSetSCD <- sqlQuery(myConn,newRowSQLSCD)
+      
     }}
   
   else{#If row for corresponding SQL data does exist, is app data equal to SQL data?

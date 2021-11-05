@@ -56,32 +56,55 @@ weightings_save <- reactive({paste(weightings$DG,weightings$SC,weightings$VE,wei
 observeEvent(input$saveSQL, {
   chosennumber <- input$projectID
   
-  #first we edit QA_log SQL database
+  #read in current sql data
   selectrow <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_log] WHERE ProjectID = ", chosennumber, sep="")
   
   #now run the query to get our output.
   selectrow <- sqlQuery(myConn, selectrow)
   
-  #if project ID does not already exist, create new entry
-  if(nrow(selectrow)==0) {
-    newRow <- c(input$projectID,paste(input$projectname),
-                paste(input$version),
-                paste(input$leadanalyst),
-                paste(input$analyticalassurer),
-                paste(input$BCM),
-                paste(types$log),
-                paste(weightings_save()))
-    
+  #create new row with app data
+  newRow <- c(input$projectID,paste(input$projectname),
+              paste(input$version),
+              paste(input$leadanalyst),
+              paste(input$analyticalassurer),
+              paste(input$BCM),
+              paste(types$log),
+              paste(weightings_save()))
+
+  if(nrow(selectrow)==0) {#if project ID does not already exist, create new entry
     newRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_log VALUES ();")
     
     newRowSQL <- InsertListInQuery(newRowQuery, newRow)
     
     newRowSet <- sqlQuery(myConn,newRowSQL)
+    
+    #Add an empty row to SCD database to log when this was created
+    emptyRow <- c(input$projectID,"","","","","","","",paste(Sys.time()))
+    
+    newRowQuerySCD <- paste("INSERT INTO", databasename,".dbo.QA_log_SCD VALUES ();")
+    
+    newRowSQLSCD <- InsertListInQuery(newRowQuerySCD, emptyRow)
+    
+    newRowSetSCD <- sqlQuery(myConn,newRowSQLSCD)
 
   }
   
-  #if project ID does exist, update existing row
+  #if project ID does exist, then check if app row is equal to sql row
   else{
+    comparerows <- selectrow == newRow
+    if(FALSE %in% comparerows){#rows are not the same
+    #we need to add a new row to SCD and then update current SQL
+    
+    #adding row to SCD
+    lognew_row_SCD <- c(selectrow,paste(Sys.time()))
+    
+    lognewRowQuerySCD <- paste("INSERT INTO", databasename, ".dbo.QA_log_SCD VALUES ();")
+    
+    lognewRowSQLSCD <- InsertListInQuery(lognewRowQuerySCD,lognew_row_SCD)
+    
+    lognewRowSetSCD <- sqlQuery(myConn,lognewRowSQLSCD)
+    
+    #updating row in QA_log
     rowEditQuery <- paste("UPDATE ", databasename,".dbo.QA_log 
                           SET ProjectName = '", input$projectname,
                           "', vers = '", input$version,
@@ -92,6 +115,9 @@ observeEvent(input$saveSQL, {
                           "' WHERE projectID = ", input$projectID, ";", sep="")
     
     rowEditSet <- sqlQuery(myConn,rowEditQuery)
+    }
+    else{#row has not been updated so we don't need to do anything
+    }
   }
   
   #now we edit QA_checks SQL database
