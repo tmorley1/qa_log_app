@@ -23,10 +23,10 @@ myConn <- odbcDriverConnect(connection=paste("Driver={SQL Server}; Server=",
            sep=""))
 
 #Reading in information about QA checks
-source(paste(pathway, "\\edit_lists.R", sep=""))
+source(paste(pathway, "\\functions\\edit_lists.R", sep=""))
 
 #Reading in functions necessary to build UI
-source(paste(pathway, "\\server\\functions_for_ui.R", sep=""))
+source(paste(pathway, "\\functions\\functions_for_ui.R", sep=""))
 
 #---App--------------------------------------------------------
 ui <- fixedPage( #Removing navigation bar between tabs
@@ -62,7 +62,7 @@ server <- function(input, output, session) {
     hide(selector = "#inTabset")
     })
   #Reading in server files
-  source(paste(pathway,"\\server\\functions.R", sep=""), local=TRUE)$value
+  source(paste(pathway,"\\functions\\functions.R", sep=""), local=TRUE)$value
   source(paste(pathway,"\\server\\home_server.R", sep=""), local=TRUE)$value
   source(paste(pathway,"\\server\\main_server.R", sep=""), local=TRUE)$value
   lapply(logslist,comments_paths,pathway=pathway)

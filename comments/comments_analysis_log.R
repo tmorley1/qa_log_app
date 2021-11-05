@@ -1,7 +1,7 @@
 #----Documentation and governance
 
 #----DG1 Scope and specification----
-DG1dataanalysis <- renderUI({fixedRow(column(12,
+DG1analysis <- renderUI({fixedRow(column(12,
       span("Mandatory check", style="color:red"),
       br(),
       "Scope and specification",
@@ -16,7 +16,7 @@ DG1dataanalysis <- renderUI({fixedRow(column(12,
       "See QA Guidance chapter 3."))})
 
 #----DG2 User guide----
-DG2dataanalysis <- renderUI({fixedRow(column(12,
+DG2analysis <- renderUI({fixedRow(column(12,
       "User guide",
       br(), br(),
       "Is the user documentation sufficiently clear to support independent use 
@@ -24,11 +24,11 @@ DG2dataanalysis <- renderUI({fixedRow(column(12,
       view outputs?"))})
 
 #----DG3 Technical guide----
-DG3dataanalysis <- renderUI({fixedRow(column(12,
+DG3analysis <- renderUI({fixedRow(column(12,
       "This check is not required."))})
 
 #----DG4 KIM----
-DG4dataanalysis <- renderUI({fixedRow(column(12,
+DG4analysis <- renderUI({fixedRow(column(12,
       "KIM",
       br(), br(),
       "Is the analysis and documentation stored according to DfE and local
@@ -42,7 +42,7 @@ DG4dataanalysis <- renderUI({fixedRow(column(12,
       "When will it be archived?"))})
 
 #----DG5 Version Control----
-DG5dataanalysis <- renderUI({fixedRow(column(12,
+DG5analysis <- renderUI({fixedRow(column(12,
       span("Mandatory check", style="color:red"),
       br(),
       "Version Control",
@@ -53,7 +53,7 @@ DG5dataanalysis <- renderUI({fixedRow(column(12,
       code/spreadsheet."))})
 
 #----DG6 Responsibilities----
-DG6dataanalysis <- renderUI({fixedRow(column(12,
+DG6analysis <- renderUI({fixedRow(column(12,
       span("Mandatory check", style="color:red"),
       br(),
       "Responsibilities",
@@ -70,7 +70,7 @@ DG6dataanalysis <- renderUI({fixedRow(column(12,
       "- an analytical assurer"))})
 
 #----DG7 QA Planning and Resourcing----
-DG7dataanalysis <- renderUI({fixedRow(column(12,
+DG7analysis <- renderUI({fixedRow(column(12,
       "QA Planning and Resourcing",
       br(), br(),
       "Has an appropriate QA plan been agreed with adequate consideration of
@@ -86,7 +86,7 @@ DG7dataanalysis <- renderUI({fixedRow(column(12,
       sign-off?"))})
 
 #----DG8 Record of QA----
-DG8dataanalysis <- renderUI({fixedRow(column(12,
+DG8analysis <- renderUI({fixedRow(column(12,
       span("Mandatory check", style="color:red"),
       br(),
       "Record of QA",
@@ -98,7 +98,7 @@ DG8dataanalysis <- renderUI({fixedRow(column(12,
       provide most of the evidence needed."))})
 
 #----DG9 Risk and issues log
-DG9dataanalysis <- renderUI({fixedRow(column(12,
+DG9analysis <- renderUI({fixedRow(column(12,
       "This check is not required."))})
 
 #----Structure and Clarity-----
