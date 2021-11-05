@@ -355,6 +355,11 @@ observeEvent(input$backtohome,{
     updateTextInput(session, inputId = "analyticalassurer", value = "")
     updateSelectizeInput(session, inputId = "BCM", selected = "No")
     updateTextInput(session, inputId = "QAlogtype", value = "")
+    weightings$DG <- 0.2
+    weightings$SC <- 0.2
+    weightings$VE <- 0.2
+    weightings$VA <- 0.2
+    weightings$DA <- 0.2
     #resetting documentation and governance checks
     lapply(logspecificchecks(),reset_checks,session1=session)
     
@@ -437,7 +442,6 @@ output$writingtest2<-renderDataTable(appinfodf())
 
 #we now compare the lists
 comparison <- reactive({appinfodf()==allsqlinfodf2()})
-output$comparisontest<-renderText(paste(comparison()))
 #display warning message if there are unsaved changes
 savetext <- reactive({
     #if both lists are the same, no error message
@@ -472,7 +476,6 @@ observeEvent(input$saveSQL, {
   
   #re-compare the lists
   comparison <- reactive({appinfodf()==allsqlinfodf2()})
-  output$comparisontest<-renderText(paste(comparison()))
   #display warning message if there are unsaved changes
   savetext <- reactive({if ("FALSE" %in% comparison() == "FALSE"){""}
     else {"You have unsaved changes!"}})
