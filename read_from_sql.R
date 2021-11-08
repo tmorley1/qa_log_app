@@ -13,7 +13,7 @@ library(shinyBS)
 servername<-"T1PRMDRSQL\\SQLPROD,55842"
 databasename <- "MDR_Modelling_DSAGT1"
 
-currentnumber <- 8510
+currentnumber <- 9830
 #Create connection to the SQL server
 myConn <- odbcDriverConnect(connection=paste("Driver={SQL Server}; Server=", servername, "; Database=", databasename, "; Trusted_Connection=yes", sep=""))
 
@@ -25,13 +25,13 @@ selectdatechecks <- paste("SELECT EndDate FROM ", databasename, ".[dbo].[QA_chec
 selectdatelog <- sqlQuery(myConn, selectdatelog)
 selectdatechecks <- sqlQuery(myConn, selectdatechecks)
 
-EndDate <- strptime(unique(c(selectdatechecks$EndDate, selectdatelog$EndDate)),"%Y-%m-%d %H:%M:%S") 
+EndDate <- unique(c(selectdatechecks$EndDate, selectdatelog$EndDate))
 alldatesdf <- as.data.frame(EndDate)%>%arrange(desc(EndDate))
 
 forversions <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_log_SCD] WHERE ProjectID = ", currentnumber, sep="")
 forversions <- sqlQuery(myConn, forversions)
 
-forversionsdf <- as.data.frame(forversions)%>%select(vers,EndDate)%>%mutate(EndDate = strptime(EndDate,"%Y-%m-%d %H:%M:%S"))
+forversionsdf <- as.data.frame(forversions)%>%select(vers,EndDate)
 
 datesdf <- (full_join(alldatesdf,forversionsdf)%>%mutate(vers=lag(vers)))[-1,]
 

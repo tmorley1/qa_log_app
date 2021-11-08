@@ -139,7 +139,7 @@ savingscore <- function(scoreID, dataframe,qacheckSave,projectID,databasename,my
     comparerows <- specificrow == correct_row
     if(FALSE %in% comparerows){#Rows are not the same
        #Copy row from dbo.QA_checks into dbo.QA_checks_SCD, with date and time appended
-       new_row_SCD <- c(correct_row,time)
+       new_row_SCD <- c(specificrow,time)
         
        newRowQuerySCD <- paste("INSERT INTO", databasename, ".dbo.QA_checks_SCD VALUES ();")
         

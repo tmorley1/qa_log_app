@@ -123,7 +123,7 @@ observeEvent(input$saveSQL, {
   qacheckSave <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", chosennumber, sep="")
   
   #now run the query to get our output.
-  qacheckSave <- sqlQuery(myConn, qacheckSave)
+  qacheckSave <- sqlQuery(myConn, qacheckSave)%>%replace(.,is.na(.),"")
 
   #Saving scores
 
@@ -495,7 +495,7 @@ observeEvent(input$previous, {
   selectdatechecks <- sqlQuery(myConn, selectdatechecks)
   
   #Only look at unique dates, and read is as date-time
-  EndDate <- strptime(unique(c(selectdatechecks$EndDate, selectdatelog$EndDate)),"%Y-%m-%d %H:%M:%S") 
+  EndDate <- unique(c(selectdatechecks$EndDate, selectdatelog$EndDate))
   
   #arrange in order, with most recent at top
   alldatesdf <- as.data.frame(EndDate)%>%arrange(desc(EndDate))
@@ -504,20 +504,46 @@ observeEvent(input$previous, {
   forversions <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_log_SCD] WHERE ProjectID = ", chosennumber, sep="")
   forversions <- sqlQuery(myConn, forversions)
   #create dataframe of version number and dates
-  forversionsdf <- as.data.frame(forversions)%>%select(vers,EndDate)%>%mutate(EndDate = strptime(EndDate,"%Y-%m-%d %H:%M:%S"))
+  forversionsdf <- as.data.frame(forversions)%>%select(vers,EndDate)
   #join dataframes together
   datesdf <- full_join(alldatesdf,forversionsdf)
   #Push version numbers in line with date they were created (rather than date discarded)
-  datesdf <- datesdf%>%mutate(vers=lag(vers))
+  datesdf <- datesdf%>%mutate(vers=lag(vers))%>%mutate(EndDate=paste(EndDate))%>%
+    rename(Version=vers,Date=EndDate)
   #remove first row (as this is current version)
   datesdf <- datesdf[-1,]
-  output$datesdfoutput <- renderDataTable(datesdf)
+  output$datesdfoutput <- DT::renderDataTable(datesdf, server=FALSE, selection='single')
   
+  #Modal displays all dates of recent saves, and upon selecting one, there is an option to preview
     showModal(modalDialog(
     renderUI({
-      fixedRow(column(12,
-       dataTableOutput('datesdfoutput')))
+      fixedRow(column(8,
+       DT::dataTableOutput('datesdfoutput'),
+       actionButton("preview","Preview")))
     })
   ))
+  
+  observeEvent(input$preview, {
+    #dateselect is the selected date of the preview
+    projectnumber <- input$datesdfoutput_rows_selected
+    dateselect <- datesdf[projectnumber,1]
+    
+    select_old_check <- function(checkid,dateselect, chosennumber){
+      selectolddate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks_SCD] WHERE ProjectID = ", chosennumber, " and checkID = ", checkid, " and EndDate > ", dateselect, sep="") 
+      selectolddate <- sqlQuery(myConn, selectolddate)
+      return(selectolddate)
+    }
+    
+    testcheck <- select_old_check("DG1",dateselect,chosennumber)
+    
+    output$testpaste <- renderText(dateselect)
+    
+    showModal(modalDialog(
+      renderUI({
+        fixedRow(column(8,
+                      textOutput('testpaste')  ))
+      })
+    ))
+  })
 }
 )
