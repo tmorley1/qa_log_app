@@ -508,7 +508,10 @@ observeEvent(input$previous, {
   #join dataframes together
   datesdf <- full_join(alldatesdf,forversionsdf)
   #Push version numbers in line with date they were created (rather than date discarded)
+  #swap round days and months because for some reason SQL puts them the wrong way round
   datesdf <- datesdf%>%mutate(vers=lag(vers))%>%mutate(EndDate=paste(EndDate))%>%
+    mutate(EndDate=as.POSIXct(EndDate, format="%Y-%d-%m %H:%M:%S"))%>%
+    mutate(EndDate=paste(EndDate))%>%
     rename(Version=vers,Date=EndDate)
   #remove first row (as this is current version)
   datesdf <- datesdf[-1,]
@@ -529,21 +532,144 @@ observeEvent(input$previous, {
     dateselect <- datesdf[projectnumber,1]
     
     select_old_check <- function(checkid,dateselect, chosennumber){
-      selectolddate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks_SCD] WHERE ProjectID = ", chosennumber, " and checkID = ", checkid, " and EndDate > ", dateselect, sep="") 
-      selectolddate <- sqlQuery(myConn, selectolddate)
+      selectolddate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks_SCD] WHERE ProjectID = ", chosennumber, " and checkID = '", checkid, "' and EndDate > '", dateselect, "'", sep="") 
+      selectolddate <- sqlQuery(myConn, selectolddate)%>%replace(.,is.na(.),"")
       return(selectolddate)
     }
+  
+  #this function will create each individual row for checks in the preview pane  
     
-    testcheck <- select_old_check("DG1",dateselect,chosennumber)
+  displayingoldchecks <- function(checkid,dateselect,chosennumber,types,names_df){
+    #This is reading in from SCD table
+    checkSCD <- select_old_check(checkid,dateselect,chosennumber)
     
-    output$testpaste <- renderText(dateselect)
+    selectcurrentdate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", chosennumber, " and checkID = '", checkid, "'", sep="") 
+    selectcurrentdate <- sqlQuery(myConn, selectcurrentdate)%>%replace(.,is.na(.),"")
     
+    #if checkSCD is empty, then look at current table
+    if (nrow(checkSCD)==0 && nrow(selectcurrentdate)==0) {
+        oldcheckrow <- c(chosennumber,checkid,7,"","","","")
+      }
+      else if (nrow(checkSCD)==0 && nrow(selectcurrentdate)!=0) {#current data is still relevant at current date
+        oldcheckrow <- selectcurrentdate
+      }
+    else { #if checkSCD is not empty, select first row
+      oldcheckrow <- checkSCD%>%top_n(EndDate,n=-1)%>%select(-EndDate)
+    }
+    #now old check row contains all information about the relevant check
+    #so we now update all relevant text outputs for this check
+    
+    #first off, read in names of checks
+    check_row <- names_df%>%filter(QAcheckslist==checkid)
+    checkname <- (check_row%>%select(paste0(types$log,"_names")))[1,1]
+    
+    #next, convert checkscore to words
+    checkscore <-readingOutput(oldcheckrow[3])
+    assessor <- oldcheckrow[4]
+    summary <- oldcheckrow[5]
+    obs <- oldcheckrow[6]
+    out <- oldcheckrow[7]
+      
+    #create preview ui
+    uihistory <- fixedRow(
+      column(2, paste(checkname)),
+      column(2, paste(checkscore)),
+      column(2, paste(assessor)),
+      column(2, paste(summary)),
+      column(2, paste(obs)),
+      column(2, paste(out))
+    )
+    
+    return(uihistory)
+    
+    }
+  
+  #apply above function to all checks
+  output$DGhistory <- renderUI(lapply(justDGchecks(),displayingoldchecks,dateselect=dateselect,chosennumber=chosennumber,types=types,names_df=names_df))
+  outputOptions(output, "DGhistory", suspendWhenHidden=FALSE)
+
+  output$SChistory <- renderUI(lapply(justSCchecks(),displayingoldchecks,dateselect=dateselect,chosennumber=chosennumber,types=types,names_df=names_df))
+  outputOptions(output, "SChistory", suspendWhenHidden=FALSE)
+
+  output$VEhistory <- renderUI(lapply(justVEchecks(),displayingoldchecks,dateselect=dateselect,chosennumber=chosennumber,types=types,names_df=names_df))
+  outputOptions(output, "VEhistory", suspendWhenHidden=FALSE)
+
+  output$VAhistory <- renderUI(lapply(justVAchecks(),displayingoldchecks,dateselect=dateselect,chosennumber=chosennumber,types=types,names_df=names_df))
+  outputOptions(output, "VAhistory", suspendWhenHidden=FALSE)
+
+  output$DAhistory <- renderUI(lapply(justDAchecks(),displayingoldchecks,dateselect=dateselect,chosennumber=chosennumber,types=types,names_df=names_df))
+  outputOptions(output, "DAhistory", suspendWhenHidden=FALSE)
+  
+    #this is the ui for the preview pane
+  
+  output$test <- renderUI(displayingoldchecks("DG1",dateselect,chosennumber,types,names_df))
+  
+ # output$testdf <- renderDataTable(test)
+  removeModal()
+  
     showModal(modalDialog(
       renderUI({
-        fixedRow(column(8,
-                      textOutput('testpaste')  ))
+        #----DG checks----
+        fixedRow(
+          column(12,
+                 h2("Documentation and Governance")), br(),
+          column(2, h5("QA area")),
+          column(2, h5("Rating")),
+          column(2, h5("Assessed by")),
+          column(2, h5("Summary...")),
+          column(2, h5("Observations")),
+          column(2, h5("Outstanding (potential) work")), br(),
+        uiOutput("DGhistory"),br(),
+        #----SC checks-----
+          column(12,
+                 h2("Structure and Clarity")), br(),
+          column(2, h5("QA area")),
+          column(2, h5("Rating")),
+          column(2, h5("Assessed by")),
+          column(2, h5("Summary...")),
+          column(2, h5("Observations")),
+          column(2, h5("Outstanding (potential) work")), br(),
+        uiOutput("SChistory"),br(),
+        #----VE Checks----
+          column(12,
+                 h2("Verification")), br(),
+          column(2, h5("QA area")),
+          column(2, h5("Rating")),
+          column(2, h5("Assessed by")),
+          column(2, h5("Summary...")),
+          column(2, h5("Observations")),
+          column(2, h5("Outstanding (potential) work")), br(),
+        uiOutput("VEhistory"), br(),
+        #----VA checks-----
+          column(12,
+                 h2("Validation")), br(),
+          column(2, h5("QA area")),
+          column(2, h5("Rating")),
+          column(2, h5("Assessed by")),
+          column(2, h5("Summary...")),
+          column(2, h5("Observations")),
+          column(2, h5("Outstanding (potential) work")), br(),
+        uiOutput("VAhistory"), br(),
+        #----DA checks----
+          column(12,
+                 h2("Data and assumptions")), br(),
+          column(2, h5("QA area")),
+          column(2, h5("Rating")),
+          column(2, h5("Assessed by")),
+          column(2, h5("Summary...")),
+          column(2, h5("Observations")),
+          column(2, h5("Outstanding (potential) work")), br(),
+        uiOutput("DAhistory"), br(),
+        column(2, actionButton("restore", "Restore this version")),
+        column(2, actionButton("backpreview", "Back")))
       })
     ))
   })
 }
 )
+
+observeEvent(input$backpreview,{
+  removeModal()
+  updateActionButton(session, "preview")
+  updateActionButton(session, "previous")
+})
