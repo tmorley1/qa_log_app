@@ -495,7 +495,8 @@ observeEvent(input$previous, {
   selectdatechecks <- sqlQuery(myConn, selectdatechecks)
   
   #Only look at unique dates, and read is as date-time
-  EndDate <- unique(c(selectdatechecks$EndDate, selectdatelog$EndDate))
+  EndDate <- if(nrow(selectdatechecks)==0){unique(c(selectdatelog$EndDate))}
+              else {unique(c(selectdatechecks$EndDate, selectdatelog$EndDate))}
   
   #arrange in order, with most recent at top
   alldatesdf <- as.data.frame(EndDate)%>%arrange(desc(EndDate))
@@ -525,7 +526,7 @@ observeEvent(input$previous, {
        actionButton("preview","Preview")))
     })
   ))
-  
+    
   observeEvent(input$preview, {
     #dateselect is the selected date of the preview
     projectnumber <- input$datesdfoutput_rows_selected
@@ -601,10 +602,6 @@ observeEvent(input$previous, {
   outputOptions(output, "DAhistory", suspendWhenHidden=FALSE)
   
     #this is the ui for the preview pane
-  
-  output$test <- renderUI(displayingoldchecks("DG1",dateselect,chosennumber,types,names_df))
-  
- # output$testdf <- renderDataTable(test)
   removeModal()
   
     showModal(modalDialog(
