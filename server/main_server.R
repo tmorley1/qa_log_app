@@ -482,10 +482,10 @@ observeEvent(input$saveSQL, {
 })
 #---- Reading in old versions ----
 
-observeEvent(input$previous, {
+reading_dates <- reactive({
   #Read in all relevant dates from both SCD databases
   chosennumber <- input$projectID
-  
+
   #selecting date from QA_log_SCD
   selectdatelog <- paste("SELECT EndDate FROM ", databasename, ".[dbo].[QA_log_SCD] WHERE ProjectID = ", chosennumber, sep="")
   #selecting date from QA_checks_SCD
@@ -493,14 +493,14 @@ observeEvent(input$previous, {
   #now run the query to get our output.
   selectdatelog <- sqlQuery(myConn, selectdatelog)
   selectdatechecks <- sqlQuery(myConn, selectdatechecks)
-  
+
   #Only look at unique dates, and read is as date-time
   EndDate <- if(nrow(selectdatechecks)==0){unique(c(selectdatelog$EndDate))}
-              else {unique(c(selectdatechecks$EndDate, selectdatelog$EndDate))}
-  
+  else {unique(c(selectdatechecks$EndDate, selectdatelog$EndDate))}
+
   #arrange in order, with most recent at top
   alldatesdf <- as.data.frame(EndDate)%>%arrange(desc(EndDate))
-  
+
   #reading in version numbers
   forversions <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_log_SCD] WHERE ProjectID = ", chosennumber, sep="")
   forversions <- sqlQuery(myConn, forversions)
@@ -516,74 +516,79 @@ observeEvent(input$previous, {
     rename(Version=vers,Date=EndDate)
   #remove first row (as this is current version)
   datesdf <- datesdf[-1,]
-  output$datesdfoutput <- DT::renderDataTable(datesdf, server=FALSE, selection='single')
+
+  return(datesdf)})
+output$datesdfoutput <- DT::renderDataTable(reading_dates(), server=FALSE, selection='single')
+
+select_old_check <- function(checkid,dateselect, chosennumber){
+  selectolddate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks_SCD] WHERE ProjectID = ", chosennumber, " and checkID = '", checkid, "' and EndDate > '", dateselect, "'", sep="") 
+  selectolddate <- sqlQuery(myConn, selectolddate)%>%replace(.,is.na(.),"")
+  return(selectolddate)
+}
+
+#this function will create each individual row for checks in the preview pane  
+
+displayingoldchecks <- function(checkid,dateselect,chosennumber,types,names_df){
+  #This is reading in from SCD table
+  checkSCD <- select_old_check(checkid,dateselect,chosennumber)
   
+  selectcurrentdate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", chosennumber, " and checkID = '", checkid, "'", sep="") 
+  selectcurrentdate <- sqlQuery(myConn, selectcurrentdate)%>%replace(.,is.na(.),"")
+  
+  #if checkSCD is empty, then look at current table
+  if (nrow(checkSCD)==0 && nrow(selectcurrentdate)==0) {
+    oldcheckrow <- c(chosennumber,checkid,7,"","","","")
+  }
+  else if (nrow(checkSCD)==0 && nrow(selectcurrentdate)!=0) {#current data is still relevant at current date
+    oldcheckrow <- selectcurrentdate
+  }
+  else { #if checkSCD is not empty, select first row
+    oldcheckrow <- checkSCD%>%top_n(EndDate,n=-1)%>%select(-EndDate)
+  }
+  #now old check row contains all information about the relevant check
+  #so we now update all relevant text outputs for this check
+  
+  #first off, read in names of checks
+  check_row <- names_df%>%filter(QAcheckslist==checkid)
+  checkname <- (check_row%>%select(paste0(types$log,"_names")))[1,1]
+  
+  #next, convert checkscore to words
+  checkscore <-readingOutput(oldcheckrow[3])
+  assessor <- oldcheckrow[4]
+  summary <- oldcheckrow[5]
+  obs <- oldcheckrow[6]
+  out <- oldcheckrow[7]
+  
+  #create preview ui
+  uihistory <- fixedRow(
+    column(2, paste(checkname)),
+    column(2, paste(checkscore)),
+    column(2, paste(assessor)),
+    column(2, paste(summary)),
+    column(2, paste(obs)),
+    column(2, paste(out))
+  )
+  
+  return(uihistory)
+  
+}
+
+observeEvent(input$previous, {
   #Modal displays all dates of recent saves, and upon selecting one, there is an option to preview
-    showModal(modalDialog(
+  showModal(modalDialog(
     renderUI({
       fixedRow(column(8,
-       DT::dataTableOutput('datesdfoutput'),
-       actionButton("preview","Preview")))
+                      DT::dataTableOutput('datesdfoutput'),
+                      actionButton("preview","Preview")))
     })
   ))
-    
-  observeEvent(input$preview, {
-    #dateselect is the selected date of the preview
-    projectnumber <- input$datesdfoutput_rows_selected
-    dateselect <- datesdf[projectnumber,1]
-    
-    select_old_check <- function(checkid,dateselect, chosennumber){
-      selectolddate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks_SCD] WHERE ProjectID = ", chosennumber, " and checkID = '", checkid, "' and EndDate > '", dateselect, "'", sep="") 
-      selectolddate <- sqlQuery(myConn, selectolddate)%>%replace(.,is.na(.),"")
-      return(selectolddate)
-    }
-  
-  #this function will create each individual row for checks in the preview pane  
-    
-  displayingoldchecks <- function(checkid,dateselect,chosennumber,types,names_df){
-    #This is reading in from SCD table
-    checkSCD <- select_old_check(checkid,dateselect,chosennumber)
-    
-    selectcurrentdate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", chosennumber, " and checkID = '", checkid, "'", sep="") 
-    selectcurrentdate <- sqlQuery(myConn, selectcurrentdate)%>%replace(.,is.na(.),"")
-    
-    #if checkSCD is empty, then look at current table
-    if (nrow(checkSCD)==0 && nrow(selectcurrentdate)==0) {
-        oldcheckrow <- c(chosennumber,checkid,7,"","","","")
-      }
-      else if (nrow(checkSCD)==0 && nrow(selectcurrentdate)!=0) {#current data is still relevant at current date
-        oldcheckrow <- selectcurrentdate
-      }
-    else { #if checkSCD is not empty, select first row
-      oldcheckrow <- checkSCD%>%top_n(EndDate,n=-1)%>%select(-EndDate)
-    }
-    #now old check row contains all information about the relevant check
-    #so we now update all relevant text outputs for this check
-    
-    #first off, read in names of checks
-    check_row <- names_df%>%filter(QAcheckslist==checkid)
-    checkname <- (check_row%>%select(paste0(types$log,"_names")))[1,1]
-    
-    #next, convert checkscore to words
-    checkscore <-readingOutput(oldcheckrow[3])
-    assessor <- oldcheckrow[4]
-    summary <- oldcheckrow[5]
-    obs <- oldcheckrow[6]
-    out <- oldcheckrow[7]
-      
-    #create preview ui
-    uihistory <- fixedRow(
-      column(2, paste(checkname)),
-      column(2, paste(checkscore)),
-      column(2, paste(assessor)),
-      column(2, paste(summary)),
-      column(2, paste(obs)),
-      column(2, paste(out))
-    )
-    
-    return(uihistory)
-    
-    }
+})
+
+observeEvent(input$preview, {
+  chosennumber <- input$projectID
+  #dateselect is the selected date of the preview
+  projectnumber <- input$datesdfoutput_rows_selected
+  dateselect <- reading_dates()[projectnumber,1]
   
   #apply above function to all checks
   output$DGhistory <- renderUI(lapply(justDGchecks(),displayingoldchecks,dateselect=dateselect,chosennumber=chosennumber,types=types,names_df=names_df))
@@ -601,11 +606,11 @@ observeEvent(input$previous, {
   output$DAhistory <- renderUI(lapply(justDAchecks(),displayingoldchecks,dateselect=dateselect,chosennumber=chosennumber,types=types,names_df=names_df))
   outputOptions(output, "DAhistory", suspendWhenHidden=FALSE)
   
-    #this is the ui for the preview pane
+  #this is the ui for the preview pane
   removeModal()
   
-    showModal(modalDialog(
-      renderUI({
+  showModal(modalDialog(
+    renderUI({
         #----DG checks----
         fixedRow(
           column(12,
@@ -662,8 +667,6 @@ observeEvent(input$previous, {
       })
     ))
   })
-}
-)
 
 observeEvent(input$backpreview,{
   removeModal()
