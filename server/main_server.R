@@ -573,7 +573,10 @@ displayingoldchecks <- function(checkid,dateselect,chosennumber,types,names_df){
   
 }
 
+previous_list <- reactiveValues(log = "blank")
+
 observeEvent(input$previous, {
+  if(previous_list$log=="blank"){
   #Modal displays all dates of recent saves, and upon selecting one, there is an option to preview
   showModal(modalDialog(
     renderUI({
@@ -581,10 +584,17 @@ observeEvent(input$previous, {
                       DT::dataTableOutput('datesdfoutput'),
                       actionButton("preview","Preview")))
     })
-  ))
+  ))}
+  else{showModal(modalDialog(
+    renderUI({
+      fixedRow(column(8,
+                      "Something has gone wrong."))
+    })
+  ))}
 })
 
 observeEvent(input$preview, {
+  previous_list$log<-"preview"
   chosennumber <- input$projectID
   #dateselect is the selected date of the preview
   projectnumber <- input$datesdfoutput_rows_selected
@@ -662,7 +672,7 @@ observeEvent(input$preview, {
           column(2, h5("Observations")),
           column(2, h5("Outstanding (potential) work")), br(),
         uiOutput("DAhistory"), br(),
-        column(2, actionButton("restore", "Restore this version")),
+        column(4, actionButton("restore", "Restore this version")),
         column(2, actionButton("backpreview", "Back")))
       })
     ))
@@ -670,6 +680,5 @@ observeEvent(input$preview, {
 
 observeEvent(input$backpreview,{
   removeModal()
-  updateActionButton(session, "preview")
-  updateActionButton(session, "previous")
+  previous_list$log<-"blank"
 })
