@@ -8,6 +8,7 @@ library(RODBC)
 library(stringr)
 library(shinyjs)
 library(shinyBS)
+library(DT)
 
 #location of app files
 username <- "tmorley"

@@ -520,59 +520,6 @@ reading_dates <- reactive({
   return(datesdf)})
 output$datesdfoutput <- DT::renderDataTable(reading_dates(), server=FALSE, selection='single')
 
-select_old_check <- function(checkid,dateselect, chosennumber){
-  selectolddate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks_SCD] WHERE ProjectID = ", chosennumber, " and checkID = '", checkid, "' and EndDate > '", dateselect, "'", sep="") 
-  selectolddate <- sqlQuery(myConn, selectolddate)%>%replace(.,is.na(.),"")
-  return(selectolddate)
-}
-
-#this function will create each individual row for checks in the preview pane  
-
-displayingoldchecks <- function(checkid,dateselect,chosennumber,types,names_df){
-  #This is reading in from SCD table
-  checkSCD <- select_old_check(checkid,dateselect,chosennumber)
-  
-  selectcurrentdate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", chosennumber, " and checkID = '", checkid, "'", sep="") 
-  selectcurrentdate <- sqlQuery(myConn, selectcurrentdate)%>%replace(.,is.na(.),"")
-  
-  #if checkSCD is empty, then look at current table
-  if (nrow(checkSCD)==0 && nrow(selectcurrentdate)==0) {
-    oldcheckrow <- c(chosennumber,checkid,7,"","","","")
-  }
-  else if (nrow(checkSCD)==0 && nrow(selectcurrentdate)!=0) {#current data is still relevant at current date
-    oldcheckrow <- selectcurrentdate
-  }
-  else { #if checkSCD is not empty, select first row
-    oldcheckrow <- checkSCD%>%top_n(EndDate,n=-1)%>%select(-EndDate)
-  }
-  #now old check row contains all information about the relevant check
-  #so we now update all relevant text outputs for this check
-  
-  #first off, read in names of checks
-  check_row <- names_df%>%filter(QAcheckslist==checkid)
-  checkname <- (check_row%>%select(paste0(types$log,"_names")))[1,1]
-  
-  #next, convert checkscore to words
-  checkscore <-readingOutput(oldcheckrow[3])
-  assessor <- oldcheckrow[4]
-  summary <- oldcheckrow[5]
-  obs <- oldcheckrow[6]
-  out <- oldcheckrow[7]
-  
-  #create preview ui
-  uihistory <- fixedRow(
-    column(2, paste(checkname)),
-    column(2, paste(checkscore)),
-    column(2, paste(assessor)),
-    column(2, paste(summary)),
-    column(2, paste(obs)),
-    column(2, paste(out))
-  )
-  
-  return(uihistory)
-  
-}
-
 previous_list <- reactiveValues(log = "blank")
 
 observeEvent(input$previous, {
@@ -600,7 +547,9 @@ observeEvent(input$preview, {
   projectnumber <- input$datesdfoutput_rows_selected
   dateselect <- reading_dates()[projectnumber,1]
   
-  #apply above function to all checks
+  output$QAloghistory <- renderUI(displayingoldlog(dateselect,chosennumber))
+  
+  #generating display for each individual check
   output$DGhistory <- renderUI(lapply(justDGchecks(),displayingoldchecks,dateselect=dateselect,chosennumber=chosennumber,types=types,names_df=names_df))
   outputOptions(output, "DGhistory", suspendWhenHidden=FALSE)
 
@@ -616,13 +565,54 @@ observeEvent(input$preview, {
   output$DAhistory <- renderUI(lapply(justDAchecks(),displayingoldchecks,dateselect=dateselect,chosennumber=chosennumber,types=types,names_df=names_df))
   outputOptions(output, "DAhistory", suspendWhenHidden=FALSE)
   
+  #calculating overall check score for each pillar
+  DGscorehistory <- mapply(checkscorehistory,justDGchecks(),dateselect=dateselect,chosennumber=chosennumber)
+  DGzerohistory <- mapply(zeroscorehistory, justDGchecks(), dateselect=dateselect,chosennumber=chosennumber)
+  DGpercenthistory <- if(sum(DGzerohistory)==0){0} else{round(sum(DGscorehistory)/sum(DGzerohistory))}
+  
+  SCscorehistory <- mapply(checkscorehistory,justSCchecks(),dateselect=dateselect,chosennumber=chosennumber)
+  SCzerohistory <- mapply(zeroscorehistory, justSCchecks(), dateselect=dateselect,chosennumber=chosennumber)
+  SCpercenthistory <- if(sum(SCzerohistory)==0){0} else{round(sum(SCscorehistory)/sum(SCzerohistory))}
+  
+  VEscorehistory <- mapply(checkscorehistory,justVEchecks(),dateselect=dateselect,chosennumber=chosennumber)
+  VEzerohistory <- mapply(zeroscorehistory, justVEchecks(), dateselect=dateselect,chosennumber=chosennumber)
+  VEpercenthistory <- if(sum(VEzerohistory)==0){0} else{round(sum(VEscorehistory)/sum(VEzerohistory))}
+  
+  VAscorehistory <- mapply(checkscorehistory,justVAchecks(),dateselect=dateselect,chosennumber=chosennumber)
+  VAzerohistory <- mapply(zeroscorehistory, justVAchecks(), dateselect=dateselect,chosennumber=chosennumber)
+  VApercenthistory <- if(sum(VAzerohistory)==0){0} else{round(sum(VAscorehistory)/sum(VAzerohistory))}
+  
+  DAscorehistory <- mapply(checkscorehistory,justDAchecks(),dateselect=dateselect,chosennumber=chosennumber)
+  DAzerohistory <- mapply(zeroscorehistory, justDAchecks(), dateselect=dateselect,chosennumber=chosennumber)
+  DApercenthistory <- if(sum(DAzerohistory)==0){0} else{round(sum(DAscorehistory)/sum(DAzerohistory))}
+  
   #this is the ui for the preview pane
   removeModal()
   
   showModal(modalDialog(
     renderUI({
-        #----DG checks----
         fixedRow(
+          column(2, h5("Project name")),
+          column(2, h5("Version")),
+          column(2, h5("Lead Analyst")),
+          column(2, h5("Analytical Assurer")),
+          column(2, h5("Business Critical")),
+          column(2, "", br(), "", br(), "", br(), ""), br(),
+        uiOutput("QAloghistory"), br(),hr(),
+        #----Score summary---
+        column(2, h5("DG")),
+        column(2, h5("SC")),
+        column(2, h5("Ve")),
+        column(2, h5("Va")),
+        column(2, h5("DA")),
+        column(2, h5("Overall score")), br(),
+        column(2, HTML(paste0("<span style=\"",scorecolours(DGpercenthistory),"\">",DGpercenthistory, "% </span>"))), 
+        column(2, HTML(paste0("<span style=\"",scorecolours(SCpercenthistory),"\">",SCpercenthistory, "% </span>"))), 
+        column(2, HTML(paste0("<span style=\"",scorecolours(VEpercenthistory),"\">",VEpercenthistory, "% </span>"))), 
+        column(2, HTML(paste0("<span style=\"",scorecolours(VApercenthistory),"\">",VApercenthistory, "% </span>"))), 
+        column(2, HTML(paste0("<span style=\"",scorecolours(DApercenthistory),"\">",DApercenthistory, "% </span>"))), 
+        column(2, HTML(paste0("<span style=\"",scorecolours(DGpercenthistory),"\">",DGpercenthistory, "% </span>"))), br(),hr(),
+        #----DG checks----
           column(12,
                  h2("Documentation and Governance")), br(),
           column(2, h5("QA area")),
@@ -681,4 +671,9 @@ observeEvent(input$preview, {
 observeEvent(input$backpreview,{
   removeModal()
   previous_list$log<-"blank"
+})
+
+observeEvent(input$restore,{
+  removeModal()
+  
 })

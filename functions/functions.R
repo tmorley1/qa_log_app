@@ -192,3 +192,175 @@ iszero <- function(qacheck){
   else
     return(1)
 }
+#--- Functions for reading in historical records-----
+#this function selects correct rows from QA_log_SCD
+select_old_log <- function(dateselect, chosennumber){
+  selectolddate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_log_SCD] WHERE ProjectID = ", chosennumber, " and EndDate > '", dateselect, "'", sep="") 
+  selectolddate <- sqlQuery(myConn, selectolddate)%>%replace(.,is.na(.),"")
+  return(selectolddate)
+}
+
+#this function will create top row of log preview
+displayingoldlog <- function(dateselect,chosennumber){
+  #This is reading in from SCD table
+  checkSCD <- select_old_log(dateselect,chosennumber)
+  
+  selectcurrentdate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_log] WHERE ProjectID = ", chosennumber, sep="") 
+  selectcurrentdate <- sqlQuery(myConn, selectcurrentdate)%>%replace(.,is.na(.),"")
+  
+  #if checkSCD is empty, then look at current table
+  if (nrow(checkSCD)==0) {
+    oldcheckrow <- selectcurrentdate
+  }
+  else { #if checkSCD is not empty, select first row
+    oldcheckrow <- checkSCD%>%top_n(EndDate,n=-1)%>%select(-EndDate)
+  }
+  
+  #read in various categories
+  projectname <-oldcheckrow[2]
+  vers <- oldcheckrow[3]
+  leadanalyst <- oldcheckrow[4]
+  analyticalassurer <- oldcheckrow[5]
+  BCM <- oldcheckrow[6]
+  
+  #create preview ui
+  uihistory <- fixedRow(
+    column(2, paste(projectname)),
+    column(2, paste(vers)),
+    column(2, paste(leadanalyst)),
+    column(2, paste(analyticalassurer)),
+    column(2, paste(BCM)),
+    column(2, paste(""))
+  )
+  
+  return(uihistory)
+}
+
+#this function selects correct rows from QA_checks_SCD
+select_old_check <- function(checkid,dateselect, chosennumber){
+  selectolddate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks_SCD] WHERE ProjectID = ", chosennumber, " and checkID = '", checkid, "' and EndDate > '", dateselect, "'", sep="") 
+  selectolddate <- sqlQuery(myConn, selectolddate)%>%replace(.,is.na(.),"")
+  return(selectolddate)
+}
+
+#this function will create each individual row for checks in the preview pane  
+displayingoldchecks <- function(checkid,dateselect,chosennumber,types,names_df){
+  #This is reading in from SCD table
+  checkSCD <- select_old_check(checkid,dateselect,chosennumber)
+  
+  selectcurrentdate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", chosennumber, " and checkID = '", checkid, "'", sep="") 
+  selectcurrentdate <- sqlQuery(myConn, selectcurrentdate)%>%replace(.,is.na(.),"")
+  
+  #if checkSCD is empty, then look at current table
+  if (nrow(checkSCD)==0 && nrow(selectcurrentdate)==0) {
+    oldcheckrow <- c(chosennumber,checkid,7,"","","","")
+  }
+  else if (nrow(checkSCD)==0 && nrow(selectcurrentdate)!=0) {#current data is still relevant at current date
+    oldcheckrow <- selectcurrentdate
+  }
+  else { #if checkSCD is not empty, select first row
+    oldcheckrow <- checkSCD%>%top_n(EndDate,n=-1)%>%select(-EndDate)
+  }
+  #now old check row contains all information about the relevant check
+  #so we now update all relevant text outputs for this check
+  
+  #first off, read in names of checks
+  check_row <- names_df%>%filter(QAcheckslist==checkid)
+  checkname <- (check_row%>%select(paste0(types$log,"_names")))[1,1]
+  
+  #next, convert checkscore to words
+  checkscore <-readingOutput(oldcheckrow[3])
+  assessor <- oldcheckrow[4]
+  summary <- oldcheckrow[5]
+  obs <- oldcheckrow[6]
+  out <- oldcheckrow[7]
+  
+  #adding colours to check ratings
+  checkscorecolour <- if(checkscore=="TO BE CHECKED"){HTML(paste0("<span style=\"background-color: #00bfff\">",checkscore,"</span>"))}
+  else if(checkscore=="1) Excellent"){HTML(paste0("<span style=\"background-color: #32cd32\">",checkscore,"</span>"))}
+  else if(checkscore=="2) Good"){HTML(paste0("<span style=\"background-color: #a4c639\">",checkscore,"</span>"))}
+  else if(checkscore=="3) Some issues"){HTML(paste0("<span style=\"background-color: #ffff00\">",checkscore,"</span>"))}
+  else if(checkscore=="4) Needs improvement"){HTML(paste0("<span style=\"background-color: #ffa500\">",checkscore,"</span>"))}
+  else if(checkscore=="5) Significant issues"){HTML(paste0("<span style=\"background-color: #ff0000\">",checkscore,"</span>"))}
+  else if(checkscore=="N/A"){HTML(paste0("<span style=\"background-color: #d3d3d3\">",checkscore,"</span>"))}
+  else {paste(checkscore)}
+  
+  #create preview ui
+  uihistory <- fixedRow(
+    hr(),
+    column(2, paste(checkname)),
+    column(2, eval(checkscorecolour)),
+    column(2, paste(assessor)),
+    column(2, paste(summary)),
+    column(2, paste(obs)),
+    column(2, paste(out))
+  )
+  
+  return(uihistory)
+  
+}
+
+#this function reads in scores, to allow us to calculate overall pillar scores
+#operates in similar way to calculate_score, but reading from SCD table rather than from app inputs
+checkscorehistory <- function(checkid,dateselect,chosennumber){
+  #This is reading in from SCD table
+  checkSCD <- select_old_check(checkid,dateselect,chosennumber)
+  
+  selectcurrentdate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", chosennumber, " and checkID = '", checkid, "'", sep="") 
+  selectcurrentdate <- sqlQuery(myConn, selectcurrentdate)%>%replace(.,is.na(.),"")
+  
+  #if checkSCD is empty, then look at current table
+  if (nrow(checkSCD)==0 && nrow(selectcurrentdate)==0) {
+    oldcheckrow <- c(chosennumber,checkid,7,"","","","")
+  }
+  else if (nrow(checkSCD)==0 && nrow(selectcurrentdate)!=0) {#current data is still relevant at current date
+    oldcheckrow <- selectcurrentdate
+  }
+  else { #if checkSCD is not empty, select first row
+    oldcheckrow <- checkSCD%>%top_n(EndDate,n=-1)%>%select(-EndDate)
+  }
+  #now old check row contains all information about the relevant check
+  #so we now read in the score
+  
+  checkscore <- oldcheckrow[3]
+  
+  score_to_calc <- if(checkscore==1){100}
+  else if(checkscore==2){80}
+  else if(checkscore==3){60}
+  else if(checkscore==4){40}
+  else if(checkscore==5){20}
+  else {0}
+  
+  return(score_to_calc)
+}
+
+#this function checks if score is zero, to allow us to calculate overall pillar scores
+#operates in similar way to is_zero, but reading from SCD table rather than from app inputs
+zeroscorehistory <- function(checkid,dateselect,chosennumber){
+  #This is reading in from SCD table
+  checkSCD <- select_old_check(checkid,dateselect,chosennumber)
+  
+  selectcurrentdate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", chosennumber, " and checkID = '", checkid, "'", sep="") 
+  selectcurrentdate <- sqlQuery(myConn, selectcurrentdate)%>%replace(.,is.na(.),"")
+  
+  #if checkSCD is empty, then look at current table
+  if (nrow(checkSCD)==0 && nrow(selectcurrentdate)==0) {
+    oldcheckrow <- c(chosennumber,checkid,7,"","","","")
+  }
+  else if (nrow(checkSCD)==0 && nrow(selectcurrentdate)!=0) {#current data is still relevant at current date
+    oldcheckrow <- selectcurrentdate
+  }
+  else { #if checkSCD is not empty, select first row
+    oldcheckrow <- checkSCD%>%top_n(EndDate,n=-1)%>%select(-EndDate)
+  }
+  #now old check row contains all information about the relevant check
+  #so we now read in the score
+  
+  checkscore <- readingOutput(oldcheckrow[3])
+  
+  score_to_zero <- if(checkscore=="TO BE CHECKED"){0}
+  else if(checkscore=="N/A"){0}
+  else {1}
+  
+  return(score_to_zero)
+}
