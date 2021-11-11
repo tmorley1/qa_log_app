@@ -586,9 +586,33 @@ observeEvent(input$preview, {
   DAzerohistory <- mapply(zeroscorehistory, justDAchecks(), dateselect=dateselect,chosennumber=chosennumber)
   DApercenthistory <- if(sum(DAzerohistory)==0){0} else{round(sum(DAscorehistory)/sum(DAzerohistory))}
   
-  #this is the ui for the preview pane
+  #Reading in weightings and calculating overall QA log score
+  checkSCDforweightings <- select_old_log(dateselect,chosennumber)
+  
+  selectcurrentdateweightings <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_log] WHERE ProjectID = ", chosennumber, sep="") 
+  selectcurrentdateweightings <- sqlQuery(myConn, selectcurrentdateweightings)%>%replace(.,is.na(.),"")
+  
+  #if checkSCD is empty, then look at current table
+  if (nrow(checkSCDforweightings)==0) {
+    weightingshistory <- selectcurrentdateweightings
+  }
+  else { #if checkSCD is not empty, select first row
+    weightingshistory <- (checkSCDforweightings%>%top_n(EndDate,n=-1))
+  }
+  
+   weightings_separate <- strsplit(weightingshistory$weighting,split=" ")
+   
+   DGweightingshistory <- weightings_separate[[1]][1]
+   SCweightingshistory <- weightings_separate[[1]][2]
+   VEweightingshistory <- weightings_separate[[1]][3]
+   VAweightingshistory <- weightings_separate[[1]][4]
+   DAweightingshistory <- weightings_separate[[1]][5]
+   
+   totalQAhistory <- as.numeric(DGweightingshistory)*DGpercenthistory + as.numeric(SCweightingshistory)*SCpercenthistory + as.numeric(VEweightingshistory)*VEpercenthistory + as.numeric(VAweightingshistory)*VApercenthistory + as.numeric(DAweightingshistory)*DApercenthistory
+   
   removeModal()
   
+  #this is the ui for the preview pane
   showModal(modalDialog(
     renderUI({
         fixedRow(
@@ -611,7 +635,7 @@ observeEvent(input$preview, {
         column(2, HTML(paste0("<span style=\"",scorecolours(VEpercenthistory),"\">",VEpercenthistory, "% </span>"))), 
         column(2, HTML(paste0("<span style=\"",scorecolours(VApercenthistory),"\">",VApercenthistory, "% </span>"))), 
         column(2, HTML(paste0("<span style=\"",scorecolours(DApercenthistory),"\">",DApercenthistory, "% </span>"))), 
-        column(2, HTML(paste0("<span style=\"",scorecolours(DGpercenthistory),"\">",DGpercenthistory, "% </span>"))), br(),hr(),
+        column(2, HTML(paste0("<span style=\"",scorecolours(DApercenthistory),"\">",totalQAhistory, "% </span>"))), br(),hr(),
         #----DG checks----
           column(12,
                  h2("Documentation and Governance")), br(),
