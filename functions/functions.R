@@ -18,6 +18,17 @@ create_log <- function(log_type,log_type_name,session1,types1,nexttab1){
   #if the ID is being used, nothing happens and the user has to click on the button again
 }
 
+#Observing what type of new log is to be created, and then calling create_log
+observe_logtype <- function(log,session,types,nexttab){
+  observeEvent(input[[paste0(log)]],{
+    create_log(log,logname(log),session,types,nexttab)
+  })
+}
+
+create_actionbutton<-function(log){
+  actionButton(log,label=logname(log))
+}
+
 #--- Functions for reading in from SQL ----
 
 #Selected rating based on number
@@ -163,6 +174,18 @@ savingscore <- function(scoreID, dataframe,qacheckSave,projectID,databasename,my
     }
   }
 }
+
+#Pull in info on individual checks
+#And insert "dummy info" where there is no data for that check
+individualChecks <- function(checkIDtext,checks){
+  somebits <- checks %>% filter(checkID==checkIDtext)
+  if (nrow(somebits)==0){
+    newrow <- c("ID",checkIDtext,7,"","","","")
+    somebits <- rbind(somebits,newrow)
+  }
+  return(somebits)
+}
+
 #--- Functions for calculating scores -----
 
 #calculate_score gives a base score (in probability) for each QA activity
@@ -191,6 +214,87 @@ iszero <- function(qacheck){
     return(0)
   else
     return(1)
+}
+
+scoresfunc <- function(listchecks){
+  #Assigns a numerical score to each rating
+  checkscores <- sapply(listchecks,calculate_score)
+  #adds up all scores
+  total <- sum(checkscores)
+  
+  #adds up number of ratings
+  numberchecks<-sapply(listchecks,iszero)
+  number <- sum(numberchecks)
+  
+  #calculates average percentage rating
+  percentage <- if(number==0){0}
+  else{round(total/number)}
+  
+  return(percentage)
+}
+
+scorecolours<-function(percentage){  
+  #score colours
+  scorecolour <- if(percentage >= 90) {
+    "Background-color: #32cd32;" #Green
+  }
+  else if (percentage >= 70){
+    "Background-color: #ffff00;" #Yellow
+  }
+  else if (percentage >= 50){
+    "Background-color: #ffa500;" #Orange
+  }
+  else{
+    "Background-color: #ff0000;" #Red
+  }
+  
+  return(scorecolour)
+}
+
+#--- Functions for displaying extra info on checks-----
+
+#This function creates modals to show extra info
+observe_info <- function(qacheck,types){
+  observeEvent(input[[paste0(qacheck,"info")]],{
+    showModal(modalDialog(
+      eval(parse(text=paste(qacheck,types$log,sep="")))
+    ))
+  })
+}
+
+#This function creates the UI necessary to render the tooltips
+tooltip_ui_render <- function(checkid,types){
+  bsTooltip(id=paste0("score",checkid),
+            title=eval(parse(text=paste0(checkid,"tooltip",types$log))),
+            trigger="hover",placement="right")
+}
+
+#--- Functions for error messages----
+#checks whether a mandatory check has been left as "To be Checked"
+check_mandatory <- function(checkID,types,names_df){
+  score <-input[[paste0("score",checkID)]]
+  check_row <- names_df%>%filter(QAcheckslist==checkID)
+  mandatory <- (check_row%>%select(paste0(types$log,"_mandatory")))[1,1]
+  to_return <- if(mandatory==1 && score=="TO BE CHECKED"){1}
+  else {0}
+  return(to_return)
+}
+#checks whether a mandatory check has been marked "N/A"
+check_NA_mandatory <- function(checkID,types,names_df){
+  score <-input[[paste0("score",checkID)]]
+  check_row <- names_df%>%filter(QAcheckslist==checkID)
+  mandatory <- (check_row%>%select(paste0(types$log,"_mandatory")))[1,1]
+  to_return <- if(mandatory==1 && score=="N/A"){1}
+  else {0}
+  return(to_return)
+}
+
+#checks whether any "Significant issues" exist
+check_significant <- function(checkID,types,names_df){
+  score <-input[[paste0("score",checkID)]]
+  to_return <- if(score=="5) Significant issues"){1}
+  else {0}
+  return(to_return)
 }
 #--- Functions for reading in historical records-----
 #this function selects correct rows from QA_log_SCD

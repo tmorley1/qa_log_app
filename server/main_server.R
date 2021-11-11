@@ -131,42 +131,7 @@ observeEvent(input$saveSQL, {
 
 })
   
-#---- Calculating score functions----
-
-scoresfunc <- function(listchecks){
-  #Assigns a numerical score to each rating
-  checkscores <- sapply(listchecks,calculate_score)
-  #adds up all scores
-  total <- sum(checkscores)
-  
-  #adds up number of ratings
-  numberchecks<-sapply(listchecks,iszero)
-  number <- sum(numberchecks)
-  
-  #calculates average percentage rating
-  percentage <- if(number==0){0}
-                         else{round(total/number)}
-  
-  return(percentage)
-}
-
-scorecolours<-function(percentage){  
-  #score colours
-  scorecolour <- if(percentage >= 90) {
-    "Background-color: #32cd32;" #Green
-  }
-  else if (percentage >= 70){
-    "Background-color: #ffff00;" #Yellow
-  }
-  else if (percentage >= 50){
-    "Background-color: #ffa500;" #Orange
-  }
-  else{
-    "Background-color: #ff0000;" #Red
-  }
-  
-  return(scorecolour)
-}
+#---- Calculating scores----
 
 #Calculation for DG scores 
 output$DGscores <- renderValueBox({valueBox(paste(scoresfunc(justDGchecks())," %"),subtitle="Documentation and governance")})
@@ -242,26 +207,10 @@ output$totalscorescolours <- renderUI(scorecolour("totalscores",scorecolours(tot
 #Info is different for each type of log
 #The info is read in from comments_'log name'_log.R
 
-observe_info <- function(qacheck,types){
-  observeEvent(input[[paste0(qacheck,"info")]],{
-      showModal(modalDialog(
-      eval(parse(text=paste(qacheck,types$log,sep="")))
-    ))
-  })
-}
-
 lapply(QAcheckslist,observe_info,types=types)
 
-#---- Tooltips-----
 #This displays extra tips on ratings when hovering over selection menu
 #Tips are different depending on type of log
-
-#This function creates the UI necessary to render the tooltips
-tooltip_ui_render <- function(checkid,types){
-    bsTooltip(id=paste0("score",checkid),
-              title=eval(parse(text=paste0(checkid,"tooltip",types$log))),
-              trigger="hover",placement="right")
-}
 
 #This applies the above function to every QA check
 output$tooltips <- renderUI(lapply(QAcheckslist,tooltip_ui_render,types=types))
@@ -269,15 +218,6 @@ output$tooltips <- renderUI(lapply(QAcheckslist,tooltip_ui_render,types=types))
 #---- Error messages----
 
 #Display error message if mandatory checks are marked TO BE CHECKED
-
-check_mandatory <- function(checkID,types,names_df){
-  score <-input[[paste0("score",checkID)]]
-  check_row <- names_df%>%filter(QAcheckslist==checkID)
-  mandatory <- (check_row%>%select(paste0(types$log,"_mandatory")))[1,1]
-  to_return <- if(mandatory==1 && score=="TO BE CHECKED"){1}
-               else {0}
-  return(to_return)
-}
 
 listofmandatory <- reactive({sapply(logspecificchecks(),check_mandatory,types=types,names_df=names_df)})
 
@@ -293,15 +233,6 @@ output$mandatory_dialogue <- renderValueBox({valueBox(value=tags$p(mandatory_err
 
 #Display error message if mandatory checks are marked NA
 
-check_NA_mandatory <- function(checkID,types,names_df){
-  score <-input[[paste0("score",checkID)]]
-  check_row <- names_df%>%filter(QAcheckslist==checkID)
-  mandatory <- (check_row%>%select(paste0(types$log,"_mandatory")))[1,1]
-  to_return <- if(mandatory==1 && score=="N/A"){1}
-  else {0}
-  return(to_return)
-}
-
 listofmandatoryNA <- reactive({sapply(logspecificchecks(),check_NA_mandatory,types=types,names_df=names_df)})
 
 numberchecksNA <- reactive({sum(listofmandatoryNA())})
@@ -315,13 +246,6 @@ mandatory_error_NA <- reactive({
 output$mandatory_dialogueNA <- renderValueBox({valueBox(value=tags$p(mandatory_error_NA(),style="font-size: 75%"),subtitle="")})
 
 #Display error message if checks are marked "5) Significant issues"
-
-check_significant <- function(checkID,types,names_df){
-  score <-input[[paste0("score",checkID)]]
-  to_return <- if(score=="5) Significant issues"){1}
-  else {0}
-  return(to_return)
-}
 
 listofsignificant <- reactive({sapply(logspecificchecks(),check_significant,types=types,names_df=names_df)})
 
@@ -412,16 +336,7 @@ logrowfinal <- reactive({if(nrow(logrow())==0){
 selectchecks <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", currentid(), sep="")})
 #now run the query to get our output.
 checks <- reactive({sqlQuery(myConn, selectchecks())})
-#The function pulls in info on individual checks
-#And inserts "dummy info" where there is no data for that check
-individualChecks <- function(checkIDtext,checks){
-  somebits <- checks %>% filter(checkID==checkIDtext)
-  if (nrow(somebits)==0){
-    newrow <- c("ID",checkIDtext,7,"","","","")
-    somebits <- rbind(somebits,newrow)
-  }
-  return(somebits)
-}
+
 #build a dataframe with all current SQL data
 sqlinfo <- reactive({sapply(logspecificchecks(),individualChecks,checks=checks())})
 sqlinfodf <- reactive({data.frame(sqlinfo())})

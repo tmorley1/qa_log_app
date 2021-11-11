@@ -18,20 +18,11 @@ observeEvent(input$newlog, {
   types$log <- "new"
 })
 
-observe_logtype <- function(log,session,types,nexttab){
-  observeEvent(input[[paste0(log)]],{
-    create_log(log,logname(log),session,types,nexttab)
-  })
-}
-
 lapply(logslist,observe_logtype,session=session,types=types,nexttab=nexttab)
 
 weightings <- reactiveValues(DG = "0.2", SC = "0.2", VA = "0.2", VE = "0.2", DA = "0.2")
 
 #----Generating UI when "Create New Log" selected----
-create_actionbutton<-function(log){
-  actionButton(log,label=logname(log))
-}
 
 output$newPanel <- renderUI({
   if (types$log=="new"){
