@@ -373,9 +373,13 @@ observeEvent(input$saveSQL, {
   selectlogrow <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[QA_log] WHERE ProjectID = ", currentid(), sep="")})
   #now run the query to get our output
   logrow <- reactive({sqlQuery(myConn, selectlogrow())})
-  #No need for if statement because Project ID will now definitely exist
-  logrowfinal <- reactive({data.frame(column1=c("NA",logrow()[1,2],"NA","NA","NA","NA","NA"),
-                    column2=t(logrow()[- 1]))})
+  #We still need if statement because a new project could be created by clicking
+  #back and then creating a new project
+  logrowfinal <- reactive({if(nrow(logrow())==0){
+    data.frame(column1=c("NA","NA","NA","NA","NA","NA","NA"),
+               column2=c("NA","NA","NA","NA","NA","NA","NA"))
+  } else{data.frame(column1=c("NA",logrow()[1,2],"NA","NA","NA","NA","NA"),
+                    column2=t(logrow()[- 1]))}})
   #select correct rows from QA_checks SQL
   selectchecks <- reactive({paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", currentid(), sep="")})
   #now run the query to get our output.
@@ -603,8 +607,8 @@ observeEvent(input$preview, {
         uiOutput("DAhistory"), br(),
         column(4, actionButton("restore", "Restore this version")),
         column(2, actionButton("backpreview", "Back")))
-      })
-    ))
+      }),
+    footer=NULL))
   })
 
 observeEvent(input$backpreview,{
@@ -614,5 +618,5 @@ observeEvent(input$backpreview,{
 
 observeEvent(input$restore,{
   removeModal()
-  
+  previous_list$log<-"blank"
 })

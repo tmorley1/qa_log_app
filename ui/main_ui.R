@@ -1,4 +1,31 @@
 tabPanel(title = "QA Log", value = "panel2", #button in navigation panel
+
+#--------changing height of text boxes with text------         
+         tags$head(
+           tags$style("textarea {
+                    width:100%; 
+                    height:34px;
+                    display: block;
+                    padding: 6px 12px;
+                    font-size: 14px;
+                    line-height: 1.42857143;
+                    color: #555;
+                    background-color: #fff;
+                    background-image: none;
+                    border: 1px solid #ccc;
+                    border-radius: 4px;
+                    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+                    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
+                  }
+
+                  textarea:focus {
+                    border-color: #66afe9;
+                    outline: 0;
+                    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
+                    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6)
+                 }"
+           )
+         ),
          
 #-------colours in drop down menu----
          tags$head(

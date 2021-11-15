@@ -23,10 +23,10 @@ UI_check <- function(checkID,types,names_df){
   uicheck <- fixedRow(
       column(2, actionButton(paste(checkID,"info",sep=""), checkname, style=style_mandatory)),
       column(2, rating_options(paste("score",checkID,sep=""))),
-      column(2, textInput(paste("assess",checkID,sep=""),label=NULL, value="")),
-      column(2, textInput(paste("summary",checkID,sep=""), label=NULL, value="")),
-      column(2, textInput(paste("obs",checkID,sep=""), label=NULL, value="")),
-      column(2, textInput(paste("out",checkID,sep=""), label=NULL, value=""))
+      column(2, withTags(div(textarea(id = paste("assess",checkID,sep=""))))),
+      column(2, withTags(div(textarea(id = paste("summary",checkID,sep=""))))),
+      column(2, withTags(div(textarea(id = paste("obs",checkID,sep=""))))),
+      column(2, withTags(div(textarea(id = paste("out",checkID,sep="")))))
     )
   return(uicheck)
 }
