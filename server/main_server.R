@@ -54,7 +54,7 @@ otherinputdf <- reactive({data.frame(otherinput())})
 weightings_save <- reactive({paste(weightings$DG,weightings$SC,weightings$VE,weightings$VA,weightings$DA)})
 
 observeEvent(input$saveSQL, {
-  time <- paste(Sys.time())
+  time <- format(Sys.time(), "%Y-%d-%m %X")
   chosennumber <- input$projectID
   
   #read in current sql data
@@ -95,7 +95,7 @@ observeEvent(input$saveSQL, {
     #we need to add a new row to SCD and then update current SQL
     
     #adding row to SCD
-    lognew_row_SCD <- c(selectrow,paste(time))
+    lognew_row_SCD <- c(selectrow,time)
     
     lognewRowQuerySCD <- paste("INSERT INTO", databasename, ".dbo.QA_log_SCD VALUES ();")
     
@@ -413,28 +413,26 @@ reading_dates <- reactive({
   selectdatelog <- sqlQuery(myConn, selectdatelog)
   selectdatechecks <- sqlQuery(myConn, selectdatechecks)
 
-  #Only look at unique dates, and read is as date-time
+  #Only look at unique dates, and read in as date-time
   EndDate <- if(nrow(selectdatechecks)==0){unique(c(selectdatelog$EndDate))}
   else {unique(c(selectdatechecks$EndDate, selectdatelog$EndDate))}
 
   #arrange in order, with most recent at top
   alldatesdf <- as.data.frame(EndDate)%>%arrange(desc(EndDate))
 
-  #reading in version numbers
-  forversions <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_log_SCD] WHERE ProjectID = ", chosennumber, sep="")
-  forversions <- sqlQuery(myConn, forversions)
-  #create dataframe of version number and dates
-  forversionsdf <- as.data.frame(forversions)%>%select(vers,EndDate)
-  #join dataframes together
-  datesdf <- full_join(alldatesdf,forversionsdf)
-  #Push version numbers in line with date they were created (rather than date discarded)
-  #swap round days and months because for some reason SQL puts them the wrong way round
-  datesdf <- datesdf%>%mutate(vers=lag(vers))%>%mutate(EndDate=paste(EndDate))%>%
-    mutate(EndDate=as.POSIXct(EndDate, format="%Y-%d-%m %H:%M:%S"))%>%
-    mutate(EndDate=paste(EndDate))%>%
-    rename(Version=vers,Date=EndDate)
-  #remove first row (as this is current version)
-  datesdf <- datesdf[-1,]
+   #reading in version numbers
+   forversions <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_log_SCD] WHERE ProjectID = ", chosennumber, sep="")
+   forversions <- sqlQuery(myConn, forversions)
+   #create dataframe of version number and dates
+   forversionsdf <- as.data.frame(forversions)%>%select(vers,EndDate)
+   #join dataframes together
+   datesdf <- full_join(alldatesdf,forversionsdf)
+   #Push version numbers in line with date they were created (rather than date discarded)
+   #swap round days and months because for some reason SQL puts them the wrong way round
+   datesdf <- datesdf%>%mutate(vers=lag(vers))%>%mutate(EndDate=paste(EndDate))%>%
+     rename(Version=vers,Date=EndDate)
+   #remove first row (as this is current version)
+   datesdf <- datesdf[-1,]
 
   return(datesdf)})
 output$datesdfoutput <- DT::renderDataTable(reading_dates(), server=FALSE, selection='single')
@@ -454,10 +452,12 @@ observeEvent(input$previous, {
   else{showModal(modalDialog(
     renderUI({
       fixedRow(column(8,
-                      "Something has gone wrong."))
+                      "Something has gone wrong."))#Hopefully we never see this message!
     })
   ))}
 })
+
+date_list <- reactiveValues(log = "blank")
 
 observeEvent(input$preview, {
   previous_list$log<-"preview"
@@ -466,8 +466,13 @@ observeEvent(input$preview, {
   projectnumber <- input$datesdfoutput_rows_selected
   dateselect <- reading_dates()[projectnumber,1]
   
-  output$QAloghistory <- renderUI(displayingoldlog(dateselect,chosennumber))
+  #To search in SQL, we need to swap around days and months
+  dateselect <- paste(format(as.POSIXct(dateselect),"%Y-%d-%m %H:%M:%S"))
   
+  date_list$log <- dateselect
+
+  output$QAloghistory <- renderUI(displayingoldlog(dateselect,chosennumber))
+
   #generating display for each individual check
   output$DGhistory <- renderUI(lapply(justDGchecks(),displayingoldchecks,dateselect=dateselect,chosennumber=chosennumber,types=types,names_df=names_df))
   outputOptions(output, "DGhistory", suspendWhenHidden=FALSE)
@@ -483,54 +488,41 @@ observeEvent(input$preview, {
 
   output$DAhistory <- renderUI(lapply(justDAchecks(),displayingoldchecks,dateselect=dateselect,chosennumber=chosennumber,types=types,names_df=names_df))
   outputOptions(output, "DAhistory", suspendWhenHidden=FALSE)
-  
+
   #calculating overall check score for each pillar
   DGscorehistory <- mapply(checkscorehistory,justDGchecks(),dateselect=dateselect,chosennumber=chosennumber)
   DGzerohistory <- mapply(zeroscorehistory, justDGchecks(), dateselect=dateselect,chosennumber=chosennumber)
   DGpercenthistory <- if(sum(DGzerohistory)==0){0} else{round(sum(DGscorehistory)/sum(DGzerohistory))}
-  
+
   SCscorehistory <- mapply(checkscorehistory,justSCchecks(),dateselect=dateselect,chosennumber=chosennumber)
   SCzerohistory <- mapply(zeroscorehistory, justSCchecks(), dateselect=dateselect,chosennumber=chosennumber)
   SCpercenthistory <- if(sum(SCzerohistory)==0){0} else{round(sum(SCscorehistory)/sum(SCzerohistory))}
-  
+
   VEscorehistory <- mapply(checkscorehistory,justVEchecks(),dateselect=dateselect,chosennumber=chosennumber)
   VEzerohistory <- mapply(zeroscorehistory, justVEchecks(), dateselect=dateselect,chosennumber=chosennumber)
   VEpercenthistory <- if(sum(VEzerohistory)==0){0} else{round(sum(VEscorehistory)/sum(VEzerohistory))}
-  
+
   VAscorehistory <- mapply(checkscorehistory,justVAchecks(),dateselect=dateselect,chosennumber=chosennumber)
   VAzerohistory <- mapply(zeroscorehistory, justVAchecks(), dateselect=dateselect,chosennumber=chosennumber)
   VApercenthistory <- if(sum(VAzerohistory)==0){0} else{round(sum(VAscorehistory)/sum(VAzerohistory))}
-  
+
   DAscorehistory <- mapply(checkscorehistory,justDAchecks(),dateselect=dateselect,chosennumber=chosennumber)
   DAzerohistory <- mapply(zeroscorehistory, justDAchecks(), dateselect=dateselect,chosennumber=chosennumber)
   DApercenthistory <- if(sum(DAzerohistory)==0){0} else{round(sum(DAscorehistory)/sum(DAzerohistory))}
-  
+
   #Reading in weightings and calculating overall QA log score
-  checkSCDforweightings <- select_old_log(dateselect,chosennumber)
-  
-  selectcurrentdateweightings <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_log] WHERE ProjectID = ", chosennumber, sep="") 
-  selectcurrentdateweightings <- sqlQuery(myConn, selectcurrentdateweightings)%>%replace(.,is.na(.),"")
-  
-  #if checkSCD is empty, then look at current table
-  if (nrow(checkSCDforweightings)==0) {
-    weightingshistory <- selectcurrentdateweightings
-  }
-  else { #if checkSCD is not empty, select first row
-    weightingshistory <- (checkSCDforweightings%>%top_n(EndDate,n=-1))
-  }
-  
-   weightings_separate <- strsplit(weightingshistory$weighting,split=" ")
-   
+   weightings_separate <- weightings_old(dateselect,chosennumber)
+
    DGweightingshistory <- weightings_separate[[1]][1]
    SCweightingshistory <- weightings_separate[[1]][2]
    VEweightingshistory <- weightings_separate[[1]][3]
    VAweightingshistory <- weightings_separate[[1]][4]
    DAweightingshistory <- weightings_separate[[1]][5]
-   
+
    totalQAhistory <- as.numeric(DGweightingshistory)*DGpercenthistory + as.numeric(SCweightingshistory)*SCpercenthistory + as.numeric(VEweightingshistory)*VEpercenthistory + as.numeric(VAweightingshistory)*VApercenthistory + as.numeric(DAweightingshistory)*DApercenthistory
-   
+
   removeModal()
-  
+
   #this is the ui for the preview pane
   showModal(modalDialog(
     renderUI({
@@ -549,11 +541,11 @@ observeEvent(input$preview, {
         column(2, h5("Va")),
         column(2, h5("DA")),
         column(2, h5("Overall score")), br(),
-        column(2, HTML(paste0("<span style=\"",scorecolours(DGpercenthistory),"\">",DGpercenthistory, "% </span>"))), 
-        column(2, HTML(paste0("<span style=\"",scorecolours(SCpercenthistory),"\">",SCpercenthistory, "% </span>"))), 
-        column(2, HTML(paste0("<span style=\"",scorecolours(VEpercenthistory),"\">",VEpercenthistory, "% </span>"))), 
-        column(2, HTML(paste0("<span style=\"",scorecolours(VApercenthistory),"\">",VApercenthistory, "% </span>"))), 
-        column(2, HTML(paste0("<span style=\"",scorecolours(DApercenthistory),"\">",DApercenthistory, "% </span>"))), 
+        column(2, HTML(paste0("<span style=\"",scorecolours(DGpercenthistory),"\">",DGpercenthistory, "% </span>"))),
+        column(2, HTML(paste0("<span style=\"",scorecolours(SCpercenthistory),"\">",SCpercenthistory, "% </span>"))),
+        column(2, HTML(paste0("<span style=\"",scorecolours(VEpercenthistory),"\">",VEpercenthistory, "% </span>"))),
+        column(2, HTML(paste0("<span style=\"",scorecolours(VApercenthistory),"\">",VApercenthistory, "% </span>"))),
+        column(2, HTML(paste0("<span style=\"",scorecolours(DApercenthistory),"\">",DApercenthistory, "% </span>"))),
         column(2, HTML(paste0("<span style=\"",scorecolours(DApercenthistory),"\">",totalQAhistory, "% </span>"))), br(),hr(),
         #----DG checks----
           column(12,
@@ -614,9 +606,15 @@ observeEvent(input$preview, {
 observeEvent(input$backpreview,{
   removeModal()
   previous_list$log<-"blank"
+  date_list$log <- "blank"
 })
 
 observeEvent(input$restore,{
   removeModal()
+  chosennumber <- input$projectID
+  dateselect <- date_list$log
+  restore_log(session,dateselect,chosennumber)
+  lapply(logspecificchecks(),restore_checks,session = session,dateselect=dateselect,chosennumber=chosennumber)
   previous_list$log<-"blank"
+  date_list$log <-"blank"
 })

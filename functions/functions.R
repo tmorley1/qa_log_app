@@ -304,8 +304,8 @@ select_old_log <- function(dateselect, chosennumber){
   return(selectolddate)
 }
 
-#this function will create top row of log preview
-displayingoldlog <- function(dateselect,chosennumber){
+#this function reads in correct information from previous versions
+read_old_log <- function(dateselect, chosennumber){
   #This is reading in from SCD table
   checkSCD <- select_old_log(dateselect,chosennumber)
   
@@ -319,6 +319,14 @@ displayingoldlog <- function(dateselect,chosennumber){
   else { #if checkSCD is not empty, select first row
     oldcheckrow <- checkSCD%>%top_n(EndDate,n=-1)%>%select(-EndDate)
   }
+  
+  return(oldcheckrow)
+}
+
+#this function will create top row of log preview
+displayingoldlog <- function(dateselect,chosennumber){
+  #This is reading in table of log data
+  oldcheckrow <- read_old_log(dateselect, chosennumber)
   
   #read in various categories
   projectname <-oldcheckrow[2]
@@ -347,9 +355,9 @@ select_old_check <- function(checkid,dateselect, chosennumber){
   return(selectolddate)
 }
 
-#this function will create each individual row for checks in the preview pane  
-displayingoldchecks <- function(checkid,dateselect,chosennumber,types,names_df){
-  #This is reading in from SCD table
+#this function reads in correct information for previous versions
+read_old_check <- function(checkid,dateselect,chosennumber){
+  #this is reading in from SCD table
   checkSCD <- select_old_check(checkid,dateselect,chosennumber)
   
   selectcurrentdate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", chosennumber, " and checkID = '", checkid, "'", sep="") 
@@ -365,6 +373,14 @@ displayingoldchecks <- function(checkid,dateselect,chosennumber,types,names_df){
   else { #if checkSCD is not empty, select first row
     oldcheckrow <- checkSCD%>%top_n(EndDate,n=-1)%>%select(-EndDate)
   }
+  
+  return(oldcheckrow)
+}
+
+#this function will create each individual row for checks in the preview pane  
+displayingoldchecks <- function(checkid,dateselect,chosennumber,types,names_df){
+  
+  oldcheckrow <- read_old_check(checkid,dateselect,chosennumber)
   #now old check row contains all information about the relevant check
   #so we now update all relevant text outputs for this check
   
@@ -408,23 +424,7 @@ displayingoldchecks <- function(checkid,dateselect,chosennumber,types,names_df){
 #operates in similar way to calculate_score, but reading from SCD table rather than from app inputs
 checkscorehistory <- function(checkid,dateselect,chosennumber){
   #This is reading in from SCD table
-  checkSCD <- select_old_check(checkid,dateselect,chosennumber)
-  
-  selectcurrentdate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", chosennumber, " and checkID = '", checkid, "'", sep="") 
-  selectcurrentdate <- sqlQuery(myConn, selectcurrentdate)%>%replace(.,is.na(.),"")
-  
-  #if checkSCD is empty, then look at current table
-  if (nrow(checkSCD)==0 && nrow(selectcurrentdate)==0) {
-    oldcheckrow <- c(chosennumber,checkid,7,"","","","")
-  }
-  else if (nrow(checkSCD)==0 && nrow(selectcurrentdate)!=0) {#current data is still relevant at current date
-    oldcheckrow <- selectcurrentdate
-  }
-  else { #if checkSCD is not empty, select first row
-    oldcheckrow <- checkSCD%>%top_n(EndDate,n=-1)%>%select(-EndDate)
-  }
-  #now old check row contains all information about the relevant check
-  #so we now read in the score
+  oldcheckrow <- read_old_check(checkid,dateselect,chosennumber)
   
   checkscore <- oldcheckrow[3]
   
@@ -442,23 +442,7 @@ checkscorehistory <- function(checkid,dateselect,chosennumber){
 #operates in similar way to is_zero, but reading from SCD table rather than from app inputs
 zeroscorehistory <- function(checkid,dateselect,chosennumber){
   #This is reading in from SCD table
-  checkSCD <- select_old_check(checkid,dateselect,chosennumber)
-  
-  selectcurrentdate <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_checks] WHERE ProjectID = ", chosennumber, " and checkID = '", checkid, "'", sep="") 
-  selectcurrentdate <- sqlQuery(myConn, selectcurrentdate)%>%replace(.,is.na(.),"")
-  
-  #if checkSCD is empty, then look at current table
-  if (nrow(checkSCD)==0 && nrow(selectcurrentdate)==0) {
-    oldcheckrow <- c(chosennumber,checkid,7,"","","","")
-  }
-  else if (nrow(checkSCD)==0 && nrow(selectcurrentdate)!=0) {#current data is still relevant at current date
-    oldcheckrow <- selectcurrentdate
-  }
-  else { #if checkSCD is not empty, select first row
-    oldcheckrow <- checkSCD%>%top_n(EndDate,n=-1)%>%select(-EndDate)
-  }
-  #now old check row contains all information about the relevant check
-  #so we now read in the score
+  oldcheckrow <- read_old_check(checkid,dateselect,chosennumber)
   
   checkscore <- readingOutput(oldcheckrow[3])
   
@@ -467,4 +451,48 @@ zeroscorehistory <- function(checkid,dateselect,chosennumber){
   else {1}
   
   return(score_to_zero)
+}
+
+#this function reads in previous weightings to allow us to calculate scores
+weightings_old <- function(dateselect,chosennumber){
+  #Reading in weightings and calculating overall QA log score
+  weightingshistory <- read_old_log(dateselect,chosennumber)
+  
+  weightings_separate <- strsplit(weightingshistory$weighting,split=" ")
+}
+
+#this function restores information in project log bar
+restore_log <- function(session,dateselect,chosennumber){
+  #reading in from SCD table
+  oldcheckrow <- read_old_log(dateselect,chosennumber)
+  
+  updateTextInput(session, inputId = "projectname", value = paste(oldcheckrow[2]))
+  
+  updateTextInput(session, inputId = "version", value = paste(oldcheckrow[3]))
+  
+  updateTextInput(session, inputId = "leadanalyst", value = paste(oldcheckrow[4]))
+  
+  updateTextInput(session, inputId = "analyticalassurer", value = paste(oldcheckrow[5]))
+  
+  updateSelectizeInput(session, inputId = "BCM", selected = oldcheckrow[6])
+  
+  weightings_separate <- weightings_old(dateselect,chosennumber)
+  
+  weightings$DG <- paste(weightings_separate[[1]][1])
+  weightings$SC <- paste(weightings_separate[[1]][2])
+  weightings$VE <- paste(weightings_separate[[1]][3])
+  weightings$VA <- paste(weightings_separate[[1]][4])
+  weightings$DA <- paste(weightings_separate[[1]][5])
+}
+
+#this function restores information in the individual checks
+restore_checks <- function(session,checkid,dateselect,chosennumber){
+  oldcheckrow <- read_old_check(checkid,dateselect,chosennumber)
+  
+  checkoutput <- readingOutput(oldcheckrow[3])
+  updateSelectizeInput(session, inputId = paste("score",checkid,sep=""), selected = checkoutput)
+  updateTextInput(session, inputId = paste("assess", checkid,sep=""), value=paste(oldcheckrow[4]))
+  updateTextInput(session, inputId = paste("summary", checkid,sep=""), value=paste(oldcheckrow[5]))
+  updateTextInput(session, inputId = paste("obs", checkid,sep=""), value=paste(oldcheckrow[6]))
+  updateTextInput(session, inputId = paste("out", checkid,sep=""), value=paste(oldcheckrow[7]))
 }
