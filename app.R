@@ -9,7 +9,6 @@ library(stringr)
 library(shinyjs)
 library(shinyBS)
 library(DT)
-library(anytime)
 
 #location of app files
 username <- "tmorley"
