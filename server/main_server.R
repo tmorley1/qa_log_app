@@ -216,8 +216,39 @@ lapply(QAcheckslist,observe_info,types=types)
 output$tooltips <- renderUI(lapply(QAcheckslist,tooltip_ui_render,types=types))
 
 #---- Displaying and adding links -----
+
+checksreact <- reactiveValues(log = "blank")
+
+dataframelink<- reactive({
+  #Reading in current project ID
+  chosennumber <- input$projectID
+  #Reading in selected qacheck
+  qacheck <- checksreact$log
+  #select relevant links from SQL
+  selectlinks <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_hyperlinks] WHERE ProjectID = ", chosennumber, "AND checkID = '", qacheck, "'", sep="")
+  #read from sql
+  selectlinks <- sqlQuery(myConn, selectlinks)%>%replace(.,is.na(.),"")
+  #Creating dataframe to show in modal
+  dataframelink <- as.data.frame(selectlinks)%>%mutate(Hyperlink=createLink(Link), Description=DisplayText)
+  return(dataframelink)
+})
+
+output$dflink <- DT::renderDataTable(dataframelink()%>%select(-Link,-DisplayText,-LinkID), server=FALSE, selection='single',escape = FALSE)
+
 #Read in function to create modals for each check
 lapply(QAcheckslist,observe_links)
+
+#Read in function to create modals for adding new link
+lapply(QAcheckslist,observe_addlinks)
+
+#Read in function to save new links
+lapply(QAcheckslist,observe_savelinks)
+
+#Read in function to create modals for editing new link
+lapply(QAcheckslist,observe_editlinks)
+
+#Read in function to save edited links
+lapply(QAcheckslist,observe_saveeditlinks)
 
 #---- Error messages----
 

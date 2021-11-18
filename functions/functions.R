@@ -269,32 +269,100 @@ tooltip_ui_render <- function(checkid,types){
             trigger="hover",placement="right")
 }
 
-#--- Functions for displaying links
+#--- Functions for displaying links ------
 
+#function for displaying link as a hyperlink
 createLink <- function(val) {
-  sprintf('<a href="https://%s" target="_blank" >%s</a>',val,val)  
+  sprintf('<a href="%s" target="_blank" >%s</a>',val,val)
 }
 
 #Creates the modal and displays the DT dataframe
 observe_links <- function(qacheck){
   observeEvent(input[[paste0(qacheck,"link")]],{
-    #Reading in current project ID
-    chosennumber <- input$projectID
-    #select relevant links from SQL
-    selectlinks <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_hyperlinks] WHERE ProjectID = ", chosennumber, "AND checkID = '", qacheck, "'", sep="")
-    #read from sql
-    selectlinks <- sqlQuery(myConn, selectlinks)%>%replace(.,is.na(.),"")
-    #Creating dataframe to show in modal
-    dataframelink <- as.data.frame(selectlinks)
-    dataframelink$Link <- createLink(dataframelink$Link)
-    output$dflink <- DT::renderDataTable(dataframelink, server=FALSE, selection='single',escape = FALSE)
   
-    
-    
+    checksreact$log <- qacheck
     
     showModal(modalDialog(
-     DT::dataTableOutput('dflink')
+     DT::dataTableOutput('dflink'),
+     actionButton(paste(qacheck,"addlink",sep=""), "Add link"),
+     conditionalPanel(
+       condition = "input.dflink_rows_selected != 0",
+       br(),
+       actionButton(paste(qacheck,"editlink",sep=""), "Edit link")
+     )
     ))
+  })
+}
+
+#This function is for adding a link
+observe_addlinks <- function(qacheck){
+  observeEvent(input[[paste0(qacheck,"addlink")]],{
+    showModal(modalDialog(
+      textInput("newlink", "Link", value=""),
+      textInput("linkdescription", "Description", value=""),
+      "If copying and pasting links, don't include 'https://' at the start of
+      your link, otherwise the link won't work!",
+      br(),
+      actionButton(paste(qacheck,"savelink",sep=""), "Save")
+    ))
+  })
+}
+
+#This function is for saving a new link
+observe_savelinks <- function(qacheck){
+  observeEvent(input[[paste0(qacheck,"savelink")]],{
+    chosennumber <- input$projectID
+    newlink <- input$newlink
+    linkdesc <- input$linkdescription
+    idnumber <- nrow(dataframelink())+1
+    listforsave <- c(chosennumber, qacheck, newlink, linkdesc, idnumber)
+    
+    newRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_hyperlinks VALUES ();")
+    
+    newRowSQL <- InsertListInQuery(newRowQuery, listforsave)
+    
+    newRowSet <- sqlQuery(myConn,newRowSQL)
+    
+    removeModal()
+    
+    checksreact$log <- "blank"
+  })
+}
+
+#This function is for editing a link
+observe_editlinks <- function(qacheck){
+  observeEvent(input[[paste0(qacheck,"editlink")]],{
+    df<-dataframelink()
+    rownumber<- input$dflink_rows_selected
+    showModal(modalDialog(
+      textInput("editlink","Link",value=df$Link[rownumber]),
+      textInput("editlinkinfo", "Description", value=df$DisplayText[rownumber]),
+      "If copying and pasting links, don't include 'https://' at the start of
+      your link, otherwise the link won't work!",
+      br(),
+      actionButton(paste(qacheck,"saveeditlink",sep=""), "Save")
+    ))
+  })
+}
+
+#This function is for saving an edited link
+observe_saveeditlinks <- function(qacheck){
+  observeEvent(input[[paste0(qacheck,"saveeditlink")]],{
+    chosennumber <- input$projectID
+    newlink <- input$editlink
+    linkdesc <- input$editlinkinfo
+    rownumber<- input$dflink_rows_selected
+    
+    linkEditQuery <- paste("UPDATE ", databasename,".dbo.QA_hyperlinks 
+                          SET Link = '", newlink,
+                          "', DisplayText = '", linkdesc,
+                          "' WHERE projectID = ", chosennumber, "AND checkID = '", qacheck, "' AND LinkID = ", rownumber, ";", sep="")
+    
+    linkEditSet <- sqlQuery(myConn,linkEditQuery)
+    
+    removeModal()
+    
+    checksreact$log <- "blank"
   })
 }
 
