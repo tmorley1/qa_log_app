@@ -269,6 +269,35 @@ tooltip_ui_render <- function(checkid,types){
             trigger="hover",placement="right")
 }
 
+#--- Functions for displaying links
+
+createLink <- function(val) {
+  sprintf('<a href="https://%s" target="_blank" >%s</a>',val,val)  
+}
+
+#Creates the modal and displays the DT dataframe
+observe_links <- function(qacheck){
+  observeEvent(input[[paste0(qacheck,"link")]],{
+    #Reading in current project ID
+    chosennumber <- input$projectID
+    #select relevant links from SQL
+    selectlinks <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_hyperlinks] WHERE ProjectID = ", chosennumber, "AND checkID = '", qacheck, "'", sep="")
+    #read from sql
+    selectlinks <- sqlQuery(myConn, selectlinks)%>%replace(.,is.na(.),"")
+    #Creating dataframe to show in modal
+    dataframelink <- as.data.frame(selectlinks)
+    dataframelink$Link <- createLink(dataframelink$Link)
+    output$dflink <- DT::renderDataTable(dataframelink, server=FALSE, selection='single',escape = FALSE)
+  
+    
+    
+    
+    showModal(modalDialog(
+     DT::dataTableOutput('dflink')
+    ))
+  })
+}
+
 #--- Functions for error messages----
 #checks whether a mandatory check has been left as "To be Checked"
 check_mandatory <- function(checkID,types,names_df){

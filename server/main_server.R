@@ -215,6 +215,10 @@ lapply(QAcheckslist,observe_info,types=types)
 #This applies the above function to every QA check
 output$tooltips <- renderUI(lapply(QAcheckslist,tooltip_ui_render,types=types))
 
+#---- Displaying and adding links -----
+#Read in function to create modals for each check
+lapply(QAcheckslist,observe_links)
+
 #---- Error messages----
 
 #Display error message if mandatory checks are marked TO BE CHECKED

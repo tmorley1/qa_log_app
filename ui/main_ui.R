@@ -117,10 +117,13 @@ fixedRow(column(2,uiOutput("DGscorescolours")),
          fixedRow(
            column(2, h5("QA area")),
            column(2, h5("Rating")),
-           column(2, h5("Assessed by")),
-           column(2, h5("Summary of/link to QA outcome or evidence")),
-           column(2, h5("Observations")),
-           column(2, h5("Outstanding (potential) work"))
+           column(8,
+                  column(2, h5("Assessed by")),
+                  column(2, h5("Summary of evidence")),
+                  column(2, h5("Links to evidence")),
+                  column(3, h5("Observations")),
+                  column(3, h5("Outstanding (potential) work"))
+           )
          ),
         uiOutput("DGuichecks"),
 #----SC checks-----
@@ -130,12 +133,13 @@ fixedRow(column(2,uiOutput("DGscorescolours")),
           )
         ),
         fixedRow(
-          column(2, h5("QA area")),
-          column(2, h5("Rating")),
-          column(2, h5("Assessed by")),
-          column(2, h5("Summary of/link to QA outcome or evidence")),
-          column(2, h5("Observations")),
-          column(2, h5("Outstanding (potential) work"))
+          column(8,
+                 column(2, h5("Assessed by")),
+                 column(2, h5("Summary of evidence")),
+                 column(2, h5("Links to evidence")),
+                 column(3, h5("Observations")),
+                 column(3, h5("Outstanding (potential) work"))
+          )
         ),
         uiOutput("SCuichecks"),
 #----VE Checks----
@@ -145,12 +149,13 @@ fixedRow(column(2,uiOutput("DGscorescolours")),
           )
         ),
         fixedRow(
-          column(2, h5("QA area")),
-          column(2, h5("Rating")),
-          column(2, h5("Assessed by")),
-          column(2, h5("Summary of/link to QA outcome or evidence")),
-          column(2, h5("Observations")),
-          column(2, h5("Outstanding (potential) work"))
+          column(8,
+                 column(2, h5("Assessed by")),
+                 column(2, h5("Summary of evidence")),
+                 column(2, h5("Links to evidence")),
+                 column(3, h5("Observations")),
+                 column(3, h5("Outstanding (potential) work"))
+          )
         ),
         uiOutput("VEuichecks"),
 
@@ -161,12 +166,13 @@ fixedRow(column(2,uiOutput("DGscorescolours")),
           )
         ),
         fixedRow(
-          column(2, h5("QA area")),
-          column(2, h5("Rating")),
-          column(2, h5("Assessed by")),
-          column(2, h5("Summary of/link to QA outcome or evidence")),
-          column(2, h5("Observations")),
-          column(2, h5("Outstanding (potential) work"))
+          column(8,
+                 column(2, h5("Assessed by")),
+                 column(2, h5("Summary of evidence")),
+                 column(2, h5("Links to evidence")),
+                 column(3, h5("Observations")),
+                 column(3, h5("Outstanding (potential) work"))
+          )
         ),
         uiOutput("VAuichecks"),
 
@@ -178,12 +184,13 @@ fixedRow(column(2,uiOutput("DGscorescolours")),
           )
         ),
         fixedRow(
-          column(2, h5("QA area")),
-          column(2, h5("Rating")),
-          column(2, h5("Assessed by")),
-          column(2, h5("Summary of/link to QA outcome or evidence")),
-          column(2, h5("Observations")),
-          column(2, h5("Outstanding (potential) work"))
+          column(8,
+                 column(2, h5("Assessed by")),
+                 column(2, h5("Summary of evidence")),
+                 column(2, h5("Links to evidence")),
+                 column(3, h5("Observations")),
+                 column(3, h5("Outstanding (potential) work"))
+          )
         ),
         uiOutput("DAuichecks"),
 
