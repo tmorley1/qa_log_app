@@ -282,7 +282,12 @@ observe_links <- function(qacheck){
   
     checksreact$log <- qacheck
     
+    check_row <- names_df%>%filter(QAcheckslist==qacheck)
+    checkname <- (check_row%>%select(paste0(types$log,"_names")))[1,1]
+    
     showModal(modalDialog(
+     h5(paste(checkname)),
+     br(),
      DT::dataTableOutput('dflink'),
      actionButton(paste(qacheck,"addlink",sep=""), "Add link"),
      conditionalPanel(
@@ -311,6 +316,7 @@ observe_addlinks <- function(qacheck){
 #This function is for saving a new link
 observe_savelinks <- function(qacheck){
   observeEvent(input[[paste0(qacheck,"savelink")]],{
+    #First, save new link to dbo.QA_hyperlinks
     chosennumber <- input$projectID
     newlink <- input$newlink
     linkdesc <- input$linkdescription
@@ -322,6 +328,18 @@ observe_savelinks <- function(qacheck){
     newRowSQL <- InsertListInQuery(newRowQuery, listforsave)
     
     newRowSet <- sqlQuery(myConn,newRowSQL)
+    
+    #Second, save blank data with current date time
+    
+    timelink <- format(Sys.time(), "%Y-%d-%m %X")
+    
+    blanklink <- c(chosennumber, qacheck, "", "", idnumber,timelink)
+    
+    blankRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_hyperlinks_SCD VALUES ();")
+    
+    blankRowSQL <- InsertListInQuery(blankRowQuery, blanklink)
+    
+    blankRowSet <- sqlQuery(myConn,blankRowSQL)
     
     removeModal()
     
@@ -348,10 +366,21 @@ observe_editlinks <- function(qacheck){
 #This function is for saving an edited link
 observe_saveeditlinks <- function(qacheck){
   observeEvent(input[[paste0(qacheck,"saveeditlink")]],{
+    #Save old data to SCD table
+    edittime <- format(Sys.time(), "%Y-%d-%m %X")
+    df<-dataframelink()
+    rownumber<- input$dflink_rows_selected
     chosennumber <- input$projectID
+    oldrow <- c(chosennumber,qacheck,df$Link[rownumber],df$DisplayText[rownumber],rownumber,edittime)
+    oldRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_hyperlinks_SCD VALUES ();")
+    
+    oldRowSQL <- InsertListInQuery(oldRowQuery, oldrow)
+    
+    oldRowSet <- sqlQuery(myConn,oldRowSQL)
+    
+    #Overwrite data in current table
     newlink <- input$editlink
     linkdesc <- input$editlinkinfo
-    rownumber<- input$dflink_rows_selected
     
     linkEditQuery <- paste("UPDATE ", databasename,".dbo.QA_hyperlinks 
                           SET Link = '", newlink,
@@ -592,4 +621,53 @@ restore_checks <- function(session,checkid,dateselect,chosennumber){
   updateTextInput(session, inputId = paste("summary", checkid,sep=""), value=paste(oldcheckrow[5]))
   updateTextInput(session, inputId = paste("obs", checkid,sep=""), value=paste(oldcheckrow[6]))
   updateTextInput(session, inputId = paste("out", checkid,sep=""), value=paste(oldcheckrow[7]))
+}
+
+#This function restores links
+restore_links <- function(linkid, session, checkid, dateselect,chosennumber,selectcurrentlink){
+  #read in from SQL
+  selectoldlink <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_hyperlinks_SCD] WHERE ProjectID = ", chosennumber, " and checkID = '", checkid, "' and linkID = ", linkid, " and EndDate > '", dateselect, "'", sep="") 
+  selectoldlink <- sqlQuery(myConn, selectoldlink)%>%replace(.,is.na(.),"")
+  
+  if(nrow(selectoldlink)==0){
+     #then current data is still relevant, so do nothing
+  }
+  else{
+    #select relevant row
+    oldlink <- selectoldlink%>%top_n(EndDate,n=-1)
+    
+    #Add new row to SCD table
+    restoretime <- format(Sys.time(), "%Y-%d-%m %X")
+    correctid <- selectcurrentlink%>%filter(LinkID == linkid)
+    currentlink <- c(correctid,restoretime)
+    currentRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_hyperlinks_SCD VALUES ();")
+    currentRowSQL <- InsertListInQuery(currentRowQuery, currentlink)
+    currentRowSet <- sqlQuery(myConn,currentRowSQL)
+    
+    #Overwrite data in current table
+    link <- oldlink[3]
+    linkdesc <- oldlink[4]
+    
+    oldlinkQuery <- paste("UPDATE ", databasename,".dbo.QA_hyperlinks 
+                          SET Link = '", link,
+                           "', DisplayText = '", linkdesc,
+                           "' WHERE projectID = ", chosennumber, "AND checkID = '", checkid, "' AND LinkID = ", linkid, ";", sep="")
+    
+    oldlinkSet <- sqlQuery(myConn,oldlinkQuery)
+  }
+}
+
+#This function reads in linkIDs for links, and applies restore_links
+read_links <- function(session,checkid,dateselect,chosennumber){
+  #First, read in current links to see how many link ID numbers there are
+  selectcurrentlink <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_hyperlinks] WHERE projectID = ", chosennumber, " and checkID = '", checkid, "'", sep="")
+  selectcurrentlink <- sqlQuery(myConn, selectcurrentlink)%>%replace(.,is.na(.),"")
+  numberofrows <- nrow(selectcurrentlink)
+  if(numberofrows==0){
+    #do nothing
+  }
+  else{
+    listofid <- list(1:numberofrows)[[1]]
+    lapply(listofid,restore_links,session=session,checkid=checkid,dateselect=dateselect,chosennumber=chosennumber,selectcurrentlink=selectcurrentlink)
+  }
 }

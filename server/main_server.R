@@ -229,11 +229,11 @@ dataframelink<- reactive({
   #read from sql
   selectlinks <- sqlQuery(myConn, selectlinks)%>%replace(.,is.na(.),"")
   #Creating dataframe to show in modal
-  dataframelink <- as.data.frame(selectlinks)%>%mutate(Hyperlink=createLink(Link), Description=DisplayText)
+  dataframelink <- as.data.frame(selectlinks)%>%mutate(Description=DisplayText, Hyperlink=createLink(Link))
   return(dataframelink)
 })
 
-output$dflink <- DT::renderDataTable(dataframelink()%>%select(-Link,-DisplayText,-LinkID), server=FALSE, selection='single',escape = FALSE)
+output$dflink <- DT::renderDataTable(dataframelink()%>%select(-Link,-DisplayText,-LinkID,-projectID,-checkID), server=FALSE, selection='single',escape = FALSE)
 
 #Read in function to create modals for each check
 lapply(QAcheckslist,observe_links)
@@ -650,6 +650,7 @@ observeEvent(input$restore,{
   dateselect <- date_list$log
   restore_log(session,dateselect,chosennumber)
   lapply(logspecificchecks(),restore_checks,session = session,dateselect=dateselect,chosennumber=chosennumber)
+  lapply(logspecificchecks(),read_links,session=session,dateselect=dateselect,chosennumber=chosennumber)
   previous_list$log<-"blank"
   date_list$log <-"blank"
 })
