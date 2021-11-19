@@ -279,11 +279,15 @@ createLink <- function(val) {
 #Creates the modal and displays the DT dataframe
 observe_links <- function(qacheck){
   observeEvent(input[[paste0(qacheck,"link")]],{
-  
-    checksreact$log <- qacheck
     
     check_row <- names_df%>%filter(QAcheckslist==qacheck)
     checkname <- (check_row%>%select(paste0(types$log,"_names")))[1,1]
+    
+    dataframelink <- as.data.frame(links$log)%>%mutate(Description=DisplayText, Hyperlink=createLink(Link))
+    
+    df <- dataframelink%>%filter(checkID==qacheck)%>%select(-Link,-DisplayText,-LinkID,-projectID,-checkID)
+    
+    output$dflink <- DT::renderDataTable(df, server=FALSE, selection='single',escape = FALSE)
     
     showModal(modalDialog(
      h5(paste(checkname)),
@@ -299,101 +303,161 @@ observe_links <- function(qacheck){
   })
 }
 
-#This function is for adding a link
-observe_addlinks <- function(qacheck){
-  observeEvent(input[[paste0(qacheck,"addlink")]],{
-    showModal(modalDialog(
-      textInput("newlink", "Link", value=""),
-      textInput("linkdescription", "Description", value=""),
-      "If copying and pasting links, don't include 'https://' at the start of
-      your link, otherwise the link won't work!",
-      br(),
-      actionButton(paste(qacheck,"savelink",sep=""), "Save")
-    ))
-  })
-}
+ #This function is for adding a link
+ observe_addlinks <- function(qacheck){
+   observeEvent(input[[paste0(qacheck,"addlink")]],{
+     showModal(modalDialog(
+       textInput("newlink", "Link", value=""),
+       textInput("linkdescription", "Description", value=""),
+       br(),
+       actionButton(paste(qacheck,"savelink",sep=""), "Enter")
+     ))
+   })
+ }
+ 
+ #This function is for saving a new link
+ observe_savelinks <- function(qacheck){
+   observeEvent(input[[paste0(qacheck,"savelink")]],{
+   
+     chosennumber <- input$projectID
+     newlink <- input$newlink
+     linkdesc <- input$linkdescription
+     
+     dataframelink <- as.data.frame(links$log)
+     idnumber <- nrow(dataframelink%>%filter(checkID==qacheck))+1
+     newrow <- c(chosennumber, qacheck, newlink, linkdesc, idnumber)
+     
+     dataframelink1 <- rbind(dataframelink,newrow)
+     
+     links$log <- dataframelink1
 
-#This function is for saving a new link
-observe_savelinks <- function(qacheck){
-  observeEvent(input[[paste0(qacheck,"savelink")]],{
-    #First, save new link to dbo.QA_hyperlinks
-    chosennumber <- input$projectID
-    newlink <- input$newlink
-    linkdesc <- input$linkdescription
-    idnumber <- nrow(dataframelink())+1
-    listforsave <- c(chosennumber, qacheck, newlink, linkdesc, idnumber)
-    
-    newRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_hyperlinks VALUES ();")
-    
-    newRowSQL <- InsertListInQuery(newRowQuery, listforsave)
-    
-    newRowSet <- sqlQuery(myConn,newRowSQL)
-    
-    #Second, save blank data with current date time
-    
-    timelink <- format(Sys.time(), "%Y-%d-%m %X")
-    
-    blanklink <- c(chosennumber, qacheck, "", "", idnumber,timelink)
-    
-    blankRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_hyperlinks_SCD VALUES ();")
-    
-    blankRowSQL <- InsertListInQuery(blankRowQuery, blanklink)
-    
-    blankRowSet <- sqlQuery(myConn,blankRowSQL)
-    
-    removeModal()
-    
-    checksreact$log <- "blank"
+     
+     #     #First, save new link to dbo.QA_hyperlinks
+#     chosennumber <- input$projectID
+#     newlink <- input$newlink
+#     linkdesc <- input$linkdescription
+#     idnumber <- nrow(dataframelink())+1
+#     listforsave <- c(chosennumber, qacheck, newlink, linkdesc, idnumber)
+#     
+#     newRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_hyperlinks VALUES ();")
+#     
+#     newRowSQL <- InsertListInQuery(newRowQuery, listforsave)
+#     
+#     newRowSet <- sqlQuery(myConn,newRowSQL)
+#     
+#     #Second, save blank data with current date time
+#     
+#     timelink <- format(Sys.time(), "%Y-%d-%m %X")
+#     
+#     blanklink <- c(chosennumber, qacheck, "", "", idnumber,timelink)
+#     
+#     blankRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_hyperlinks_SCD VALUES ();")
+#     
+#     blankRowSQL <- InsertListInQuery(blankRowQuery, blanklink)
+#     
+#     blankRowSet <- sqlQuery(myConn,blankRowSQL)
+#     
+     removeModal()
+   })
+ }
+ 
+ #This function is for editing a link
+ observe_editlinks <- function(qacheck){
+   observeEvent(input[[paste0(qacheck,"editlink")]],{
+     dataframelink <- as.data.frame(links$log)%>%filter(checkID==qacheck)
+     rownumber<- input$dflink_rows_selected
+     showModal(modalDialog(
+       textInput("editlink","Link",value=dataframelink$Link[rownumber]),
+       textInput("editlinkinfo", "Description", value=dataframelink$DisplayText[rownumber]),
+       br(),
+       actionButton(paste(qacheck,"saveeditlink",sep=""), "Save")
+     ))
+   })
+ }
+ 
+ #This function is for saving an edited link
+ observe_saveeditlinks <- function(qacheck){
+   observeEvent(input[[paste0(qacheck,"saveeditlink")]],{
+#     #Save old data to SCD table
+#     edittime <- format(Sys.time(), "%Y-%d-%m %X")
+#     df<-dataframelink()
+#     rownumber<- input$dflink_rows_selected
+      chosennumber <- input$projectID
+#     oldrow <- c(chosennumber,qacheck,df$Link[rownumber],df$DisplayText[rownumber],rownumber,edittime)
+#     oldRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_hyperlinks_SCD VALUES ();")
+#     
+#     oldRowSQL <- InsertListInQuery(oldRowQuery, oldrow)
+#     
+#     oldRowSet <- sqlQuery(myConn,oldRowSQL)
+     
+     dataframelink <- as.data.frame(links$log)
+     rownumber<- input$dflink_rows_selected
+     
+     #Overwrite data in current table
+     newlink <- input$editlink
+     linkdesc <- input$editlinkinfo
+     
+     dataframelink$Link <- ifelse(dataframelink$projectID==chosennumber & dataframelink$checkID==qacheck & dataframelink$LinkID == rownumber,
+                                  newlink,dataframelink$Link)
+     
+     dataframelink$DisplayText <- ifelse(dataframelink$projectID==chosennumber & dataframelink$checkID==qacheck & dataframelink$LinkID == rownumber,
+                                  linkdesc,dataframelink$DisplayText)
+     
+     links$log <- dataframelink
+#     
+#     linkEditQuery <- paste("UPDATE ", databasename,".dbo.QA_hyperlinks 
+#                           SET Link = '", newlink,
+#                           "', DisplayText = '", linkdesc,
+#                           "' WHERE projectID = ", chosennumber, "AND checkID = '", qacheck, "' AND LinkID = ", rownumber, ";", sep="")
+#     
+#     linkEditSet <- sqlQuery(myConn,linkEditQuery)
+#     
+     removeModal()
+#     
+#     checksreact$log <- "blank"
   })
-}
-
-#This function is for editing a link
-observe_editlinks <- function(qacheck){
-  observeEvent(input[[paste0(qacheck,"editlink")]],{
-    df<-dataframelink()
-    rownumber<- input$dflink_rows_selected
-    showModal(modalDialog(
-      textInput("editlink","Link",value=df$Link[rownumber]),
-      textInput("editlinkinfo", "Description", value=df$DisplayText[rownumber]),
-      "If copying and pasting links, don't include 'https://' at the start of
-      your link, otherwise the link won't work!",
-      br(),
-      actionButton(paste(qacheck,"saveeditlink",sep=""), "Save")
-    ))
-  })
-}
-
-#This function is for saving an edited link
-observe_saveeditlinks <- function(qacheck){
-  observeEvent(input[[paste0(qacheck,"saveeditlink")]],{
-    #Save old data to SCD table
-    edittime <- format(Sys.time(), "%Y-%d-%m %X")
-    df<-dataframelink()
-    rownumber<- input$dflink_rows_selected
-    chosennumber <- input$projectID
-    oldrow <- c(chosennumber,qacheck,df$Link[rownumber],df$DisplayText[rownumber],rownumber,edittime)
-    oldRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_hyperlinks_SCD VALUES ();")
-    
-    oldRowSQL <- InsertListInQuery(oldRowQuery, oldrow)
-    
-    oldRowSet <- sqlQuery(myConn,oldRowSQL)
-    
-    #Overwrite data in current table
-    newlink <- input$editlink
-    linkdesc <- input$editlinkinfo
-    
-    linkEditQuery <- paste("UPDATE ", databasename,".dbo.QA_hyperlinks 
-                          SET Link = '", newlink,
-                          "', DisplayText = '", linkdesc,
-                          "' WHERE projectID = ", chosennumber, "AND checkID = '", qacheck, "' AND LinkID = ", rownumber, ";", sep="")
-    
-    linkEditSet <- sqlQuery(myConn,linkEditQuery)
-    
-    removeModal()
-    
-    checksreact$log <- "blank"
-  })
-}
+ }
+ 
+ #this function sees what new links have been added, and then runs the saving function for these new links
+ savingnewlinks <- function(qacheck,time){
+   #Read in from SQL
+   chosennumber <- input$projectID
+   selectlinks <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_hyperlinks] WHERE ProjectID = ", chosennumber, " AND checkID = '", qacheck, "'", sep="")
+   selectlinks <- sqlQuery(myConn, selectlinks)%>%replace(.,is.na(.),"")
+   
+   #Read in from app
+   dataframelink <- as.data.frame(links$log)%>%filter(projectID == chosennumber)%>%filter(checkID == qacheck)
+   
+   sqlnumber <- nrow(selectlinks)+1
+   appnumber <- nrow(dataframelink)
+   
+   if (sqlnumber == appnumber){
+     #No additional rows, so no need to add new link
+   }
+   else {
+     listnewrows <- list(sqlnumber:appnumber)[[1]]
+     lapply(listnewrows,newlinks_sql,qacheck=qacheck,dataframelink=dataframelink, time=time)
+   }
+ }
+ 
+ newlinks_sql <- function(rownumber,qacheck,dataframelink,time){
+   #saving new row to SQL
+   newrow <- dataframelink[rownumber,]
+   newRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_hyperlinks VALUES ();")
+        
+   newRowSQL <- InsertListInQuery(newRowQuery, newrow)
+        
+   newRowSet <- sqlQuery(myConn,newRowSQL)
+   
+   #saving empty row to SCD table
+   emptyrow <- c(input$projectID, qacheck, "", "", rownumber,time)
+   emptyRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_hyperlinks_SCD VALUES ();")
+   
+   emptyRowSQL <- InsertListInQuery(emptyRowQuery, emptyrow)
+   
+   emptyRowSet <- sqlQuery(myConn,emptyRowSQL)
+ }
+ 
 
 #--- Functions for error messages----
 #checks whether a mandatory check has been left as "To be Checked"

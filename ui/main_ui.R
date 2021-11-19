@@ -74,6 +74,7 @@ fixedRow(column(2, uiOutput("projectIDtext")),
                                  font-size: 25px;
                                  font-style: italic;
                                  }")),
+         column(4, textOutput("texttest")),
 #         column(4, dataTableOutput("writingtest")),
 #         column(4, dataTableOutput("writingtest2")),
          column(2, actionButton("backtohome","Back"), align="right")),

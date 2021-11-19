@@ -128,6 +128,10 @@ observeEvent(input$saveSQL, {
   #Saving scores
 
   lapply(logspecificchecks(),savingscore, dataframe=otherinputdf(),qacheckSave=qacheckSave,projectID=input$projectID,databasename=databasename,myConn=myConn,time=time)
+  
+  justdg1 <- c("DG1")
+  
+  lapply(justdg1,savingnewlinks,time=time)
 
 })
   
@@ -217,32 +221,16 @@ output$tooltips <- renderUI(lapply(QAcheckslist,tooltip_ui_render,types=types))
 
 #---- Displaying and adding links -----
 
-checksreact <- reactiveValues(log = "blank")
-
-dataframelink<- reactive({
-  #Reading in current project ID
-  chosennumber <- input$projectID
-  #Reading in selected qacheck
-  qacheck <- checksreact$log
-  #select relevant links from SQL
-  selectlinks <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_hyperlinks] WHERE ProjectID = ", chosennumber, "AND checkID = '", qacheck, "'", sep="")
-  #read from sql
-  selectlinks <- sqlQuery(myConn, selectlinks)%>%replace(.,is.na(.),"")
-  #Creating dataframe to show in modal
-  dataframelink <- as.data.frame(selectlinks)%>%mutate(Description=DisplayText, Hyperlink=createLink(Link))
-  return(dataframelink)
-})
-
-output$dflink <- DT::renderDataTable(dataframelink()%>%select(-Link,-DisplayText,-LinkID,-projectID,-checkID), server=FALSE, selection='single',escape = FALSE)
-
-#Read in function to create modals for each check
+ #Read in function to create modals for each check
 lapply(QAcheckslist,observe_links)
 
-#Read in function to create modals for adding new link
-lapply(QAcheckslist,observe_addlinks)
+# #Read in function to create modals for adding new link
+ lapply(QAcheckslist,observe_addlinks)
+ 
+ #Read in function to save new links
+ lapply(QAcheckslist,observe_savelinks)
 
-#Read in function to save new links
-lapply(QAcheckslist,observe_savelinks)
+ output$texttest <- renderText(paste(links$log))
 
 #Read in function to create modals for editing new link
 lapply(QAcheckslist,observe_editlinks)

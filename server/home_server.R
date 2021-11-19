@@ -20,7 +20,11 @@ observeEvent(input$newlog, {
 
 lapply(logslist,observe_logtype,session=session,types=types,nexttab=nexttab)
 
+#list of weightings to edit in app
 weightings <- reactiveValues(DG = "0.2", SC = "0.2", VA = "0.2", VE = "0.2", DA = "0.2")
+
+#list of links to edit in app
+links <- reactiveValues(log = "")
 
 #----Generating UI when "Create New Log" selected----
 
@@ -106,6 +110,13 @@ observeEvent(input$submitprojectID, {
     lapply(logspecificchecks(),update_checks,session1 = session,qachecks = qachecks)
     
     updateTabsetPanel(session, "inTabset", selected="panel2")
+    
+    #UPDATE LINKS DATABASE
+    selectlinks <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_hyperlinks] WHERE ProjectID = ", chosennumber, sep="")
+    #read from sql
+    selectlinks <- sqlQuery(myConn, selectlinks)%>%replace(.,is.na(.),"")
+    
+    links$log <- selectlinks
   }
 })
 
