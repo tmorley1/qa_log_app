@@ -232,9 +232,6 @@ lapply(QAcheckslist,observe_links)
  #Read in function to save new links
  lapply(QAcheckslist,observe_savelinks)
 
- test <- reactiveValues(log = "blank")
- output$texttest <- renderText(paste(test$log))
-
 #Read in function to create modals for editing new link
 lapply(QAcheckslist,observe_editlinks)
 
@@ -378,14 +375,20 @@ appinfo <- reactive({data.frame(column1=c(input$projectname,"NA","NA","NA","NA",
                        types$log, weightings_save()))})
 appinfodf <- reactive({data.frame(cbind(appinfo(),otherinput()))})
 
-output$writingtest2<-renderDataTable(appinfodf())
-
 #we now compare the lists
 comparison <- reactive({appinfodf()==allsqlinfodf2()})
+
+#for hyperlinks, we have the app database already - this is links$log
+#and what is saved in sql is sqllinks$log
+
+comparison_link <- reactive({links$log == sqllinks$log})
+
+output$writingtest2<-renderDataTable(comparison_link())
+
 #display warning message if there are unsaved changes
 savetext <- reactive({
     #if both lists are the same, no error message
-    if ("FALSE" %in% comparison() == "FALSE"){""}
+    if ("FALSE" %in% comparison() == "FALSE" && "FALSE" %in% comparison_link() == "FALSE"){""}
     #otherwise, print error message
     else {"You have unsaved changes!"}})
 
@@ -418,10 +421,26 @@ observeEvent(input$saveSQL, {
   
   output$writingtest<-renderDataTable(allsqlinfodf())
   
+  #UPDATE LINKS DATABASE
+  selectlinks <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_hyperlinks] WHERE ProjectID = ", currentid(), sep="")
+  #read from sql
+  selectlinks <- sqlQuery(myConn, selectlinks)%>%replace(.,is.na(.),"")
+  
+  links$log <- if(nrow(selectlinks)==0){data.frame(projectID="",checkID="",Link="",DisplayText="",LinkID="")}
+  else{selectlinks}
+  
+  sqllinks$log <- if(nrow(selectlinks)==0){data.frame(projectID="",checkID="",Link="",DisplayText="",LinkID="")}
+  else{selectlinks}
+  
   #re-compare the lists
   comparison <- reactive({appinfodf()==allsqlinfodf2()})
+  
+  comparison_link <- reactive({links$log == sqllinks$log})
+  
+  output$writingtest2<-renderDataTable(comparison_link())
+  
   #display warning message if there are unsaved changes
-  savetext <- reactive({if ("FALSE" %in% comparison() == "FALSE"){""}
+  savetext <- reactive({if ("FALSE" %in% comparison() == "FALSE" && "FALSE" %in% comparison_link() == "FALSE"){""}
     else {"You have unsaved changes!"}})
   output$savedialogue <- renderText(paste(savetext()))
 })

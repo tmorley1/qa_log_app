@@ -25,6 +25,8 @@ weightings <- reactiveValues(DG = "0.2", SC = "0.2", VA = "0.2", VE = "0.2", DA 
 
 #list of links to edit in app
 links <- reactiveValues(log = "")
+#list of links in sql
+sqllinks <- reactiveValues(log="")
 
 #----Generating UI when "Create New Log" selected----
 
@@ -117,6 +119,9 @@ observeEvent(input$submitprojectID, {
     selectlinks <- sqlQuery(myConn, selectlinks)%>%replace(.,is.na(.),"")
     
     links$log <- if(nrow(selectlinks)==0){data.frame(projectID="",checkID="",Link="",DisplayText="",LinkID="")}
+    else{selectlinks}
+    
+    sqllinks$log <- if(nrow(selectlinks)==0){data.frame(projectID="",checkID="",Link="",DisplayText="",LinkID="")}
     else{selectlinks}
   }
 })
