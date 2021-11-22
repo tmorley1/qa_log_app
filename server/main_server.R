@@ -131,6 +131,8 @@ observeEvent(input$saveSQL, {
   
   justdg1 <- c("DG1")
   
+  lapply(justdg1,savingeditedlinks,time=time)
+  
   lapply(justdg1,savingnewlinks,time=time)
 
 })
@@ -230,7 +232,8 @@ lapply(QAcheckslist,observe_links)
  #Read in function to save new links
  lapply(QAcheckslist,observe_savelinks)
 
- output$texttest <- renderText(paste(links$log))
+ test <- reactiveValues(log = "blank")
+ output$texttest <- renderText(paste(test$log))
 
 #Read in function to create modals for editing new link
 lapply(QAcheckslist,observe_editlinks)
@@ -432,13 +435,15 @@ reading_dates <- reactive({
   selectdatelog <- paste("SELECT EndDate FROM ", databasename, ".[dbo].[QA_log_SCD] WHERE ProjectID = ", chosennumber, sep="")
   #selecting date from QA_checks_SCD
   selectdatechecks <- paste("SELECT EndDate FROM ", databasename, ".[dbo].[QA_checks_SCD] WHERE ProjectID = ", chosennumber, sep="")
+  #selecting data from QA_hyperlinks_SCD
+  selectdatelinks <- paste("SELECT EndDate FROM ", databasename, ".[dbo].[QA_hyperlinks_SCD] WHERE ProjectID = ", chosennumber, sep="")
   #now run the query to get our output.
   selectdatelog <- sqlQuery(myConn, selectdatelog)
   selectdatechecks <- sqlQuery(myConn, selectdatechecks)
+  selectdatelinks <- sqlQuery(myConn, selectdatelinks)
 
   #Only look at unique dates, and read in as date-time
-  EndDate <- if(nrow(selectdatechecks)==0){unique(c(selectdatelog$EndDate))}
-  else {unique(c(selectdatechecks$EndDate, selectdatelog$EndDate))}
+  EndDate <- unique(c(selectdatechecks$EndDate, selectdatelog$EndDate, selectdatelinks$EndDate))
 
   #arrange in order, with most recent at top
   alldatesdf <- as.data.frame(EndDate)%>%arrange(desc(EndDate))

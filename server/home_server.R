@@ -116,7 +116,8 @@ observeEvent(input$submitprojectID, {
     #read from sql
     selectlinks <- sqlQuery(myConn, selectlinks)%>%replace(.,is.na(.),"")
     
-    links$log <- selectlinks
+    links$log <- if(nrow(selectlinks)==0){data.frame(projectID="",checkID="",Link="",DisplayText="",LinkID="")}
+    else{selectlinks}
   }
 })
 

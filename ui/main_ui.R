@@ -74,7 +74,6 @@ fixedRow(column(2, uiOutput("projectIDtext")),
                                  font-size: 25px;
                                  font-style: italic;
                                  }")),
-         column(4, textOutput("texttest")),
 #         column(4, dataTableOutput("writingtest")),
 #         column(4, dataTableOutput("writingtest2")),
          column(2, actionButton("backtohome","Back"), align="right")),
@@ -134,6 +133,8 @@ fixedRow(column(2,uiOutput("DGscorescolours")),
           )
         ),
         fixedRow(
+          column(2, h5("QA area")),
+          column(2, h5("Rating")),
           column(8,
                  column(2, h5("Assessed by")),
                  column(2, h5("Summary of evidence")),
@@ -150,6 +151,8 @@ fixedRow(column(2,uiOutput("DGscorescolours")),
           )
         ),
         fixedRow(
+          column(2, h5("QA area")),
+          column(2, h5("Rating")),
           column(8,
                  column(2, h5("Assessed by")),
                  column(2, h5("Summary of evidence")),
@@ -167,6 +170,8 @@ fixedRow(column(2,uiOutput("DGscorescolours")),
           )
         ),
         fixedRow(
+          column(2, h5("QA area")),
+          column(2, h5("Rating")),
           column(8,
                  column(2, h5("Assessed by")),
                  column(2, h5("Summary of evidence")),
@@ -185,6 +190,8 @@ fixedRow(column(2,uiOutput("DGscorescolours")),
           )
         ),
         fixedRow(
+          column(2, h5("QA area")),
+          column(2, h5("Rating")),
           column(8,
                  column(2, h5("Assessed by")),
                  column(2, h5("Summary of evidence")),

@@ -285,7 +285,7 @@ observe_links <- function(qacheck){
     
     dataframelink <- as.data.frame(links$log)%>%mutate(Description=DisplayText, Hyperlink=createLink(Link))
     
-    df <- dataframelink%>%filter(checkID==qacheck)%>%select(-Link,-DisplayText,-LinkID,-projectID,-checkID)
+    df <- dataframelink%>%filter(checkID==qacheck)%>%arrange(LinkID)%>%select(-Link,-DisplayText,-projectID,-checkID,-LinkID)
     
     output$dflink <- DT::renderDataTable(df, server=FALSE, selection='single',escape = FALSE)
     
@@ -315,7 +315,7 @@ observe_links <- function(qacheck){
    })
  }
  
- #This function is for saving a new link
+ #This function is for saving a new link to app dataframe
  observe_savelinks <- function(qacheck){
    observeEvent(input[[paste0(qacheck,"savelink")]],{
    
@@ -325,38 +325,12 @@ observe_links <- function(qacheck){
      
      dataframelink <- as.data.frame(links$log)
      idnumber <- nrow(dataframelink%>%filter(checkID==qacheck))+1
-     newrow <- c(chosennumber, qacheck, newlink, linkdesc, idnumber)
      
-     dataframelink1 <- rbind(dataframelink,newrow)
+     
+     dataframelink1 <- rbind(dataframelink,list(as.integer(chosennumber), qacheck, newlink, linkdesc, as.integer(idnumber)))
      
      links$log <- dataframelink1
 
-     
-     #     #First, save new link to dbo.QA_hyperlinks
-#     chosennumber <- input$projectID
-#     newlink <- input$newlink
-#     linkdesc <- input$linkdescription
-#     idnumber <- nrow(dataframelink())+1
-#     listforsave <- c(chosennumber, qacheck, newlink, linkdesc, idnumber)
-#     
-#     newRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_hyperlinks VALUES ();")
-#     
-#     newRowSQL <- InsertListInQuery(newRowQuery, listforsave)
-#     
-#     newRowSet <- sqlQuery(myConn,newRowSQL)
-#     
-#     #Second, save blank data with current date time
-#     
-#     timelink <- format(Sys.time(), "%Y-%d-%m %X")
-#     
-#     blanklink <- c(chosennumber, qacheck, "", "", idnumber,timelink)
-#     
-#     blankRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_hyperlinks_SCD VALUES ();")
-#     
-#     blankRowSQL <- InsertListInQuery(blankRowQuery, blanklink)
-#     
-#     blankRowSet <- sqlQuery(myConn,blankRowSQL)
-#     
      removeModal()
    })
  }
@@ -364,7 +338,7 @@ observe_links <- function(qacheck){
  #This function is for editing a link
  observe_editlinks <- function(qacheck){
    observeEvent(input[[paste0(qacheck,"editlink")]],{
-     dataframelink <- as.data.frame(links$log)%>%filter(checkID==qacheck)
+     dataframelink <- as.data.frame(links$log)%>%filter(checkID==qacheck)%>%arrange(LinkID)
      rownumber<- input$dflink_rows_selected
      showModal(modalDialog(
        textInput("editlink","Link",value=dataframelink$Link[rownumber]),
@@ -375,7 +349,7 @@ observe_links <- function(qacheck){
    })
  }
  
- #This function is for saving an edited link
+ #This function is for saving an edited link to app dataframe
  observe_saveeditlinks <- function(qacheck){
    observeEvent(input[[paste0(qacheck,"saveeditlink")]],{
 #     #Save old data to SCD table
@@ -428,14 +402,15 @@ observe_links <- function(qacheck){
    #Read in from app
    dataframelink <- as.data.frame(links$log)%>%filter(projectID == chosennumber)%>%filter(checkID == qacheck)
    
-   sqlnumber <- nrow(selectlinks)+1
+   sqlnumber <- nrow(selectlinks)
+   startnumber <- nrow(selectlinks)+1
    appnumber <- nrow(dataframelink)
    
    if (sqlnumber == appnumber){
      #No additional rows, so no need to add new link
    }
    else {
-     listnewrows <- list(sqlnumber:appnumber)[[1]]
+     listnewrows <- list(startnumber:appnumber)[[1]]
      lapply(listnewrows,newlinks_sql,qacheck=qacheck,dataframelink=dataframelink, time=time)
    }
  }
@@ -458,6 +433,62 @@ observe_links <- function(qacheck){
    emptyRowSet <- sqlQuery(myConn,emptyRowSQL)
  }
  
+ #this function sees what links have been edited, and then runs the saving function for these new links
+ savingeditedlinks <- function(qacheck, time){
+   #Read in from SQL
+   chosennumber <- input$projectID
+   selectlinks <- paste("SELECT * FROM ", databasename, ".[dbo].[QA_hyperlinks] WHERE ProjectID = ", chosennumber, " AND checkID = '", qacheck, "'", sep="")
+   selectlinks <- sqlQuery(myConn, selectlinks)%>%replace(.,is.na(.),"")
+   selectlinks <- as.data.frame(selectlinks)
+   if(nrow(selectlinks)==0){
+     #do nothing, there is no data currently in SQL, so no data to edit
+   }
+   else{
+   #Read in from app
+   dataframelink <- as.data.frame(links$log)%>%
+     filter(projectID == chosennumber)%>%
+     filter(checkID == qacheck)%>%
+     mutate(Link1 = Link, DisplayText1 = DisplayText,projectID=as.integer(projectID))%>%
+     select(-Link,-DisplayText)
+   
+   #We join the data from SQL and from the app together
+   join_df <- full_join(selectlinks,dataframelink)
+   #Identify whether link or link description has changed
+   compare_df <- join_df%>%mutate(compare= ifelse(Link==Link1 & DisplayText==DisplayText1,TRUE,FALSE))
+   filtered_df <- compare_df%>%filter(compare==FALSE)
+   listofedits <- filtered_df$LinkID #This is list of link ids that have been altered
+   
+   #lapply function to list of ids
+  
+   lapply(listofedits,editlinksql,qacheck=qacheck,selectlinks=selectlinks,dataframelink=dataframelink,time=time,chosennumber=chosennumber)
+   
+   }
+ }
+ 
+ editlinksql <- function(rownumber,qacheck,selectlinks,dataframelink,time,chosennumber){
+   #first save old info to SCD table
+   oldrow <- selectlinks%>%filter(LinkID==rownumber)
+   oldrow_forsql <- c(oldrow,time)
+   
+   oldRowQuery <- paste("INSERT INTO", databasename,".dbo.QA_hyperlinks_SCD VALUES ();")
+        
+   oldRowSQL <- InsertListInQuery(oldRowQuery, oldrow_forsql)
+       
+   oldRowSet <- sqlQuery(myConn,oldRowSQL)
+   
+   #now overwrite edited row in current table
+   
+   newrow <- dataframelink%>%filter(LinkID==rownumber)
+   newlink <- newrow$Link1
+   linkdesc <- newrow$DisplayText1
+   
+   linkEditQuery <- paste("UPDATE ", databasename,".dbo.QA_hyperlinks 
+                         SET Link = '", newlink,
+                         "', DisplayText = '", linkdesc,
+                         "' WHERE projectID = ", chosennumber, "AND checkID = '", qacheck, "' AND LinkID = ", rownumber, ";", sep="")
+                              
+   linkEditSet <- sqlQuery(myConn,linkEditQuery)
+ }
 
 #--- Functions for error messages----
 #checks whether a mandatory check has been left as "To be Checked"
