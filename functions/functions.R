@@ -622,7 +622,7 @@ displayingoldchecks <- function(checkid,dateselect,chosennumber,types,names_df){
   #create preview ui
   uihistory <- fixedRow(
     hr(),
-    column(2, paste(checkname)),
+    column(2, HTML(checkname)),
     column(2, eval(checkscorecolour)),
     column(2, paste(assessor)),
     column(2, paste(summary)),

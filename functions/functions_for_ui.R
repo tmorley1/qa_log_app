@@ -20,20 +20,40 @@ UI_check <- function(checkID,types,names_df){
   checkname <- (check_row%>%select(paste0(types$log,"_names")))[1,1]
   mandatory <- (check_row%>%select(paste0(types$log,"_mandatory")))[1,1]
   style_mandatory <- if(mandatory == 1){"color: #fff; background-color: #ce2029; border-color: #a9203e"} else {""}
-  uicheck <- fixedRow(
-      column(2, actionButton(paste(checkID,"info",sep=""), checkname, style=style_mandatory)),
-      column(2, rating_options(paste("score",checkID,sep=""))),
-      column(8,
-        column(2, withTags(div(textarea(id = paste("assess",checkID,sep=""))))),
-        column(2, withTags(div(textarea(id = paste("summary",checkID,sep=""))))),
-        column(2, actionButton(paste(checkID,"link",sep=""), "Links"), align="center"),
-        column(3, withTags(div(textarea(id = paste("obs",checkID,sep=""))))),
-        column(3, withTags(div(textarea(id = paste("out",checkID,sep="")))))
-      )
-    )
+  uicheck <- fixedRow(fixedRow(
+      column(2, actionButton(paste(checkID,"info",sep=""), HTML(checkname), style=style_mandatory)),
+      column(2, fixedRow(rating_options(paste("score",checkID,sep=""))),
+             fixedRow(withTags(div(textarea(id = paste("assess",checkID,sep=""),placeholder="Assessed by"))))),
+      column(3, withTags(div(textarea(id = paste("summary",checkID,sep=""),placeholder="Summary of evidence")))),
+      column(1, actionButton(paste(checkID,"link",sep=""), "Links"), align="center"),
+      column(4, fixedRow(withTags(div(textarea(id = paste("obs",checkID,sep=""),placeholder="Observations")))),br(),
+                fixedRow(withTags(div(textarea(id = paste("out",checkID,sep=""),placeholder="Outstanding (potential) work")))))
+      ),
+      hr(), br())
   return(uicheck)
 }
 
 scorecolour<-function(scores,colours){
   uiOutput(scores,style=colours)
+}
+
+#generating some html code for text boxes
+paste_summary <- function(checkid){
+  paste0("#summary",checkid, " {height:110px; width:100%}")
+}
+
+paste_obs <- function(checkid){
+  paste0("#obs",checkid, " {width:100%}")
+}
+
+paste_out <- function(checkid){
+  paste0("#out",checkid, " {width:100%}")
+}
+
+paste_assess <- function(checkid){
+  paste0("#assess",checkid, " {width:100%}")
+}
+
+paste_info <- function(checkid){
+  paste0("#",checkid,"info {height:110px; width:100%}")
 }

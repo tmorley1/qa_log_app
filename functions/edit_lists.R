@@ -30,50 +30,50 @@ QAcheckslist <- c("DG1", "DG2", "DG3", "DG4", "DG5", "DG6", "DG7", "DG8", "DG9",
 #The following are the names of checks - if there is a 0, that means the check
 #is not relevant for that log
 
-modelling_names <- c("Scope and Specification", "User guide", "Technical guide", "KIM",
-               "Version control", "Responsibilities","QA planning and resourcing",
+modelling_names <- c("Scope <br> and <br> Specification", "User guide", "Technical guide", "KIM",
+               "Version control", "Responsibilities","QA planning <br> and <br> resourcing",
                "Record of QA", 0,
-               "Structure of model", "Calculation structure", "Variable names and units",
-               "Model comments", "Formula clarity and robustness", 0, 0, 0, 0,
-               "Formula and code correctness","Usability testing","Autochecks",
-               "Regression testing", "Use of model outputs", 0,
-               "Methodology correctness", "Comparisons", "Uncertainty testing",
-               "Extreme values testing", "Re-performance testing",
-               "Data", "Data transformation", "Assumptions", "Decisions")
+               "Structure <br> of <br> model", "Calculation <br> structure", "Variable <br> names <br> and <br> units",
+               "Model comments", "Formula <br> clarity <br> and <br> robustness", 0, 0, 0, 0,
+               "Formula <br> and <br> code <br> correctness","Usability <br> testing","Autochecks",
+               "Regression <br> testing", "Use of <br> model <br> outputs", 0,
+               "Methodology <br> correctness", "Comparisons", "Uncertainty <br> testing",
+               "Extreme <br> values <br> testing", "Re-performance <br> testing",
+               "Data", "Data <br> transformation", "Assumptions", "Decisions")
 
-analysis_names <- c("Scope and Specification", "User guide", 0, "KIM",
-              "Version control", "Responsibilities","QA planning and resourcing",
+analysis_names <- c("Scope <br> and <br> Specification", "User guide", 0, "KIM",
+              "Version control", "Responsibilities","QA planning <br> and <br> resourcing",
               "Record of QA", 0,
-              "Structure of analysis", "Calculation structure", "Variable names and units",
-              "Analysis comments", "Formula clarity and robustness", 0, 0, 0, 0,
-              "Formula and code correctness","Usability testing","Autochecks",
+              "Structure <br> of <br> analysis", "Calculation <br> structure", "Variable <br> names <br> and <br> units",
+              "Analysis comments", "Formula <br> clarity <br> and <br> robustness", 0, 0, 0, 0,
+              "Formula <br> and <br> code <br> correctness","Usability <br> testing","Autochecks",
               0, 0, 0,
-              "Methodology correctness", "Comparisons", "Uncertainty testing",
+              "Methodology <br> correctness", "Comparisons", "Uncertainty <br> testing",
               0,0,
-              "Data", "Data transformation", "Assumptions", 0)
+              "Data", "Data <br> transformation", "Assumptions", 0)
 
-dashboard_names <- c("Scope and Specification", "User guide", 0, "KIM",
-               "Version control", "Responsibilities","QA planning and resourcing",
+dashboard_names <- c("Scope <br> and <br> Specification", "User guide", 0, "KIM",
+               "Version control", "Responsibilities","QA planning <br> and <br> resourcing",
                "Record of QA", 0,
-               "Structure of data model", "Dashboard structure", "Variable names and units",
-               0, "Formula clarity and robustness", "Accessibility", 0, 0, 0,
-               "Formula and code correctness","Usability testing","Autochecks",
-               0, 0, "Visual correctness",
-               "Methodology correctness", "Comparisons", "Uncertainty testing",
+               "Structure <br> of <br> data model", "Dashboard <br> structure", "Variable <br> names <br> and <br> units",
+               0, "Formula <br> clarity <br> and <br> robustness", "Accessibility", 0, 0, 0,
+               "Formula <br> and <br> code <br> correctness","Usability <br> testing","Autochecks",
+               0, 0, "Visual <br> correctness",
+               "Methodology <br> correctness", "Comparisons", "Uncertainty <br> testing",
                0,0,
-               "Data", "Data transformation", "Assumptions", "Decisions")
+               "Data", "Data <br> transformation", "Assumptions", "Decisions")
 
-statistics_names <- c("Scope and Specification", "User guide", "Technical guide", "KIM",
-                     "Version control", "Responsibilities","QA planning and resourcing",
-                     "Record of QA", "Risk and issues log",
-                     "Structure of analysis", "Calculation structure", "Variable names and units",
-                     "Analysis comments", "Formula clarity and robustness", 0, 
-                     "Caveats and footnotes", "Output formatting", "RAP",
-                     "Formula and code correctness","Usability testing","Autochecks",
-                     0, "Use of analytical outputs", "Visual correctness",
-                     "Methodology correctness", "Comparisons", 0,
-                     "Extreme values testing", "Re-performance testing",
-                     "Data", "Data transformation", "Assumptions", 0)
+statistics_names <- c("Scope <br> and <br> Specification", "User guide", "Technical guide", "KIM",
+                     "Version control", "Responsibilities","QA planning <br> and <br> resourcing",
+                     "Record of QA", "Risk and <br> issues log",
+                     "Structure <br> of <br> analysis", "Calculation <br> structure", "Variable <br> names <br> and <br> units",
+                     "Analysis <br> comments", "Formula <br> clarity <br> and <br> robustness", 0, 
+                     "Caveats <br> and <br> footnotes", "Output <br> formatting", "RAP",
+                     "Formula <br> and <br> code <br> correctness","Usability <br> testing","Autochecks",
+                     0, "Use of <br> analytical <br> outputs", "Visual <br> correctness",
+                     "Methodology <br> correctness", "Comparisons", 0,
+                     "Extreme <br> values <br> testing", "Re-performance <br> testing",
+                     "Data", "Data <br> transformation", "Assumptions", 0)
 
 #Are checks mandatory? If check is mandatory = "M", if not mandatory = ""
 modelling_mandatory <- c(1,0,0,0,1,1,0,1,0, #DG checks

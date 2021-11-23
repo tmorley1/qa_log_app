@@ -2,30 +2,29 @@ tabPanel(title = "QA Log", value = "panel2", #button in navigation panel
 
 #--------changing height of text boxes with text------         
          tags$head(
-           tags$style("textarea {
-                    width:100%; 
-                    height:34px;
-                    display: block;
-                    padding: 6px 12px;
-                    font-size: 14px;
-                    line-height: 1.42857143;
-                    color: #555;
-                    background-color: #fff;
-                    background-image: none;
-                    border: 1px solid #ccc;
-                    border-radius: 4px;
-                    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-                    box-shadow: inset 0 1px 1px rgba(0,0,0,.075);
-                  }
-
-                  textarea:focus {
-                    border-color: #66afe9;
-                    outline: 0;
-                    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6);
-                    box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(102, 175, 233, .6)
-                 }"
+           tags$style(lapply(QAcheckslist,paste_summary)
            )
          ),
+
+          tags$head(
+            tags$style(lapply(QAcheckslist,paste_obs)
+            )
+          ),
+
+          tags$head(
+            tags$style(lapply(QAcheckslist,paste_out)
+            )
+          ),
+
+          tags$head(
+            tags$style(lapply(QAcheckslist,paste_assess)
+            )
+          ),
+
+          tags$head(
+            tags$style(lapply(QAcheckslist,paste_info)
+            )
+          ),
          
 #-------colours in drop down menu----
          tags$head(
@@ -76,12 +75,14 @@ fixedRow(column(2, uiOutput("projectIDtext")),
                                  }")),
 #         column(4, dataTableOutput("writingtest")),
 #         column(4, dataTableOutput("writingtest2")),
-         column(2, actionButton("backtohome","Back"), align="right")),
+         column(2, actionButton("saveSQL", "Save"), align="center"),
+         column(2, actionButton("backtohome","Back"), align="center")),
 fixedRow(column(2, textInput("projectname", "Project name", value="")),
          column(2, textInput("version", "Version", value="")),
          column(2, textInput("leadanalyst", "Lead Analyst", value="")),
          column(2, textInput("analyticalassurer", "Analytical Assurer", value="")),
-         column(2, selectizeInput("BCM", choices=c("Yes", "No"), selected="No", label="Business Critical"))),
+         column(2, selectizeInput("BCM", choices=c("Yes", "No"), selected="No", label="Business Critical")),
+         column(2, downloadButton("report", "Generate QA Log"), align="center")),
 #Edit pillar weighting, display overall score, display error messages
 fixedRow(column(2, uiOutput("totalscorescolours")),
          column(2, br(), br(), actionButton("weighting","Edit pillar weighting")),
@@ -100,7 +101,7 @@ fixedRow(column(2, uiOutput("totalscorescolours")),
                                  font-style: italic;
                                  background-color: #ff0000
                                  }")))),
-#Scores
+#----Scores------
 fixedRow(column(2,uiOutput("DGscorescolours")),
          column(2,uiOutput("SCscorescolours")),
          column(2,uiOutput("VEscorescolours")),
@@ -108,107 +109,48 @@ fixedRow(column(2,uiOutput("DGscorescolours")),
          column(2,uiOutput("DAscorescolours")),
          column(2, actionButton("previous","Previous versions"))),
 
+br(),
+
 #----DG checks----
-         fixedRow(
-           column(12,
-                  h2("Documentation and Governance")
-           )
-         ),
-         fixedRow(
-           column(2, h5("QA area")),
-           column(2, h5("Rating")),
-           column(8,
-                  column(2, h5("Assessed by")),
-                  column(2, h5("Summary of evidence")),
-                  column(2, h5("Links to evidence")),
-                  column(3, h5("Observations")),
-                  column(3, h5("Outstanding (potential) work"))
-           )
-         ),
-        uiOutput("DGuichecks"),
+fixedRow(
+   tabBox(width=12,
+        tabPanel("Documentation and Governance",
+              h4("Documentation and Governance"),
+              hr(),
+              uiOutput("DGuichecks")
+              ),
 #----SC checks-----
-        fixedRow(
-          column(12,
-                 h2("Structure and Clarity")
-          )
-        ),
-        fixedRow(
-          column(2, h5("QA area")),
-          column(2, h5("Rating")),
-          column(8,
-                 column(2, h5("Assessed by")),
-                 column(2, h5("Summary of evidence")),
-                 column(2, h5("Links to evidence")),
-                 column(3, h5("Observations")),
-                 column(3, h5("Outstanding (potential) work"))
-          )
-        ),
-        uiOutput("SCuichecks"),
+       tabPanel("Structure and Clarity",
+                h4("Structure and Clarity"),
+                hr(),
+                uiOutput("SCuichecks")
+       ),      
 #----VE Checks----
-        fixedRow(
-          column(12,
-                 h2("Verification")
-          )
-        ),
-        fixedRow(
-          column(2, h5("QA area")),
-          column(2, h5("Rating")),
-          column(8,
-                 column(2, h5("Assessed by")),
-                 column(2, h5("Summary of evidence")),
-                 column(2, h5("Links to evidence")),
-                 column(3, h5("Observations")),
-                 column(3, h5("Outstanding (potential) work"))
-          )
-        ),
-        uiOutput("VEuichecks"),
+       tabPanel("Verification",
+                h4("Verification"),
+                hr(),
+                uiOutput("VEuichecks")
+       ),
 
 #----VA checks-----
-        fixedRow(
-          column(12,
-                 h2("Validation")
-          )
-        ),
-        fixedRow(
-          column(2, h5("QA area")),
-          column(2, h5("Rating")),
-          column(8,
-                 column(2, h5("Assessed by")),
-                 column(2, h5("Summary of evidence")),
-                 column(2, h5("Links to evidence")),
-                 column(3, h5("Observations")),
-                 column(3, h5("Outstanding (potential) work"))
-          )
-        ),
-        uiOutput("VAuichecks"),
+       tabPanel("Validation",
+                h4("Validation"),
+                hr(),
+                uiOutput("VAuichecks")
+       ),
 
 #----DA checks----
-
-        fixedRow(
-          column(12,
-                 h2("Data and assumptions")
-          )
-        ),
-        fixedRow(
-          column(2, h5("QA area")),
-          column(2, h5("Rating")),
-          column(8,
-                 column(2, h5("Assessed by")),
-                 column(2, h5("Summary of evidence")),
-                 column(2, h5("Links to evidence")),
-                 column(3, h5("Observations")),
-                 column(3, h5("Outstanding (potential) work"))
-          )
-        ),
-        uiOutput("DAuichecks"),
+       tabPanel("Data and Assumptions",
+                h4("Data and Assumptions"),
+                hr(),
+                uiOutput("DAuichecks")
+       )
+)
+),
 
 #----Tooltips----
 uiOutput("tooltips"),
 tags$style(HTML(".tooltip {width: 1000px;}")),
 HTML("<br><br><br>"),
-#----Generate HTML and saving to SQL----
-         fixedRow(
-           column(2, downloadButton("report", "Generate QA Log")),
-           column(2, actionButton("saveSQL", "Save"))
-         )
+
 )
