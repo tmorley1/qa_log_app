@@ -1,4 +1,8 @@
 #---Functions for calling inputs----
+test <- reactiveValues(log= "blank")
+
+output$test1 <- renderText(paste(test$log))
+
 scoreinputs <- function(checkid){
   #read in check name
   check_row <- names_df%>%filter(QAcheckslist==checkid)
@@ -10,10 +14,34 @@ scoreinputs <- function(checkid){
   assessor <- eval(parse(text=paste0("input$assess",checkid)))
   obs <- eval(parse(text=paste0("input$obs",checkid)))
   out <- eval(parse(text=paste0("input$out",checkid)))
+  
+  # #read in links
+   linksdf <- as.data.frame(links$log)%>%
+     filter(projectID==input$projectID)%>%
+     filter(checkID==checkid)%>%
+     select(-projectID,-checkID,-LinkID)
+   df_length <- nrow(linksdf)
+    if (df_length == 0){
+      link<-""
+    }
+    else {
+      listlinks <- list(1:df_length)[[1]]
+      link_pasted <- paste(unlist(lapply(listlinks,paste_link, linksdf=linksdf)), collapse=" \n")
+      link<-link_pasted
+    }
+    
+   test$log<-link
+
   #paste all together
-  pastescore <- paste0(checkname_nobr,": \n Rating: ", score, " \n Assessed by: ", assessor, " \n Observations: ", obs, " \n Outstanding (potential) work: \n \n", out)
+  pastescore <- paste0(checkname_nobr,": \n Rating: ", score, " \n Assessed by: ", assessor, " \n Observations: ", obs, " \n Outstanding (potential) work: ", out, " \n Links: ", link, " \n \n")
   return(pastescore)
 }
+
+ #function for pasting in links
+ paste_link <- function(rownumber,linksdf){
+   link <- linksdf[rownumber,]
+   return(paste(link))
+ }
 
 #---- Creating HTML report----
 output$report <- downloadHandler(

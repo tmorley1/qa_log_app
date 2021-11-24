@@ -336,7 +336,7 @@ observe_links <- function(qacheck){
      
      links$log <- dataframelink1
      
-     #Add an extra dummy row to SQL database
+     #Add an extra dummy row to SQL database - this allows us to compare for "Unsaved changes" warning
      sql <- sqllinks$log
      sql1 <- rbind(sql, list(as.integer(chosennumber), qacheck,"","",as.integer(idnumber)))
      
