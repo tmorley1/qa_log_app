@@ -19,7 +19,8 @@ scoreinputs <- function(checkid){
    linksdf <- as.data.frame(links$log)%>%
      filter(projectID==input$projectID)%>%
      filter(checkID==checkid)%>%
-     select(-projectID,-checkID,-LinkID)
+     mutate(Hyperlink=createLink(Link))%>%
+     select(-projectID,-checkID,-LinkID,-Link)
    df_length <- nrow(linksdf)
     if (df_length == 0){
       link<-""
