@@ -1,3 +1,20 @@
+#---Functions for calling inputs----
+scoreinputs <- function(checkid){
+  #read in check name
+  check_row <- names_df%>%filter(QAcheckslist==checkid)
+  checkname <- (check_row%>%select(paste0(types$log,"_names")))[1,1]
+  checkname_nobr <- str_replace_all(checkname,"<br> ", "")
+  #read in score
+  score <- eval(parse(text=paste0("input$score",checkid)))
+  #read in comments
+  assessor <- eval(parse(text=paste0("input$assess",checkid)))
+  obs <- eval(parse(text=paste0("input$obs",checkid)))
+  out <- eval(parse(text=paste0("input$out",checkid)))
+  #paste all together
+  pastescore <- paste0(checkname_nobr,": \n Rating: ", score, " \n Assessed by: ", assessor, " \n Observations: ", obs, " \n Outstanding (potential) work: \n \n", out)
+  return(pastescore)
+}
+
 #---- Creating HTML report----
 output$report <- downloadHandler(
   # For pdf output, change this to "report.pdf"
@@ -15,16 +32,23 @@ output$report <- downloadHandler(
                    version = input$version,
                    leadanalyst = input$leadanalyst,
                    analyticalassurer = input$analyticalassurer,
-                   BCM = input$BCM,
-                   DGscore = percentage_DG(),
-                   DG1 = input$scoreDG1,
-                   DG2 = input$scoreDG2,
-                   DG3 = input$scoreDG3,
-                   DG4 = input$scoreDG4,
-                   DG5 = input$scoreDG5,
-                   DG6 = input$scoreDG6,
-                   DG7 = input$scoreDG7,
-                   DG8 = input$scoreDG8)
+                   totalscore = totalscore(),
+                   DGscore = scoresfunc(justDGchecks()),
+                   SCscore = scoresfunc(justSCchecks()),
+                   VEscore = scoresfunc(justVEchecks()),
+                   VAscore = scoresfunc(justVAchecks()),
+                   DAscore = scoresfunc(justDAchecks()),
+                   DGchecks=mapply(scoreinputs,justDGchecks()),
+                   number_DG=length(justDGchecks()),
+                   SCchecks=mapply(scoreinputs,justSCchecks()),
+                   number_SC=length(justSCchecks()),
+                   VEchecks=mapply(scoreinputs,justVEchecks()),
+                   number_VE=length(justVEchecks()),
+                   VAchecks=mapply(scoreinputs,justVAchecks()),
+                   number_VA=length(justVAchecks()),
+                   DAchecks=mapply(scoreinputs,justDAchecks()),
+                   number_DA=length(justDAchecks()),
+                   BCM = input$BCM)
     
     # Knit the document, passing in the `params` list, and eval it in a
     # child of the global environment (this isolates the code in the document
