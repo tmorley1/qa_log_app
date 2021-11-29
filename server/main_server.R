@@ -129,11 +129,9 @@ observeEvent(input$saveSQL, {
 
   lapply(logspecificchecks(),savingscore, dataframe=otherinputdf(),qacheckSave=qacheckSave,projectID=input$projectID,databasename=databasename,myConn=myConn,time=time)
   
-  justdg1 <- c("DG1")
+  lapply(logspecificchecks(),savingeditedlinks,time=time)
   
-  lapply(justdg1,savingeditedlinks,time=time)
-  
-  lapply(justdg1,savingnewlinks,time=time)
+  lapply(logspecificchecks(),savingnewlinks,time=time)
 
 })
   

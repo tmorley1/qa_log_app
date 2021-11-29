@@ -34,7 +34,7 @@ scoreinputs <- function(checkid){
    test$log<-link
 
   #paste all together
-  pastescore <- paste0(checkname_nobr,": <br /> Rating: ", score, " <br /> Assessed by: ", assessor, " <br /> Observations: ", obs, " <br /> Outstanding (potential) work: ", out, " <br /> Links: ", link, " <br /> <br />")
+  pastescore <- paste0("<h5>",checkname_nobr,":</h5> Rating: ", score, " <br /> Assessed by: ", assessor, " <br /> Observations: ", obs, " <br /> Outstanding (potential) work: ", out, " <br /> Links: ", link, " <br />")
   return(pastescore)
 }
 

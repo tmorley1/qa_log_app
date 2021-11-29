@@ -52,7 +52,7 @@ Analytical assurer: `r params$analyticalassurer`
 
 Business Critical (Y/N): `r params$BCM`
 
-Scores:
+## Scores:
 
 Overall score: `r paste(params$totalscore,"%")`
 
@@ -72,12 +72,12 @@ allDG <- paste(unlist(params$DGchecks),collapse='<br />')
 
 ```
 
-Documentation and Governance breakdown:
+## Documentation and Governance:
 
 `r allDG`
 
 
-Structure and Clarity breakdown:
+## Structure and Clarity:
 
 ```{r, echo=FALSE, comment=""}
 
@@ -87,7 +87,7 @@ allSC <- paste(unlist(params$SCchecks),collapse='<br />')
 
 `r allSC`
 
-Verification breakdown:
+## Verification:
 
 ```{r, echo=FALSE, comment=""}
 
@@ -97,7 +97,7 @@ allVE <- paste(unlist(params$VEchecks),collapse='<br />')
 
 `r allVE`
 
-Validation breakdown:
+## Validation:
 
 ```{r, echo=FALSE, comment=""}
 
@@ -107,7 +107,7 @@ allVA <- paste(unlist(params$VAchecks),collapse='<br />')
 
 `r allVA`
 
-Data and Assumptions breakdown:
+## Data and Assumptions:
 
 ```{r, echo=FALSE, comment=""}
 
