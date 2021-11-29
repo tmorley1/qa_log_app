@@ -27,14 +27,14 @@ scoreinputs <- function(checkid){
     }
     else {
       listlinks <- list(1:df_length)[[1]]
-      link_pasted <- paste(unlist(lapply(listlinks,paste_link, linksdf=linksdf)), collapse=" \n")
+      link_pasted <- paste(unlist(lapply(listlinks,paste_link, linksdf=linksdf)), collapse=" <br />")
       link<-link_pasted
     }
     
    test$log<-link
 
   #paste all together
-  pastescore <- paste0(checkname_nobr,": \n Rating: ", score, " \n Assessed by: ", assessor, " \n Observations: ", obs, " \n Outstanding (potential) work: ", out, " \n Links: ", link, " \n \n")
+  pastescore <- paste0(checkname_nobr,": <br /> Rating: ", score, " <br /> Assessed by: ", assessor, " <br /> Observations: ", obs, " <br /> Outstanding (potential) work: ", out, " <br /> Links: ", link, " <br /> <br />")
   return(pastescore)
 }
 
@@ -67,16 +67,11 @@ output$report <- downloadHandler(
                    VEscore = scoresfunc(justVEchecks()),
                    VAscore = scoresfunc(justVAchecks()),
                    DAscore = scoresfunc(justDAchecks()),
-                   DGchecks=mapply(scoreinputs,justDGchecks()),
-                   number_DG=length(justDGchecks()),
-                   SCchecks=mapply(scoreinputs,justSCchecks()),
-                   number_SC=length(justSCchecks()),
-                   VEchecks=mapply(scoreinputs,justVEchecks()),
-                   number_VE=length(justVEchecks()),
-                   VAchecks=mapply(scoreinputs,justVAchecks()),
-                   number_VA=length(justVAchecks()),
-                   DAchecks=mapply(scoreinputs,justDAchecks()),
-                   number_DA=length(justDAchecks()),
+                   DGchecks=sapply(justDGchecks(),scoreinputs),
+                   SCchecks=sapply(justSCchecks(),scoreinputs),
+                   VEchecks=sapply(justVEchecks(),scoreinputs),
+                   VAchecks=sapply(justVAchecks(),scoreinputs),
+                   DAchecks=sapply(justDAchecks(),scoreinputs),
                    BCM = input$BCM)
     
     # Knit the document, passing in the `params` list, and eval it in a

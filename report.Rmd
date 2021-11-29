@@ -15,15 +15,10 @@ params:
   VAscore: NA
   DAscore: NA
   DGchecks: NA
-  number_DG: NA
   SCchecks: NA
-  number_SC: NA
   VEchecks: NA
-  number_VE: NA
   VAchecks: NA
-  number_VA: NA
   DAchecks: NA
-  number_DA: NA
 ---
 
 <style>
@@ -45,114 +40,79 @@ params:
 </style>
 
 
-Project ID
-```{r, echo=FALSE, comment=""}
-writeLines(params$id)
-```
+Project ID: `r params$id`
 
-Project title
-```{r, echo=FALSE, comment=""}
-writeLines(params$name)
-```
+Project title: `r params$name`
 
-Version
-```{r, echo=FALSE, comment=""}
-writeLines(params$version)
-```
+Version: `r params$version`
 
-Lead analyst
-```{r, echo=FALSE, comment=""}
-writeLines(params$leadanalyst)
-```
+Lead analyst: `r params$leadanalyst`
 
-Analytical assurer
-```{r, echo=FALSE, comment=""}
-writeLines(params$analyticalassurer)
-```
+Analytical assurer: `r params$analyticalassurer`
 
-Business Critical (Y/N)
-```{r, echo=FALSE, comment=""}
-writeLines(params$BCM)
-```
+Business Critical (Y/N): `r params$BCM`
 
 Scores:
 
-Overall score:
-```{r, echo=FALSE, comment=""}
-writeLines(paste(params$totalscore,"%"))
-```
+Overall score: `r paste(params$totalscore,"%")`
 
-Documentation and Governance:
-```{r, echo=FALSE, comment=""}
-writeLines(paste(params$DGscore,"%"))
-```
+Documentation and Governance: `r paste(params$DGscore, "%")`
 
-Structure and Clarity:
-```{r, echo=FALSE, comment=""}
-writeLines(paste(params$SCscore,"%"))
-```
+Structure and Clarity: `r paste(params$SCscore, "%")`
 
-Verification:
-```{r, echo=FALSE, comment=""}
-writeLines(paste(params$VEscore,"%"))
-```
+Verification: `r paste(params$VEscore, "%")`
 
-Validation:
-```{r, echo=FALSE, comment=""}
-writeLines(paste(params$VAscore,"%"))
-```
+Validation: `r paste(params$VAscore, "%")`
 
-Data and Assumptions:
+Data and Assumptions: `r paste(params$DAscore, "%")`
+
 ```{r, echo=FALSE, comment=""}
-writeLines(paste(params$DAscore,"%"))
+
+allDG <- paste(unlist(params$DGchecks),collapse='<br />')
+
 ```
 
 Documentation and Governance breakdown:
 
-```{r, echo=FALSE, comment=""}
-listDG <- list(1:params$number_DG)
+`r allDG`
 
-readDG <- function(number){cat(params$DGchecks[number])}
-
-html(lapply(listDG,readDG))
-```
 
 Structure and Clarity breakdown:
 
 ```{r, echo=FALSE, comment=""}
-listSC <- list(1:params$number_SC)
 
-readSC <- function(number){cat(params$SCchecks[number])}
+allSC <- paste(unlist(params$SCchecks),collapse='<br />')
 
-lapply(listSC,readSC)
 ```
+
+`r allSC`
 
 Verification breakdown:
 
 ```{r, echo=FALSE, comment=""}
-listVE <- list(1:params$number_VE)
 
-readVE <- function(number){cat(params$VEchecks[number])}
+allVE <- paste(unlist(params$VEchecks),collapse='<br />')
 
-lapply(listVE,readVE)
 ```
+
+`r allVE`
 
 Validation breakdown:
 
 ```{r, echo=FALSE, comment=""}
-listVA <- list(1:params$number_VA)
 
-readVA <- function(number){cat(params$VAchecks[number])}
+allVA <- paste(unlist(params$VAchecks),collapse='<br />')
 
-lapply(listVA,readVA)
 ```
+
+`r allVA`
 
 Data and Assumptions breakdown:
 
 ```{r, echo=FALSE, comment=""}
-listDA <- list(1:params$number_DA)
 
-readDA <- function(number){cat(params$DAchecks[number])}
+allDA <- paste(unlist(params$DAchecks),collapse='<br />')
 
-lapply(listDA,readDA)
 ```
+
+`r allDA`

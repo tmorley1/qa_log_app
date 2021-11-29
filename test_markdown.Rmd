@@ -1,0 +1,112 @@
+---
+title: "Test_markdown"
+output: html_document
+params:
+  id : NA
+  website: NA
+---
+
+We can display the project ID number in a box like this
+
+```{r, echo=FALSE, comment=""}
+writeLines(params$id)
+```
+
+
+Or we can put project ID in line like this `r params$id`
+
+Or we can put it on the next line like this, and it doesn't display in a box
+
+`r params$id`
+
+To include a hyperlink
+
+```{r, echo=FALSE, comment=""}
+params$website
+```
+
+Or try in line `r params$website`
+
+Now, try defining something, and calling it later on
+
+```{r, echo=FALSE, comment=""}
+testdef <- "This is a test"
+```
+
+And now call it `r testdef`
+
+Now try defining a web address
+
+```{r, echo=FALSE, comment=""}
+testweb <- "<a href=\"https://youtube.com\">\"https://youtube.com\"</a>"
+```
+
+And now call it `r testweb`
+
+Now define text with line skips. 
+
+Using n doesn't work in line, but it does work in box when we use the cat() function
+
+```{r, echo=FALSE, comment=""}
+testskip <- "This is the first line \n and this is the second line without cat()"
+
+testskip1 <- "This is the first line \n and this is the second line with cat()"
+
+testskip
+
+cat(testskip1)
+```
+
+Using cat() in line gives us nothing: `r cat(testskip)`
+
+If we just call without cat, we don't skip line: `r testskip`
+
+Using br doesn't work in box, but it does work in line
+
+```{r, echo=FALSE, comment=""}
+testskip2 <- "This is the first line <br /> and this is the second line"
+
+testskip2
+```
+
+We now get line skips in line: `r testskip2`
+
+Now we test the lapply function, so create a function and a list to lapply over. First, call lapply within box
+
+```{r, echo=FALSE, comment=""}
+apply_fun <- function(inputs){
+  paste("We are pasting the", inputs, "input")
+}
+
+apply_list <- c("first", "second", "third", "fourth")
+
+lapply(apply_list,apply_fun)
+
+```
+
+Next, call lapply within line `r lapply(apply_list,apply_fun)`
+
+Now, try the lapply function with a line skip
+
+```{r, echo=FALSE, comment=""}
+apply_fun1 <- function(inputs){
+  paste("<br /> We are pasting the", inputs, "input")
+}
+
+lapply(apply_list,apply_fun1)
+
+```
+
+Call within line `r lapply(apply_list,apply_fun1)`
+
+Finally, let's use the lapply function with a line skip and a hyperlink
+
+```{r, echo=FALSE, comment=""}
+apply_list1 <- c("<a href=\"https://bbc.co.uk\">\"https://bbc.co.uk\"</a>",
+                 "<a href=\"https://youtube.com\">\"https://youtube.com\"</a>",
+                 "<a href=\"https://reddit.com\">\"https://reddit.com\"</a>")
+
+lapply(apply_list1,apply_fun1)
+```
+
+Call within line: `r lapply(apply_list1,apply_fun1)`
